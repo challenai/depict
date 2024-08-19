@@ -4,7 +4,7 @@ export interface Mesh {
   seed?: number;
 };
 
-export interface Options {
+export interface MeshOptions {
   renderer?: string;
   stroke?: string;
   fill?: string;
@@ -18,7 +18,7 @@ export interface Text {
   content: string;
 };
 
-export interface Options {
+export interface TextOptions {
   maxWidth?: number;
   color?: string;
   size?: number;
