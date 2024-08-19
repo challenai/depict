@@ -4,9 +4,7 @@ export interface ShadowElement {
   id: string;
   x: number;
   y: number;
-  static: boolean;
-  dirty: boolean;
-  ms: Mesh[];
-  t: Text | undefined;
-  children: ShadowElement[];
+  shapes: Mesh[];
+  text?: Text;
+  children?: ShadowElement[];
 };
