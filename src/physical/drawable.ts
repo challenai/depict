@@ -15,9 +15,12 @@ export interface Options {
 export interface Text {
   x: number;
   y: number;
-  maxWidth: number;
   content: string;
-  color: string;
-  size: number;
-  family: string;
 };
+
+export interface Options {
+  maxWidth?: number;
+  color?: string;
+  size?: number;
+  family?: string;
+}
