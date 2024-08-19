@@ -7,4 +7,5 @@ export interface ShadowElement {
   shapes: Mesh[];
   text?: Text;
   children?: ShadowElement[];
+  contains?: (x: number, y: number) => void;
 };
