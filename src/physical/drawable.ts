@@ -1,7 +1,3 @@
-/**
- * TODO: is it necessary to add x, y to Mesh?
- */
-
 // mesh is the basic render unit
 export interface Mesh {
   // path of the given mesh
@@ -12,6 +8,8 @@ export interface Mesh {
   x?: number;
   // offset y
   y?: number;
+  // options
+  opts?: MeshOptions;
 };
 
 // mesh style options
@@ -34,6 +32,8 @@ export interface Text {
   x?: number;
   // offset y
   y?: number;
+  // options
+  opts?: TextOptions;
 };
 
 // text style options
