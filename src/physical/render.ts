@@ -1,9 +1,6 @@
-import type { Mesh, MeshOptions, Text, TextOptions } from './drawable';
+import type { Mesh, Text } from './drawable';
 
 export abstract class Renderer {
-  abstract mesh(shape: Mesh, opts?: MeshOptions): void
+  abstract draw(shape: Mesh): void
+  abstract write(text: Text): void
 };
-
-export abstract class Writer {
-  abstract write(text: Text, opts?: TextOptions): void
-}
