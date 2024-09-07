@@ -1,4 +1,5 @@
 import type { Mesh, Text } from "@physical/drawable";
+import type { Renderer } from "@physical/render";
 
 // ShadowElement is the basic unit which stores shapes and texts
 // it contains a children property so that it is organized as a tree
@@ -17,4 +18,6 @@ export interface ShadowElement {
   children?: ShadowElement[];
   // if current element contains the given coordination
   contain?: (x: number, y: number) => void;
+  // specify renderer for this element
+  renderer?: Renderer;
 };
