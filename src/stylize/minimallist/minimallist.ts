@@ -1,15 +1,12 @@
 import type { Mesh, MeshOptions, Text, TextOptions } from "@physical/drawable";
 import { Renderer } from "@physical/render";
 
-const MINIMALIST_RENDERER = "minimalist";
-
 export interface MinimalistOptions {
   defaultMeshOpts?: MeshOptions;
   defaultTextOpts?: TextOptions;
 }
 
 const DMO: MeshOptions = {
-  renderer: MINIMALIST_RENDERER,
   stroke: "#000",
   fill: undefined,
   rotation: undefined,
