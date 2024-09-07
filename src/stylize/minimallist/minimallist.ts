@@ -73,4 +73,8 @@ export class MinimalistRenderer extends Renderer {
     // write text
     this.ctx.fillText(text.content, x, y);
   };
+
+  offset(x: number, y: number) {
+    this.ctx.translate(x, y);
+  };
 };
