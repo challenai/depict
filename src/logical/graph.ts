@@ -2,6 +2,7 @@ import type { Renderer } from "@physical/render";
 import { type ShadowElement, NodeType } from "./element";
 import type { Mesh, Text } from "@physical/drawable";
 
+// device ratio to adapt different device, prevent blur issue
 const DEVICE_RATIO = window.devicePixelRatio;
 
 export interface GraphOptions {
@@ -149,6 +150,7 @@ export class Graph {
     }
   }
 
+  // animate the node trees
   animate(delta: number) {
     this.ctx.clearRect(0, 0, this.w, this.h);
     if (this.event) {
@@ -157,6 +159,7 @@ export class Graph {
       this.ctx.drawImage(this.stCanvas, 0, 0);
     }
     this.depict0(this.elements, delta);
+    // enter the next render process
     requestAnimationFrame(this.animate.bind(this));
   }
 
