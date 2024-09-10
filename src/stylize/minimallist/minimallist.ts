@@ -22,56 +22,50 @@ const DTO: TextOptions = {
 // minimalist renderer provide basic wire frame to draw,
 // it will draw our shapes as fast as possible.
 export class MinimalistRenderer extends Renderer {
-  ctx: CanvasRenderingContext2D;
   dmo: MeshOptions;
   dto: TextOptions;
 
-  constructor(ctx: CanvasRenderingContext2D, opts: MinimalistOptions) {
+  constructor(opts: MinimalistOptions) {
     super();
-    this.ctx = ctx;
     this.dmo = opts.defaultMeshOpts || DMO;
     this.dto = opts.defaultTextOpts || DTO;
   };
 
-  draw(mesh: Mesh) {
-    this.ctx.save();
+  draw(ctx: CanvasRenderingContext2D, mesh: Mesh) {
+    ctx.save();
     const opts = mesh.opts;
 
     // set current mesh offset
     const x = mesh.x || 0;
     const y = mesh.y || 0;
-    if (x != 0 && y != 0) this.ctx.translate(x, y);
+    if (x != 0 && y != 0) ctx.translate(x, y);
 
     // create 2D path
     const p2d = new Path2D(mesh.path);
 
     // set stroke style
     if (opts && opts.stroke) {
-      this.ctx.strokeStyle = opts.stroke;
+      ctx.strokeStyle = opts.stroke;
     } else {
-      this.ctx.strokeStyle = "#000";
+      ctx.strokeStyle = "#000";
     }
 
-    this.ctx.stroke(p2d);
+    ctx.stroke(p2d);
 
     // fill the mesh
     if (opts && opts.fill) {
-      this.ctx.fillStyle = opts.fill;
-      this.ctx.fill(p2d);
+      ctx.fillStyle = opts.fill;
+      ctx.fill(p2d);
     }
 
-    this.ctx.restore();
+    ctx.restore();
   };
 
-  write(text: Text) {
+  write(ctx: CanvasRenderingContext2D, text: Text) {
     // set text offset
     const x = text.x || 0;
     const y = text.y || 0;
     // write text
-    this.ctx.fillText(text.content, x, y);
-  };
-
-  offset(x: number, y: number) {
-    this.ctx.translate(x, y);
+    ctx.fillText(text.content, x, y);
   };
 };

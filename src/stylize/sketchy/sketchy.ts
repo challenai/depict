@@ -25,27 +25,23 @@ export class SketchyRenderer extends Renderer {
   dmo: MeshOptions;
   dto: TextOptions;
 
-  constructor(ctx: CanvasRenderingContext2D, opts: SketchyOptions) {
+  constructor(opts: SketchyOptions) {
     super();
     this.ctx = ctx;
     this.dmo = opts.defaultMeshOpts || DMO;
     this.dto = opts.defaultTextOpts || DTO;
   };
 
-  draw(mesh: Mesh) {
+  draw(ctx: CanvasRenderingContext2D, mesh: Mesh) {
     // TODO
   };
 
   // TODO: sketchy style text + default fonts?
-  write(text: Text) {
+  write(ctx: CanvasRenderingContext2D, text: Text) {
     // set text offset
     const x = text.x || 0;
     const y = text.y || 0;
     // write text
     this.ctx.fillText(text.content, x, y);
-  };
-
-  offset(x: number, y: number) {
-    this.ctx.translate(x, y);
   };
 }
