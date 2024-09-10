@@ -1,6 +1,12 @@
 import type { Mesh, Text } from "@physical/drawable";
 import type { Renderer } from "@physical/render";
 
+export enum NodeType {
+  DYNAMIC = 0,
+  EVENT = 1,
+  STATIC = 2,
+};
+
 // ShadowElement is the basic unit which stores shapes and texts
 // it contains a children property so that it is organized as a tree
 export interface ShadowElement {
@@ -20,4 +26,8 @@ export interface ShadowElement {
   contain?: (x: number, y: number) => void;
   // specify renderer for this element
   renderer?: Renderer;
+  // node type of current node, only for performance tuning
+  type?: NodeType;
+  // animation
+  animate?: (self: ShadowElement, delta: number) => void;
 };
