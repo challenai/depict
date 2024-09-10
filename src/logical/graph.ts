@@ -41,9 +41,16 @@ export class Graph {
   // height
   h: number;
 
-  constructor({ canvas, defaultRenderer, width, height, event, animation }: GraphOptions) {
+  constructor({
+    canvas,
+    defaultRenderer,
+    width,
+    height,
+    event,
+    animation,
+  }: GraphOptions) {
     this.canvas = canvas;
-    this.ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+    this.ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
     canvas.style.width = `${width}px`;
     canvas.style.height = `${height}px`;
     this.initializeCanvas(canvas, this.ctx, width, height, true);
@@ -52,14 +59,14 @@ export class Graph {
     this.evCanvas = canvas;
     this.evCtx = this.ctx;
     if (animation || event) {
-      this.stCanvas = document.createElement('canvas');
-      this.stCtx = this.stCanvas.getContext('2d') as CanvasRenderingContext2D;
-      this.initializeCanvas(this.stCanvas, this.stCtx, width, height, false)
+      this.stCanvas = document.createElement("canvas");
+      this.stCtx = this.stCanvas.getContext("2d") as CanvasRenderingContext2D;
+      this.initializeCanvas(this.stCanvas, this.stCtx, width, height, false);
     }
     if (event) {
-      this.evCanvas = document.createElement('canvas');
-      this.evCtx = this.evCanvas.getContext('2d') as CanvasRenderingContext2D;
-      this.initializeCanvas(this.evCanvas, this.evCtx, width, height, false)
+      this.evCanvas = document.createElement("canvas");
+      this.evCtx = this.evCanvas.getContext("2d") as CanvasRenderingContext2D;
+      this.initializeCanvas(this.evCanvas, this.evCtx, width, height, false);
     }
     this.w = width;
     this.h = height;
@@ -70,14 +77,20 @@ export class Graph {
     // this.update = true;
   }
 
-  initializeCanvas(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, w: number, h: number, visible: boolean) {
+  initializeCanvas(
+    canvas: HTMLCanvasElement,
+    ctx: CanvasRenderingContext2D,
+    w: number,
+    h: number,
+    visible: boolean
+  ) {
     // nice fix for canvas blur issue
     // from https://stackoverflow.com/questions/8696631/canvas-drawings-like-lines-are-blurry
     canvas.width = w * DEVICE_RATIO;
     canvas.height = h * DEVICE_RATIO;
 
     ctx.scale(DEVICE_RATIO, DEVICE_RATIO);
-    ctx.translate(-.5, -.5);
+    ctx.translate(-0.5, -0.5);
 
     if (!visible) canvas.style.display = "none";
   }
@@ -177,15 +190,33 @@ export class Graph {
     if (this.animation) this.animate(0);
   }
 
+  handleMouseEvent(e: MouseEvent): number[] {
+    e.preventDefault();
+    e.stopPropagation();
+    return [e.clientX, e.clientY];
+  }
+
   // handle event: click
-  onClick(x: number, y: number) { }
+  onClick(e: MouseEvent) {
+    this.handleMouseEvent(e);
+    // TODO
+  }
 
   // handle event: mousemove
-  onMouseMove(x: number, y: number) { }
+  onMouseMove(e: MouseEvent) {
+    this.handleMouseEvent(e);
+    // TODO
+  }
 
   // handle event: mouseup
-  onMouseUp(x: number, y: number) { }
+  onMouseUp(e: MouseEvent) {
+    this.handleMouseEvent(e);
+    // TODO
+  }
 
   // handle event: mousedown
-  onMouseDown(x: number, y: number) { }
+  onMouseDown(e: MouseEvent) {
+    this.handleMouseEvent(e);
+    // TODO
+  }
 }
