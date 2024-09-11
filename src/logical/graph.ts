@@ -221,7 +221,7 @@ export class Graph {
       y += el.y;
       if (el.contain && el.contain(this.x - x, this.y - y)) {
         if (ev === "click") {
-          // if (el.onClick) el.onClick();
+          if (el.onClick) el.onClick(el);
         } else if (ev == "mousemove") {
           if (!this.focus.has(el)) {
             this.focus.add(el);
@@ -250,6 +250,7 @@ export class Graph {
   // handle event: click
   onClick(e: MouseEvent) {
     this.handleMouseEvent(e);
+    this.triggerEvents(this.elements, "click", 0, 0);
   }
 
   // handle event: mousemove
