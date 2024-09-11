@@ -206,7 +206,6 @@ export class Graph {
     // static render
     this.stCtx.clearRect(this.x0, this.y0, this.x1, this.y1);
     this.depict2(this.elements);
-    // TODO: cache
     if (this.event) {
       this.evCtx.clearRect(this.x0, this.y0, this.x1, this.y1);
       this.depict1(this.elements);
@@ -219,20 +218,40 @@ export class Graph {
     for (let el of elements) {
       x += el.x;
       y += el.y;
-      if (el.contain && el.contain(this.x - x, this.y - y)) {
-        if (ev === "click") {
-          if (el.onClick) el.onClick(el);
-        } else if (ev == "mousemove") {
-          if (!this.focus.has(el)) {
-            this.focus.add(el);
-            if (el.onMouseenter) el.onMouseenter(el);
+      switch (ev) {
+        case "click":
+          if (el.contain && el.contain(this.x - x, this.y - y) && el.onClick) {
+            el.onClick(el, this.x, this.y);
           }
-        }
-      } else {
-        if (this.focus.has(el)) {
-          this.focus.delete(el);
-          if (el.onMouseleave) el.onMouseleave(el);
-        }
+          break;
+        case "mousemove":
+          if (el.onMousemove) el.onMousemove(el, this.x, this.y);
+          if (el.contain && el.contain(this.x - x, this.y - y)) {
+            if (!this.focus.has(el)) {
+              this.focus.add(el);
+              if (el.onMouseenter) el.onMouseenter(el, this.x, this.y);
+            }
+          } else {
+            if (this.focus.has(el)) {
+              this.focus.delete(el);
+              if (el.onMouseleave) el.onMouseleave(el, this.x, this.y);
+            }
+          }
+          break;
+        case "mouseup":
+          if (el.onMouseup) el.onMouseup(el, this.x, this.y);
+          break;
+        case "mousedown":
+          if (
+            el.contain &&
+            el.contain(this.x - x, this.y - y) &&
+            el.onMousedown
+          ) {
+            el.onMousedown(el, this.x, this.y);
+          }
+          break;
+        default:
+          break;
       }
       if (el.children) this.triggerEvents(el.children, ev, x, y);
       x -= el.x;
@@ -240,34 +259,37 @@ export class Graph {
     }
   }
 
-  handleMouseEvent(e: MouseEvent) {
+  handleMouseEvent(e: MouseEvent, ev: string) {
     e.preventDefault();
     e.stopPropagation();
     this.x = e.clientX;
     this.y = e.clientY;
+    this.triggerEvents(this.elements, ev, 0, 0);
+    this.renderEvent();
+  }
+
+  renderEvent() {
+    this.evCtx.clearRect(this.x0, this.y0, this.x1, this.y1);
+    this.depict1(this.elements);
   }
 
   // handle event: click
   onClick(e: MouseEvent) {
-    this.handleMouseEvent(e);
-    this.triggerEvents(this.elements, "click", 0, 0);
+    this.handleMouseEvent(e, "click");
   }
 
   // handle event: mousemove
   onMouseMove(e: MouseEvent) {
-    this.handleMouseEvent(e);
-    this.triggerEvents(this.elements, "mousemove", 0, 0);
+    this.handleMouseEvent(e, "mousemove");
   }
 
   // handle event: mouseup
   onMouseUp(e: MouseEvent) {
-    this.handleMouseEvent(e);
-    // TODO
+    this.handleMouseEvent(e, "mouseup");
   }
 
   // handle event: mousedown
   onMouseDown(e: MouseEvent) {
-    this.handleMouseEvent(e);
-    // TODO
+    this.handleMouseEvent(e, "mousedown");
   }
 }

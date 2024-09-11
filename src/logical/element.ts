@@ -31,13 +31,15 @@ export interface ShadowElement {
   // animation
   animate?: (self: ShadowElement, delta: number) => void;
   // handle event: click
-  onClick?: (self: ShadowElement) => void;
+  onClick?: (self: ShadowElement, x: number, y: number) => void;
   // handle event: mouse enter
-  onMouseenter?: (self: ShadowElement) => void;
+  onMouseenter?: (self: ShadowElement, x: number, y: number) => void;
   // handle event: mouse leave
-  onMouseleave?: (self: ShadowElement) => void;
+  onMouseleave?: (self: ShadowElement, x: number, y: number) => void;
   // handle event: mouse up
-  onMouseup?: (self: ShadowElement) => void;
+  onMouseup?: (self: ShadowElement, x: number, y: number) => void;
   // handle event: mouse down
-  onMousedown?: (self: ShadowElement) => void;
+  onMousedown?: (self: ShadowElement, x: number, y: number) => void;
+  // handle event: mouse move
+  onMousemove?: (self: ShadowElement, x: number, y: number) => void;
 }
