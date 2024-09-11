@@ -3,7 +3,8 @@ import { type ShadowElement, NodeType } from "./element";
 import type { Mesh, Text } from "@physical/drawable";
 
 // device ratio to adapt different device, prevent blur issue
-const DEVICE_RATIO = window.devicePixelRatio;
+const SCALE_FACTOR = window.devicePixelRatio;
+const BLUR_OFFSET = -0.5;
 
 export interface GraphOptions {
   canvas: HTMLCanvasElement;
@@ -36,10 +37,10 @@ export class Graph {
   // off-screen canvas to cache
   stCanvas: HTMLCanvasElement;
   stCtx: CanvasRenderingContext2D;
-  // width
-  w: number;
-  // height
-  h: number;
+  x0: number;
+  y0: number;
+  x1: number;
+  y1: number;
 
   constructor({
     canvas,
@@ -49,27 +50,31 @@ export class Graph {
     event,
     animation,
   }: GraphOptions) {
+    this.x0 = BLUR_OFFSET;
+    this.y0 = BLUR_OFFSET;
+    this.x1 = width + BLUR_OFFSET;
+    this.y1 = height + BLUR_OFFSET;
+
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-    canvas.style.width = `${width}px`;
-    canvas.style.height = `${height}px`;
     this.initializeCanvas(canvas, this.ctx, width, height, true);
     this.stCanvas = canvas;
     this.stCtx = this.ctx;
     this.evCanvas = canvas;
     this.evCtx = this.ctx;
+
     if (animation || event) {
       this.stCanvas = document.createElement("canvas");
       this.stCtx = this.stCanvas.getContext("2d") as CanvasRenderingContext2D;
       this.initializeCanvas(this.stCanvas, this.stCtx, width, height, false);
     }
+
     if (event) {
       this.evCanvas = document.createElement("canvas");
       this.evCtx = this.evCanvas.getContext("2d") as CanvasRenderingContext2D;
       this.initializeCanvas(this.evCanvas, this.evCtx, width, height, false);
     }
-    this.w = width;
-    this.h = height;
+
     this.dr = defaultRenderer;
     this.elements = [];
     this.animation = animation;
@@ -86,11 +91,13 @@ export class Graph {
   ) {
     // nice fix for canvas blur issue
     // from https://stackoverflow.com/questions/8696631/canvas-drawings-like-lines-are-blurry
-    canvas.width = w * DEVICE_RATIO;
-    canvas.height = h * DEVICE_RATIO;
+    canvas.width = w * SCALE_FACTOR;
+    canvas.height = h * SCALE_FACTOR;
+    canvas.style.width = `${w}px`;
+    canvas.style.height = `${h}px`;
 
-    ctx.scale(DEVICE_RATIO, DEVICE_RATIO);
-    ctx.translate(-0.5, -0.5);
+    ctx.scale(SCALE_FACTOR, SCALE_FACTOR);
+    ctx.translate(BLUR_OFFSET, BLUR_OFFSET);
 
     if (!visible) canvas.style.display = "none";
   }
@@ -165,11 +172,11 @@ export class Graph {
 
   // animate the node trees
   animate(delta: number) {
-    this.ctx.clearRect(0, 0, this.w, this.h);
+    this.ctx.clearRect(this.x0, this.y0, this.x1, this.y1);
     if (this.event) {
-      this.ctx.drawImage(this.evCanvas, 0, 0);
+      this.ctx.drawImage(this.evCanvas, BLUR_OFFSET, BLUR_OFFSET);
     } else {
-      this.ctx.drawImage(this.stCanvas, 0, 0);
+      this.ctx.drawImage(this.stCanvas, BLUR_OFFSET, BLUR_OFFSET);
     }
     this.depict0(this.elements, delta);
     // enter the next render process
@@ -183,10 +190,13 @@ export class Graph {
       return;
     }
     // static render
-    this.stCtx.clearRect(0, 0, this.w, this.h);
+    this.stCtx.clearRect(this.x0, this.y0, this.x1, this.y1);
     this.depict2(this.elements);
     // TODO: cache
-    if (this.event) this.depict1(this.elements);
+    if (this.event) {
+      this.evCtx.clearRect(this.x0, this.y0, this.x1, this.y1);
+      this.depict1(this.elements);
+    }
     if (this.animation) this.animate(0);
   }
 
