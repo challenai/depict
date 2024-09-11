@@ -41,6 +41,9 @@ export class Graph {
   y0: number;
   x1: number;
   y1: number;
+  x: number;
+  y: number;
+  focus: Set<ShadowElement>;
 
   constructor({
     canvas,
@@ -54,6 +57,8 @@ export class Graph {
     this.y0 = BLUR_OFFSET;
     this.x1 = width + BLUR_OFFSET;
     this.y1 = height + BLUR_OFFSET;
+    this.x = 0;
+    this.y = 0;
 
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -79,7 +84,9 @@ export class Graph {
     this.elements = [];
     this.animation = animation;
     this.event = event;
-    // this.update = true;
+
+    this.focus = new Set();
+    this.registerEvents();
   }
 
   initializeCanvas(
@@ -100,6 +107,13 @@ export class Graph {
     ctx.translate(BLUR_OFFSET, BLUR_OFFSET);
 
     if (!visible) canvas.style.display = "none";
+  }
+
+  registerEvents() {
+    this.canvas.addEventListener("mousemove", this.onMouseMove.bind(this));
+    this.canvas.addEventListener("mouseup", this.onMouseUp.bind(this));
+    this.canvas.addEventListener("mousedown", this.onMouseDown.bind(this));
+    this.canvas.addEventListener("click", this.onClick.bind(this));
   }
 
   // to check whether the nodes is valid and safe to render
@@ -200,22 +214,48 @@ export class Graph {
     if (this.animation) this.animate(0);
   }
 
-  handleMouseEvent(e: MouseEvent): number[] {
+  triggerEvents(elements: ShadowElement[], ev: string, x: number, y: number) {
+    if (!elements) return;
+    for (let el of elements) {
+      x += el.x;
+      y += el.y;
+      if (el.contain && el.contain(this.x - x, this.y - y)) {
+        if (ev === "click") {
+          // if (el.onClick) el.onClick();
+        } else if (ev == "mousemove") {
+          if (!this.focus.has(el)) {
+            this.focus.add(el);
+            if (el.onMouseenter) el.onMouseenter(el);
+          }
+        }
+      } else {
+        if (this.focus.has(el)) {
+          this.focus.delete(el);
+          if (el.onMouseleave) el.onMouseleave(el);
+        }
+      }
+      if (el.children) this.triggerEvents(el.children, ev, x, y);
+      x -= el.x;
+      y -= el.y;
+    }
+  }
+
+  handleMouseEvent(e: MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    return [e.clientX, e.clientY];
+    this.x = e.clientX;
+    this.y = e.clientY;
   }
 
   // handle event: click
   onClick(e: MouseEvent) {
     this.handleMouseEvent(e);
-    // TODO
   }
 
   // handle event: mousemove
   onMouseMove(e: MouseEvent) {
     this.handleMouseEvent(e);
-    // TODO
+    this.triggerEvents(this.elements, "mousemove", 0, 0);
   }
 
   // handle event: mouseup
