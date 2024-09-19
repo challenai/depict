@@ -14,8 +14,6 @@ export interface Mesh {
 
 // mesh style options
 export interface MeshOptions {
-  // selected randerer
-  renderer?: string;
   // canvas stroke of given mesh
   stroke?: string;
   // fill color or pattern into mesh
