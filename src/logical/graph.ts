@@ -43,6 +43,8 @@ export class Graph {
   y1: number;
   x: number;
   y: number;
+  dx: number;
+  dy: number;
   focus: Set<ShadowElement>;
 
   constructor({
@@ -87,6 +89,10 @@ export class Graph {
 
     this.focus = new Set();
     this.registerEvents();
+
+    const rect = canvas.getClientRects().item(0);
+    this.dx = rect ? rect.x : 0;
+    this.dy = rect ? rect.y : 0;
   }
 
   initializeCanvas(
@@ -262,8 +268,8 @@ export class Graph {
   handleMouseEvent(e: MouseEvent, ev: string) {
     e.preventDefault();
     e.stopPropagation();
-    this.x = e.clientX;
-    this.y = e.clientY;
+    this.x = e.clientX - this.dx;
+    this.y = e.clientY - this.dy;
     this.triggerEvents(this.elements, ev, 0, 0);
     this.renderEvent();
   }
