@@ -1,6 +1,7 @@
 import type { Renderer } from "@physical/render";
 import { type ShadowElement, NodeType } from "./element";
-import type { Mesh, Text } from "@physical/drawable";
+import type { DrawableOptions, Mesh, MeshOptions, MeshSpecificOptions, Text, TextOptions, TextSpecificOptions } from "@physical/drawable";
+import { initializeContext } from "@physical/context";
 
 // device ratio to adapt different device, prevent blur issue
 const SCALE_FACTOR = window.devicePixelRatio;
@@ -13,6 +14,9 @@ export interface GraphOptions {
   height: number;
   animation: boolean;
   event: boolean;
+  globalMeshOptions: MeshSpecificOptions;
+  globalTextOptions: TextSpecificOptions;
+  globalDrawableOptions: DrawableOptions;
 }
 
 // the internal graph
@@ -43,7 +47,12 @@ export class Graph {
   y1: number;
   x: number;
   y: number;
+  dx: number;
+  dy: number;
   focus: Set<ShadowElement>;
+  gmo: MeshOptions;
+  gto: TextOptions;
+  gdo: DrawableOptions;
 
   constructor({
     canvas,
@@ -52,6 +61,9 @@ export class Graph {
     height,
     event,
     animation,
+    globalMeshOptions,
+    globalTextOptions,
+    globalDrawableOptions,
   }: GraphOptions) {
     this.x0 = BLUR_OFFSET;
     this.y0 = BLUR_OFFSET;
@@ -59,6 +71,10 @@ export class Graph {
     this.y1 = height + BLUR_OFFSET;
     this.x = 0;
     this.y = 0;
+
+    this.gmo = globalMeshOptions;
+    this.gto = globalTextOptions;
+    this.gdo = globalDrawableOptions;
 
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -87,6 +103,14 @@ export class Graph {
 
     this.focus = new Set();
     this.registerEvents();
+
+    const rect = canvas.getClientRects().item(0);
+    this.dx = rect ? rect.x : 0;
+    this.dy = rect ? rect.y : 0;
+
+    initializeContext(this.ctx, this.gmo, this.gto, this.gdo);
+    initializeContext(this.stCtx, this.gmo, this.gto, this.gdo);
+    initializeContext(this.evCtx, this.gmo, this.gto, this.gdo);
   }
 
   initializeCanvas(
@@ -262,8 +286,8 @@ export class Graph {
   handleMouseEvent(e: MouseEvent, ev: string) {
     e.preventDefault();
     e.stopPropagation();
-    this.x = e.clientX;
-    this.y = e.clientY;
+    this.x = e.clientX - this.dx;
+    this.y = e.clientY - this.dy;
     this.triggerEvents(this.elements, ev, 0, 0);
     this.renderEvent();
   }
