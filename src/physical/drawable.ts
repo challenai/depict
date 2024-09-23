@@ -12,14 +12,34 @@ export interface Mesh {
   opts?: MeshOptions;
 };
 
-// mesh style options
-export interface MeshOptions {
-  // canvas stroke of given mesh
+// shared style options
+export interface DrawableOptions {
+  // need to draw border
+  border?: boolean;
+  // need to draw background
+  background?: boolean;
+  // canvas stroke style
   stroke?: string;
-  // fill color or pattern into mesh
+  // canvas fill color or pattern
   fill?: string;
   // rotation in degrees
   rotation?: number;
+  // shadow
+  shadowColor?: string;
+  shadowBlur?: number;
+  shadowOffsetX?: number;
+  shadowOffsetY?: number;
+}
+
+// mesh style options
+export interface MeshOptions extends MeshSpecificOptions, DrawableOptions { };
+
+export interface MeshSpecificOptions {
+  // line width of mesh
+  lineWidth?: number;
+  lineCap?: string;
+  lineJoin?: string;
+  miterLimit?: number;
 }
 
 // Text is all the text shown in our art
@@ -35,13 +55,11 @@ export interface Text {
 };
 
 // text style options
-export interface TextOptions {
+export interface TextOptions extends TextSpecificOptions, DrawableOptions { };
+
+export interface TextSpecificOptions {
   // max width of given text, the extra ones whould be throw
   maxWidth?: number;
-  // color of text
-  color?: string;
-  // size of text
-  size?: number;
-  // font family of text
-  family?: string;
+  // font of text
+  font?: string;
 }
