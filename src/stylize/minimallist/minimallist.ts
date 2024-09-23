@@ -62,10 +62,20 @@ export class MinimalistRenderer extends Renderer {
   };
 
   write(ctx: CanvasRenderingContext2D, text: Text) {
+    ctx.save();
+    const opts = text.opts || {};
+
     // set text offset
     const x = text.x || 0;
     const y = text.y || 0;
     // write text
+    ctx.fillStyle = opts.color || (DTO.color as string);
+    const sz = opts.size || DTO.size;
+    const family = opts.family || DTO.family;
+    ctx.font = `${sz}pt ${family}`;
+
     ctx.fillText(text.content, x, y);
+
+    ctx.restore();
   };
 };
