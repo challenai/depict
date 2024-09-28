@@ -42,4 +42,10 @@ export interface ShadowElement {
   onMousedown?: (self: ShadowElement, x: number, y: number) => void;
   // handle event: mouse move
   onMousemove?: (self: ShadowElement, x: number, y: number) => void;
+  // // TODO: decide if bounding box works
+  // boundingBox?: number[];
+  // user data
+  data: any;
+  // internal state, not control by user
+  _state: any;
 }
