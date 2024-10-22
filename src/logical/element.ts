@@ -2,9 +2,14 @@ import type { Mesh, Text } from "@physical/drawable";
 import type { Renderer } from "@physical/render";
 
 export enum NodeType {
+  // dynamic node will redraw per frame, it's an animation and relatively expensive.
   DYNAMIC = 0,
+  // event based node, the node can be modified when some events are triggered.
   EVENT = 1,
+  // static node will never redraw.
   STATIC = 2,
+  // current node is static, but contains dynamic or event based children.
+  HYBRID = 3,
 }
 
 // ShadowElement is the basic unit which stores shapes and texts
