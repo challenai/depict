@@ -90,7 +90,7 @@ export class Graph {
       this.initializeCanvas(this.stCanvas, this.stCtx, width, height, false);
     }
 
-    if (event) {
+    if (event && animation) {
       this.evCanvas = document.createElement("canvas");
       this.evCtx = this.evCanvas.getContext("2d") as CanvasRenderingContext2D;
       this.initializeCanvas(this.evCanvas, this.evCtx, width, height, false);
@@ -180,19 +180,29 @@ export class Graph {
   }
 
   // render for event driven nodes
-  depict1(elements: ShadowElement[], ctx: CanvasRenderingContext2D) {
+  depict1(elements: ShadowElement[]) {
     if (!elements) return;
     for (let el of elements) {
-      if (el.type === NodeType.STATIC || !el.type) continue;
-      ctx.translate(el.x, el.y);
-      if (el.type === NodeType.EVENT) {
+      if (el.type === NodeType.STATIC) continue;
+      if (this.animation) {
+        if (!el.type) continue;
+        this.evCtx.translate(el.x, el.y);
+        if (el.type === NodeType.EVENT) {
+          const r = el.renderer || this.dr;
+          el.shapes?.forEach((m: Mesh) => r.draw(this.evCtx, m));
+          el.texts?.forEach((t: Text) => r.write(this.evCtx, t));
+          if (el.children) this.depict1(el.children);
+        }
+        if (el.type === NodeType.HYBRID && el.children) this.depict1(el.children);
+        this.evCtx.translate(-el.x, -el.y);
+      } else {
+        this.ctx.translate(el.x, el.y);
         const r = el.renderer || this.dr;
-        el.shapes?.forEach((m: Mesh) => r.draw(ctx, m));
-        el.texts?.forEach((t: Text) => r.write(ctx, t));
-        if (el.children) this.depict1(el.children, ctx);
+        el.shapes?.forEach((m: Mesh) => r.draw(this.ctx, m));
+        el.texts?.forEach((t: Text) => r.write(this.ctx, t));
+        if (el.children) this.depict1(el.children);
+        this.ctx.translate(-el.x, -el.y);
       }
-      if (el.type === NodeType.HYBRID && el.children) this.depict1(el.children, ctx);
-      ctx.translate(-el.x, -el.y);
     }
   }
 
@@ -241,8 +251,9 @@ export class Graph {
     if (this.animation) this.animate(0);
   }
 
-  triggerEvents(elements: ShadowElement[], ev: string, x: number, y: number) {
-    if (!elements) return;
+  triggerEvents(elements: ShadowElement[], ev: string, x: number, y: number): boolean {
+    let hit = false;
+    if (!elements) return false;
     for (let el of elements) {
       x += el.x;
       y += el.y;
@@ -250,24 +261,37 @@ export class Graph {
         case "click":
           if (el.contain && el.contain(this.x - x, this.y - y) && el.onClick) {
             el.onClick(el, this.x, this.y);
+            hit = true;
           }
           break;
         case "mousemove":
-          if (el.onMousemove) el.onMousemove(el, this.x, this.y);
+          if (el.onMousemove) {
+            el.onMousemove(el, this.x, this.y);
+            hit = true;
+          }
           if (el.contain && el.contain(this.x - x, this.y - y)) {
             if (!this.focus.has(el)) {
               this.focus.add(el);
-              if (el.onMouseenter) el.onMouseenter(el, this.x, this.y);
+              if (el.onMouseenter) {
+                el.onMouseenter(el, this.x, this.y);
+                hit = true;
+              }
             }
           } else {
             if (this.focus.has(el)) {
               this.focus.delete(el);
-              if (el.onMouseleave) el.onMouseleave(el, this.x, this.y);
+              if (el.onMouseleave) {
+                el.onMouseleave(el, this.x, this.y);
+                hit = true;
+              }
             }
           }
           break;
         case "mouseup":
-          if (el.onMouseup) el.onMouseup(el, this.x, this.y);
+          if (el.onMouseup) {
+            el.onMouseup(el, this.x, this.y);
+            hit = true;
+          }
           break;
         case "mousedown":
           if (
@@ -276,15 +300,20 @@ export class Graph {
             el.onMousedown
           ) {
             el.onMousedown(el, this.x, this.y);
+            hit = true;
           }
           break;
         default:
           break;
       }
-      if (el.children) this.triggerEvents(el.children, ev, x, y);
+      if (el.children) {
+        const hit_ = this.triggerEvents(el.children, ev, x, y);
+        hit = hit || hit_;
+      }
       x -= el.x;
       y -= el.y;
     }
+    return hit;
   }
 
   handleMouseEvent(e: MouseEvent, ev: string) {
@@ -293,8 +322,8 @@ export class Graph {
     if (!this.event) return;
     this.x = e.clientX - this.dx;
     this.y = e.clientY - this.dy;
-    this.triggerEvents(this.elements, ev, 0, 0);
-    this.renderEvent();
+    const hit = this.triggerEvents(this.elements, ev, 0, 0);
+    if (hit) this.renderEvent();
   }
 
   renderStatic() {
@@ -303,10 +332,9 @@ export class Graph {
   }
 
   renderEvent() {
-    const targetCtx = this.animation ? this.evCtx : this.ctx;
-    targetCtx.clearRect(this.x0, this.y0, this.x1, this.y1);
-    targetCtx.drawImage(this.stCanvas, BLUR_OFFSET, BLUR_OFFSET);
-    this.depict1(this.elements, targetCtx);
+    this.evCtx.clearRect(this.x0, this.y0, this.x1, this.y1);
+    this.evCtx.drawImage(this.stCanvas, BLUR_OFFSET, BLUR_OFFSET);
+    this.depict1(this.elements);
   }
 
   // handle event: click
