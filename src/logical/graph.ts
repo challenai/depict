@@ -169,7 +169,7 @@ export class Graph {
   depict2(elements: ShadowElement[]) {
     if (!elements) return;
     for (const el of elements) {
-      if (el.type !== NodeType.STATIC) continue;
+      if (el.type !== NodeType.STATIC && el.type !== NodeType.HYBRID) continue;
       const r = el.renderer || this.dr;
       this.stCtx.translate(el.x, el.y);
       el.shapes?.forEach((m: Mesh) => r.draw(this.stCtx, m));
@@ -180,30 +180,36 @@ export class Graph {
   }
 
   // render for event driven nodes
-  depict1(elements: ShadowElement[]) {
+  depict1(elements: ShadowElement[], ctx: CanvasRenderingContext2D) {
     if (!elements) return;
     for (let el of elements) {
-      if (el.type !== NodeType.EVENT) continue;
-      const r = el.renderer || this.dr;
-      this.evCtx.translate(el.x, el.y);
-      el.shapes?.forEach((m: Mesh) => r.draw(this.evCtx, m));
-      el.texts?.forEach((t: Text) => r.write(this.evCtx, t));
-      if (el.children) this.depict1(el.children);
-      this.evCtx.translate(-el.x, -el.y);
+      if (el.type === NodeType.STATIC || !el.type) continue;
+      ctx.translate(el.x, el.y);
+      if (el.type === NodeType.EVENT) {
+        const r = el.renderer || this.dr;
+        el.shapes?.forEach((m: Mesh) => r.draw(ctx, m));
+        el.texts?.forEach((t: Text) => r.write(ctx, t));
+        if (el.children) this.depict1(el.children, ctx);
+      }
+      if (el.type === NodeType.HYBRID && el.children) this.depict1(el.children, ctx);
+      ctx.translate(-el.x, -el.y);
     }
   }
 
   // render for dynamic nodes
-  depict0(elements: ShadowElement[], delta: number) {
+  depict0(elements: ShadowElement[], delta: number, dynamic: boolean) {
     if (!elements) return;
     for (let el of elements) {
-      if (el.type === NodeType.EVENT || el.type === NodeType.STATIC) continue;
-      if (el.animate) el.animate(el, delta);
-      const r = el.renderer || this.dr;
+      if (!dynamic && (el.type === NodeType.EVENT || el.type === NodeType.STATIC)) continue;
       this.ctx.translate(el.x, el.y);
-      el.shapes?.forEach((m: Mesh) => r.draw(this.ctx, m));
-      el.texts?.forEach((t: Text) => r.write(this.ctx, t));
-      if (el.children) this.depict0(el.children, delta);
+      if (!el.type || dynamic) {
+        if (el.animate) el.animate(el, delta);
+        const r = el.renderer || this.dr;
+        el.shapes?.forEach((m: Mesh) => r.draw(this.ctx, m));
+        el.texts?.forEach((t: Text) => r.write(this.ctx, t));
+        if (el.children) this.depict0(el.children, delta, true);
+      }
+      if (!dynamic && el.type === NodeType.HYBRID && el.children) this.depict0(el.children, delta, false);
       this.ctx.translate(-el.x, -el.y);
     }
   }
@@ -216,7 +222,7 @@ export class Graph {
     } else {
       this.ctx.drawImage(this.stCanvas, BLUR_OFFSET, BLUR_OFFSET);
     }
-    this.depict0(this.elements, delta);
+    this.depict0(this.elements, delta, false);
     // enter the next render process
     requestAnimationFrame(this.animate.bind(this));
   }
@@ -228,11 +234,9 @@ export class Graph {
       return;
     }
     // static render
-    this.stCtx.clearRect(this.x0, this.y0, this.x1, this.y1);
-    this.depict2(this.elements);
+    this.renderStatic();
     if (this.event) {
-      this.evCtx.clearRect(this.x0, this.y0, this.x1, this.y1);
-      this.depict1(this.elements);
+      this.renderEvent();
     }
     if (this.animation) this.animate(0);
   }
@@ -286,15 +290,23 @@ export class Graph {
   handleMouseEvent(e: MouseEvent, ev: string) {
     e.preventDefault();
     e.stopPropagation();
+    if (!this.event) return;
     this.x = e.clientX - this.dx;
     this.y = e.clientY - this.dy;
     this.triggerEvents(this.elements, ev, 0, 0);
     this.renderEvent();
   }
 
+  renderStatic() {
+    this.stCtx.clearRect(this.x0, this.y0, this.x1, this.y1);
+    this.depict2(this.elements);
+  }
+
   renderEvent() {
-    this.evCtx.clearRect(this.x0, this.y0, this.x1, this.y1);
-    this.depict1(this.elements);
+    const targetCtx = this.animation ? this.evCtx : this.ctx;
+    targetCtx.clearRect(this.x0, this.y0, this.x1, this.y1);
+    targetCtx.drawImage(this.stCanvas, BLUR_OFFSET, BLUR_OFFSET);
+    this.depict1(this.elements, targetCtx);
   }
 
   // handle event: click
