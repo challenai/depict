@@ -2,9 +2,14 @@ import type { Mesh, Text } from "@physical/drawable";
 import type { Renderer } from "@physical/render";
 
 export enum NodeType {
+  // dynamic node will redraw per frame, it's an animation and relatively expensive.
   DYNAMIC = 0,
+  // event based node, the node can be modified when some events are triggered.
   EVENT = 1,
+  // static node will never redraw.
   STATIC = 2,
+  // current node is static, but contains dynamic or event based children.
+  HYBRID = 3,
 }
 
 // ShadowElement is the basic unit which stores shapes and texts
@@ -26,6 +31,8 @@ export interface ShadowElement {
   contain?: (x: number, y: number) => boolean;
   // specify renderer for this element
   renderer?: Renderer;
+  // tell the graph the user want the text to caculate layout again
+  relayout?: boolean;
   // node type of current node, only for performance tuning
   type?: NodeType;
   // animation
@@ -42,4 +49,10 @@ export interface ShadowElement {
   onMousedown?: (self: ShadowElement, x: number, y: number) => void;
   // handle event: mouse move
   onMousemove?: (self: ShadowElement, x: number, y: number) => void;
+  // // TODO: decide if bounding box works
+  // boundingBox?: number[];
+  // user data
+  data: any;
+  // internal state, not control by user
+  _state: any;
 }
