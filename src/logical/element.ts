@@ -31,8 +31,6 @@ export interface ShadowElement {
   contain?: (x: number, y: number) => boolean;
   // specify renderer for this element
   renderer?: Renderer;
-  // tell the graph the user want the text to caculate layout again
-  relayout?: boolean;
   // node type of current node, only for performance tuning
   type?: NodeType;
   // animation
