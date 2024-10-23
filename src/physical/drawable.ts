@@ -52,14 +52,24 @@ export interface Text {
   y?: number;
   // options
   opts?: TextOptions;
+  // internal state
+  _state?: any;
 };
 
 // text style options
 export interface TextOptions extends TextSpecificOptions, DrawableOptions { };
 
 export interface TextSpecificOptions {
-  // max width of given text, the extra ones whould be throw
-  maxWidth?: number;
+  // max width of given text, the extra words whould be thrown away
+  width?: number;
+  // max height of the text, if the height is given, the lines could be wrap
+  height?: number;
+  // line height of the text
+  lineHeight?: number;
   // font of text
   font?: string;
+  // tell the graph the user want the text to caculate layout again
+  relayout?: boolean;
+  // ellipsis
+  ellipsis?: boolean;
 }
