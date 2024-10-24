@@ -1,6 +1,7 @@
 import type { MeshContextBuilder, TextContextBuilder } from "@physical/context";
 import type { Mesh, Text } from "@physical/drawable";
 import { Renderer } from "@physical/render";
+import { cutLastLine, seperateText2MultiLines } from "@physical/text";
 
 export interface MinimalistOptions {
   meshContextBuilder: MeshContextBuilder;
@@ -46,12 +47,17 @@ export class MinimalistRenderer extends Renderer {
     // fill the text, default value == true
     const fill = !text.opts || text.opts.background !== false || text.opts.fill;
 
+    const caculateWidth = (text: string, start: number, end?: number) => {
+      return ctx.measureText(text.substring(start, end)).width;
+    };
+
     if (text.opts) this.tcb(ctx, text.opts);
 
     if (!text.opts || !text.opts.height || !text.opts.width) {
       let content = text.content;
       if (text.opts && text.opts.ellipsis && text.opts.width) {
-        content = this.ellipsisLine(ctx, text.content, text.opts.width);
+        // content = this.ellipsisLine(ctx, text.content, 0, text.opts.width, -1, text.opts.wordBasedWrap);
+        content = cutLastLine(text.content, text.opts.width, 0, caculateWidth, text.opts.wordBased, text.opts.ellipsis);
       }
       if (border) ctx.strokeText(content, text.x || 0, text.y || 0, text.opts?.width);
       if (fill) ctx.fillText(content, text.x || 0, text.y || 0, text.opts?.width);
@@ -63,14 +69,16 @@ export class MinimalistRenderer extends Renderer {
     const height = text.opts.height;
     const lineHeight = text.opts?.lineHeight || 18;
 
+
     // lines to render
     let lines: string[];
     if (text._state && text._state.t === text.content && !text.opts.relayout) {
       lines = text._state.ls;
     } else {
+      const cacheContent = text.content.slice();
       const targetLines = this.estimateLines(lineHeight, height);
-      lines = this.segementText(ctx, text.content, width, targetLines);
-      text._state = { t: text.content.slice(), ls: lines };
+      lines = seperateText2MultiLines(cacheContent, width, caculateWidth, targetLines, text.opts.wordBased, text.opts.ellipsis);
+      text._state = { t: cacheContent, ls: lines };
     }
 
     let y = text.y || 0;
@@ -84,18 +92,10 @@ export class MinimalistRenderer extends Renderer {
   };
 
   // estimate how many lines should it wraps.
+  // TODO: optional inner padding ?
   private estimateLines(lh: number, mh: number): number {
     if (mh < lh) return 0;
 
-    return 0;
-  }
-
-  // wrap lines.
-  private segementText(ctx: CanvasRenderingContext2D, t: string, w: number, targetLines: number): string[] {
-    return [];
-  }
-
-  private ellipsisLine(ctx: CanvasRenderingContext2D, t: string, w: number): string {
-    return t;
+    return Math.floor(mh / lh);
   }
 };

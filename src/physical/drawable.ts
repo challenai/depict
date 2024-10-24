@@ -24,6 +24,8 @@ export interface DrawableOptions {
   fill?: string;
   // rotation in degrees
   rotation?: number;
+  // scale factor
+  scale?: number;
   // shadow
   shadowColor?: string;
   shadowBlur?: number;
@@ -72,4 +74,6 @@ export interface TextSpecificOptions {
   relayout?: boolean;
   // ellipsis
   ellipsis?: boolean;
+  // seperate according to words instead of letter
+  wordBased?: boolean;
 }
