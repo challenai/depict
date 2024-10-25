@@ -62,7 +62,10 @@ const buildDrawableContextWithKey = (ctx: CanvasRenderingContext2D, o: DrawableO
       ctx.fillStyle = o.fill as any;
       return true;
     case "rotation":
-      ctx.rotate = o.rotation as any;
+      ctx.rotate(o.rotation as number);
+      return true;
+    case "scale":
+      ctx.scale(o.scale as number, o.scale as number);
       return true;
     case "shadowColor":
       ctx.shadowColor = o.shadowColor as any;

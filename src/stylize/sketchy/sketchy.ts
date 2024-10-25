@@ -4,6 +4,7 @@ import { randomSeed } from "roughjs/bin/math";
 import type { TextContextBuilder } from "@physical/context";
 import type { Mesh, Text } from "@physical/drawable";
 import { Renderer } from "@physical/render";
+import { cutLastLine, seperateText2MultiLines } from '@physical/text';
 
 // TODO: extra rough options
 export interface MinimalistOptions {
@@ -44,18 +45,62 @@ export class SketchyRenderer extends Renderer {
   // TODO: sketchy style text + default fonts?
   write(ctx: CanvasRenderingContext2D, text: Text) {
     ctx.save();
+    // text border: default value == false
+    const border = text.opts?.border;
+    // fill the text, default value == true
+    const fill = !text.opts || text.opts.background !== false || text.opts.fill;
+
+    const caculateWidth = (text: string, start: number, end?: number) => {
+      return ctx.measureText(text.substring(start, end)).width;
+    };
+
     if (text.opts) this.tcb(ctx, text.opts);
 
-    const maxWidth = text.opts?.maxWidth || undefined;
+    if (!text.opts || !text.opts.height || !text.opts.width) {
+      let content = text.content;
+      if (text.opts && text.opts.ellipsis && text.opts.width) {
+        // content = this.ellipsisLine(ctx, text.content, 0, text.opts.width, -1, text.opts.wordBasedWrap);
+        content = cutLastLine(text.content, text.opts.width, 0, caculateWidth, text.opts.wordBased, text.opts.ellipsis);
+      }
+      if (border) ctx.strokeText(content, text.x || 0, text.y || 0, text.opts?.width);
+      if (fill) ctx.fillText(content, text.x || 0, text.y || 0, text.opts?.width);
+      ctx.restore();
+      return;
+    }
 
-    // border: default value == false
-    if (text.opts?.border) ctx.strokeText(text.content, text.x || 0, text.y || 0, maxWidth);
+    const width = text.opts.width;
+    const height = text.opts.height;
+    const lineHeight = text.opts?.lineHeight || 18;
 
-    // fill the text, default value == true
-    if (!text.opts || text.opts.background !== false || text.opts.fill) ctx.fillText(text.content, text.x || 0, text.y || 0, maxWidth);
+
+    // lines to render
+    let lines: string[];
+    if (text._state && text._state.t === text.content && !text.opts.relayout) {
+      lines = text._state.ls;
+    } else {
+      const cacheContent = text.content.slice();
+      const targetLines = this.estimateLines(lineHeight, height);
+      lines = seperateText2MultiLines(cacheContent, width, caculateWidth, targetLines, text.opts.wordBased, text.opts.ellipsis);
+      text._state = { t: cacheContent, ls: lines };
+    }
+
+    let y = text.y || 0;
+    for (let ln of lines) {
+      if (border) ctx.strokeText(ln, text.x || 0, y);
+      if (fill) ctx.fillText(ln, text.x || 0, y);
+      y += lineHeight;
+    }
 
     ctx.restore();
   };
+
+  // estimate how many lines should it wraps.
+  // TODO: optional inner padding ?
+  private estimateLines(lh: number, mh: number): number {
+    if (mh < lh) return 0;
+
+    return Math.floor(mh / lh);
+  }
 
   drawRough(ctx: CanvasRenderingContext2D, drawable: Drawable): void {
     const sets = drawable.sets || [];
