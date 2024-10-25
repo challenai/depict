@@ -12,6 +12,8 @@ export enum NodeType {
   HYBRID = 3,
 }
 
+export type RenderHooksFn = (ctx: CanvasRenderingContext2D) => void;
+
 // ShadowElement is the basic unit which stores shapes and texts
 // it contains a children property so that it is organized as a tree
 export interface ShadowElement {
@@ -33,6 +35,8 @@ export interface ShadowElement {
   renderer?: Renderer;
   // node type of current node, only for performance tuning
   type?: NodeType;
+  // render hook
+  preRenderCallback?: RenderHooksFn;
   // animation
   animate?: (self: ShadowElement, delta: number) => void;
   // handle event: click
@@ -50,7 +54,7 @@ export interface ShadowElement {
   // // TODO: decide if bounding box works
   // boundingBox?: number[];
   // user data
-  data: any;
+  data?: any;
   // internal state, not control by user
-  _state: any;
+  _state?: any;
 }

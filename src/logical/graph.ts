@@ -160,6 +160,7 @@ export class Graph {
       this.ctx.translate(el.x, el.y);
       el.shapes?.forEach((m: Mesh) => r.draw(this.ctx, m));
       el.texts?.forEach((t: Text) => r.write(this.ctx, t));
+      if (el.preRenderCallback) this.postRender(this.ctx, el.preRenderCallback);
       if (el.children) this.depict9(el.children);
       this.ctx.translate(-el.x, -el.y);
     }
@@ -174,6 +175,7 @@ export class Graph {
       this.stCtx.translate(el.x, el.y);
       el.shapes?.forEach((m: Mesh) => r.draw(this.stCtx, m));
       el.texts?.forEach((t: Text) => r.write(this.stCtx, t));
+      if (el.preRenderCallback) this.postRender(this.stCtx, el.preRenderCallback);
       if (el.children) this.depict2(el.children);
       this.stCtx.translate(-el.x, -el.y);
     }
@@ -191,6 +193,7 @@ export class Graph {
           const r = el.renderer || this.dr;
           el.shapes?.forEach((m: Mesh) => r.draw(this.evCtx, m));
           el.texts?.forEach((t: Text) => r.write(this.evCtx, t));
+          if (el.preRenderCallback) this.postRender(this.evCtx, el.preRenderCallback);
           if (el.children) this.depict1(el.children);
         }
         if (el.type === NodeType.HYBRID && el.children) this.depict1(el.children);
@@ -200,6 +203,7 @@ export class Graph {
         const r = el.renderer || this.dr;
         el.shapes?.forEach((m: Mesh) => r.draw(this.ctx, m));
         el.texts?.forEach((t: Text) => r.write(this.ctx, t));
+        if (el.preRenderCallback) this.postRender(this.ctx, el.preRenderCallback);
         if (el.children) this.depict1(el.children);
         this.ctx.translate(-el.x, -el.y);
       }
@@ -217,11 +221,18 @@ export class Graph {
         const r = el.renderer || this.dr;
         el.shapes?.forEach((m: Mesh) => r.draw(this.ctx, m));
         el.texts?.forEach((t: Text) => r.write(this.ctx, t));
+        if (el.preRenderCallback) this.postRender(this.ctx, el.preRenderCallback);
         if (el.children) this.depict0(el.children, delta, true);
       }
       if (!dynamic && el.type === NodeType.HYBRID && el.children) this.depict0(el.children, delta, false);
       this.ctx.translate(-el.x, -el.y);
     }
+  }
+
+  private postRender(ctx: CanvasRenderingContext2D, callback: (ctx: CanvasRenderingContext2D) => void) {
+    ctx.save();
+    callback(ctx);
+    ctx.restore();
   }
 
   // animate the node trees
