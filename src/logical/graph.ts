@@ -156,6 +156,7 @@ export class Graph {
   depict9(elements: ShadowElement[]) {
     if (!elements) return;
     for (const el of elements) {
+      if (el.hidden || el.destory) continue;
       const r = el.renderer || this.dr;
       this.ctx.translate(el.x, el.y);
       el.shapes?.forEach((m: Mesh) => r.draw(this.ctx, m));
@@ -170,7 +171,7 @@ export class Graph {
   depict2(elements: ShadowElement[]) {
     if (!elements) return;
     for (const el of elements) {
-      if (el.type !== NodeType.STATIC && el.type !== NodeType.HYBRID) continue;
+      if (el.hidden || el.destory || el.type !== NodeType.STATIC && el.type !== NodeType.HYBRID) continue;
       const r = el.renderer || this.dr;
       this.stCtx.translate(el.x, el.y);
       el.shapes?.forEach((m: Mesh) => r.draw(this.stCtx, m));
@@ -185,7 +186,7 @@ export class Graph {
   depict1(elements: ShadowElement[]) {
     if (!elements) return;
     for (let el of elements) {
-      if (el.type === NodeType.STATIC) continue;
+      if (el.hidden || el.destory || el.type === NodeType.STATIC) continue;
       if (this.animation) {
         if (!el.type) continue;
         this.evCtx.translate(el.x, el.y);
@@ -214,6 +215,7 @@ export class Graph {
   depict0(elements: ShadowElement[], delta: number, dynamic: boolean) {
     if (!elements) return;
     for (let el of elements) {
+      if (el.hidden || el.destory) continue;
       if (!dynamic && (el.type === NodeType.EVENT || el.type === NodeType.STATIC)) continue;
       this.ctx.translate(el.x, el.y);
       if (!el.type || dynamic) {

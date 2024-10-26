@@ -55,6 +55,10 @@ export interface ShadowElement {
   // boundingBox?: number[];
   // user data
   data?: any;
+  // hide current element
+  hidden?: boolean;
+  // delete the current element
+  destory?: boolean;
   // internal state, not control by user
   _state?: any;
 }
