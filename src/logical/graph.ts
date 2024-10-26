@@ -287,6 +287,7 @@ export class Graph {
     let hit = false;
     if (!elements) return false;
     for (let el of elements) {
+      if (el.destory || el.hidden) continue;
       x += el.x;
       y += el.y;
       switch (ev) {
