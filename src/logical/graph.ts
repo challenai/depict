@@ -185,8 +185,13 @@ export class Graph {
   // render for event driven nodes
   depict1(elements: ShadowElement[]) {
     if (!elements) return;
+    let deleteTag = false;
     for (let el of elements) {
-      if (el.hidden || el.destory || el.type === NodeType.STATIC) continue;
+      if (el.destory) {
+        deleteTag = true;
+        continue;
+      }
+      if (el.hidden || el.type === NodeType.STATIC) continue;
       if (this.animation) {
         if (!el.type) continue;
         this.evCtx.translate(el.x, el.y);
@@ -209,14 +214,23 @@ export class Graph {
         this.ctx.translate(-el.x, -el.y);
       }
     }
+    if (deleteTag) {
+      for (let i = elements.length - 1; i >= 0; i--) {
+        if (elements[i].destory) elements.splice(i, 1);
+      }
+    }
   }
 
   // render for dynamic nodes
   depict0(elements: ShadowElement[], delta: number, dynamic: boolean) {
     if (!elements) return;
+    let deleteTag = false;
     for (let el of elements) {
-      if (el.hidden || el.destory) continue;
-      if (!dynamic && (el.type === NodeType.EVENT || el.type === NodeType.STATIC)) continue;
+      if (el.destory) {
+        deleteTag = true;
+        continue;
+      }
+      if (el.hidden || (!dynamic && (el.type === NodeType.EVENT || el.type === NodeType.STATIC))) continue;
       this.ctx.translate(el.x, el.y);
       if (!el.type || dynamic) {
         if (el.animate) el.animate(el, delta);
@@ -228,6 +242,11 @@ export class Graph {
       }
       if (!dynamic && el.type === NodeType.HYBRID && el.children) this.depict0(el.children, delta, false);
       this.ctx.translate(-el.x, -el.y);
+    }
+    if (deleteTag) {
+      for (let i = elements.length - 1; i >= 0; i--) {
+        if (elements[i].destory) elements.splice(i, 1);
+      }
     }
   }
 
