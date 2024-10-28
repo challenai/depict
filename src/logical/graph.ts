@@ -8,7 +8,7 @@ const SCALE_FACTOR = window.devicePixelRatio;
 const BLUR_OFFSET = -0.5;
 
 export interface GraphOptions {
-  canvas: HTMLCanvasElement;
+  root: HTMLDivElement;
   defaultRenderer: Renderer;
   width: number;
   height: number;
@@ -55,7 +55,7 @@ export class Graph {
   gdo: DrawableOptions;
 
   constructor({
-    canvas,
+    root,
     defaultRenderer,
     width,
     height,
@@ -76,24 +76,25 @@ export class Graph {
     this.gto = globalTextOptions;
     this.gdo = globalDrawableOptions;
 
-    this.canvas = canvas;
-    this.ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-    this.initializeCanvas(canvas, this.ctx, width, height, true);
-    this.stCanvas = canvas;
+    this.canvas = document.createElement("canvas");
+    root.appendChild(this.canvas);
+    this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
+    this.initializeCanvas(this.canvas, this.ctx, width, height);
+    this.stCanvas = this.canvas;
     this.stCtx = this.ctx;
-    this.evCanvas = canvas;
+    this.evCanvas = this.canvas;
     this.evCtx = this.ctx;
 
     if (animation || event) {
       this.stCanvas = document.createElement("canvas");
       this.stCtx = this.stCanvas.getContext("2d") as CanvasRenderingContext2D;
-      this.initializeCanvas(this.stCanvas, this.stCtx, width, height, false);
+      this.initializeCanvas(this.stCanvas, this.stCtx, width, height);
     }
 
     if (event && animation) {
       this.evCanvas = document.createElement("canvas");
       this.evCtx = this.evCanvas.getContext("2d") as CanvasRenderingContext2D;
-      this.initializeCanvas(this.evCanvas, this.evCtx, width, height, false);
+      this.initializeCanvas(this.evCanvas, this.evCtx, width, height);
     }
 
     this.dr = defaultRenderer;
@@ -104,7 +105,7 @@ export class Graph {
     this.focus = new Set();
     this.registerEvents();
 
-    const rect = canvas.getClientRects().item(0);
+    const rect = this.canvas.getClientRects().item(0);
     this.dx = rect ? rect.x : 0;
     this.dy = rect ? rect.y : 0;
 
@@ -118,7 +119,6 @@ export class Graph {
     ctx: CanvasRenderingContext2D,
     w: number,
     h: number,
-    visible: boolean
   ) {
     // nice fix for canvas blur issue
     // from https://stackoverflow.com/questions/8696631/canvas-drawings-like-lines-are-blurry
@@ -129,8 +129,6 @@ export class Graph {
 
     ctx.scale(SCALE_FACTOR, SCALE_FACTOR);
     ctx.translate(BLUR_OFFSET, BLUR_OFFSET);
-
-    if (!visible) canvas.style.display = "none";
   }
 
   registerEvents() {
