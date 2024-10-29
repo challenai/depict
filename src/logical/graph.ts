@@ -144,6 +144,13 @@ export class Graph {
     this.canvas.addEventListener("click", this.onClick.bind(this));
   }
 
+  // destory the graph munually to remove the doms which won't be used any more
+  destory() {
+    this.canvas.remove();
+    if (this.evCanvas !== this.canvas) this.evCanvas.remove();
+    if (this.stCanvas !== this.canvas) this.stCanvas.remove();
+  }
+
   // to check whether the nodes is valid and safe to render
   // if there are broken dependencies, unexpected node types
   // the checker will output hint information
