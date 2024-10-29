@@ -38,17 +38,17 @@ export interface ShadowElement {
   // animation
   animate?: (self: ShadowElement, delta: number) => void;
   // handle event: click
-  onClick?: (self: ShadowElement, x: number, y: number) => void;
+  onClick?: (self: ShadowElement, x: number, y: number, mouseX: number, mouseY: number) => boolean;
   // handle event: mouse enter
-  onMouseenter?: (self: ShadowElement, x: number, y: number) => void;
+  onMouseenter?: (self: ShadowElement, x: number, y: number, mouseX: number, mouseY: number) => boolean;
   // handle event: mouse leave
-  onMouseleave?: (self: ShadowElement, x: number, y: number) => void;
+  onMouseleave?: (self: ShadowElement, x: number, y: number, mouseX: number, mouseY: number) => boolean;
   // handle event: mouse up
-  onMouseup?: (self: ShadowElement, x: number, y: number) => void;
+  onMouseup?: (self: ShadowElement, x: number, y: number, mouseX: number, mouseY: number) => boolean;
   // handle event: mouse down
-  onMousedown?: (self: ShadowElement, x: number, y: number) => void;
+  onMousedown?: (self: ShadowElement, x: number, y: number, mouseX: number, mouseY: number) => boolean;
   // handle event: mouse move
-  onMousemove?: (self: ShadowElement, x: number, y: number) => void;
+  onMousemove?: (self: ShadowElement, x: number, y: number, mouseX: number, mouseY: number) => boolean;
   // // TODO: decide if bounding box works
   // boundingBox?: number[];
   // user data
