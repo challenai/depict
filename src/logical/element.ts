@@ -3,13 +3,13 @@ import type { Renderer } from "@physical/render";
 
 export enum NodeType {
   // dynamic node will redraw per frame, it's an animation and relatively expensive.
-  DYNAMIC = 0,
+  DYNAMIC = 1,
   // event based node, the node can be modified when some events are triggered.
-  EVENT = 1,
+  EVENT = 2,
   // static node will never redraw.
-  STATIC = 2,
+  STATIC = 3,
   // current node is static, but contains dynamic or event based children.
-  HYBRID = 3,
+  HYBRID = 4,
 }
 
 export type RenderHooksFn = (ctx: CanvasRenderingContext2D) => void;
