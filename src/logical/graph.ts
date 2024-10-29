@@ -33,6 +33,8 @@ export class Graph {
   animation: boolean;
   // tell if this graph needs to listen to events
   event: boolean;
+  // tell if this graph is waiting to rerender for events
+  evWaiting: boolean;
   // canvas context
   ctx: CanvasRenderingContext2D;
   // off-screen canvas to cache
@@ -101,9 +103,13 @@ export class Graph {
     this.elements = [];
     this.animation = animation;
     this.event = event;
+    // wait to render event frame during bootstrap
+    this.evWaiting = true;
 
     this.focus = new Set();
-    this.registerEvents();
+    // if the global event setting is enabled,
+    // register event listeners to graph
+    if (this.event) this.registerEvents();
 
     const rect = this.canvas.getClientRects().item(0);
     this.dx = rect ? rect.x : 0;
@@ -258,6 +264,10 @@ export class Graph {
   animate(delta: number) {
     this.ctx.clearRect(this.x0, this.y0, this.x1, this.y1);
     if (this.event) {
+      if (this.evWaiting) {
+        this.renderEvent();
+        this.evWaiting = false;
+      }
       this.ctx.drawImage(this.evCanvas, BLUR_OFFSET, BLUR_OFFSET);
     } else {
       this.ctx.drawImage(this.stCanvas, BLUR_OFFSET, BLUR_OFFSET);
@@ -353,8 +363,13 @@ export class Graph {
     if (!this.event) return;
     this.x = e.clientX - this.dx;
     this.y = e.clientY - this.dy;
-    const hit = this.triggerEvents(this.elements, ev, 0, 0);
-    if (hit) this.renderEvent();
+    this.triggerEvents(this.elements, ev, 0, 0);
+    // if the animation mode is disabled,
+    // render the event frame immediately
+    if (this.evWaiting && !this.animation) {
+      this.renderEvent();
+      this.evWaiting = false;
+    }
   }
 
   renderStatic() {
