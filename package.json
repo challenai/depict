@@ -1,7 +1,7 @@
 {
   "name": "dipict",
   "module": "index.ts",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "type": "module",
   "description": "make it easy to design dynamic graph in web environment",
   "author": "Challen Ai <fengyiai@gmail.com>",
