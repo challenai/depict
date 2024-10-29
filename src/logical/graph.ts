@@ -156,38 +156,41 @@ export class Graph {
     return;
   }
 
-  // render for static graph
-  depict9(elements: ShadowElement[]) {
+  // render given subtree
+  depict9(ctx: CanvasRenderingContext2D, elements?: ShadowElement[]) {
     if (!elements) return;
     for (const el of elements) {
       if (el.hidden || el.destory) continue;
       const r = el.renderer || this.dr;
-      this.ctx.translate(el.x, el.y);
-      el.shapes?.forEach((m: Mesh) => r.draw(this.ctx, m));
-      el.texts?.forEach((t: Text) => r.write(this.ctx, t));
-      if (el.preRenderCallback) this.postRender(this.ctx, el.preRenderCallback);
-      if (el.children) this.depict9(el.children);
-      this.ctx.translate(-el.x, -el.y);
+      ctx.translate(el.x, el.y);
+      el.shapes?.forEach((m: Mesh) => r.draw(ctx, m));
+      el.texts?.forEach((t: Text) => r.write(ctx, t));
+      if (el.preRenderCallback) this.postRender(ctx, el.preRenderCallback);
+      if (el.children) this.depict9(ctx, el.children);
+      ctx.translate(-el.x, -el.y);
     }
   }
 
   // render for static nodes
-  depict2(elements: ShadowElement[]) {
+  depict2(elements?: ShadowElement[]) {
     if (!elements) return;
     for (const el of elements) {
-      if (el.hidden || el.destory || el.type !== NodeType.STATIC && el.type !== NodeType.HYBRID) continue;
+      if (el.hidden || el.destory) continue;
+      if (el.type !== NodeType.STATIC && el.type !== NodeType.HYBRID) continue;
       const r = el.renderer || this.dr;
       this.stCtx.translate(el.x, el.y);
       el.shapes?.forEach((m: Mesh) => r.draw(this.stCtx, m));
       el.texts?.forEach((t: Text) => r.write(this.stCtx, t));
       if (el.preRenderCallback) this.postRender(this.stCtx, el.preRenderCallback);
-      if (el.children) this.depict2(el.children);
+      if (el.type === NodeType.STATIC) this.depict9(this.stCtx, el.children);
+      if (el.type === NodeType.HYBRID) this.depict2(el.children);
       this.stCtx.translate(-el.x, -el.y);
     }
   }
 
+
   // render for event driven nodes
-  depict1(elements: ShadowElement[]) {
+  depict1(force: boolean, elements?: ShadowElement[]) {
     if (!elements) return;
     let deleteTag = false;
     for (let el of elements) {
@@ -195,28 +198,18 @@ export class Graph {
         deleteTag = true;
         continue;
       }
-      if (el.hidden || el.type === NodeType.STATIC) continue;
-      if (this.animation) {
-        if (!el.type) continue;
-        this.evCtx.translate(el.x, el.y);
-        if (el.type === NodeType.EVENT) {
-          const r = el.renderer || this.dr;
-          el.shapes?.forEach((m: Mesh) => r.draw(this.evCtx, m));
-          el.texts?.forEach((t: Text) => r.write(this.evCtx, t));
-          if (el.preRenderCallback) this.postRender(this.evCtx, el.preRenderCallback);
-          if (el.children) this.depict1(el.children);
-        }
-        if (el.type === NodeType.HYBRID && el.children) this.depict1(el.children);
-        this.evCtx.translate(-el.x, -el.y);
-      } else {
-        this.ctx.translate(el.x, el.y);
+      if (el.hidden || (!force && (el.type === NodeType.STATIC || el.type === NodeType.DYNAMIC))) continue;
+      this.evCtx.translate(el.x, el.y);
+      if (force || el.type === NodeType.EVENT || (!this.animation && !el.type)) {
+        // if (el.texts && force) console.log("----------- render text: ", el.texts)
         const r = el.renderer || this.dr;
-        el.shapes?.forEach((m: Mesh) => r.draw(this.ctx, m));
-        el.texts?.forEach((t: Text) => r.write(this.ctx, t));
-        if (el.preRenderCallback) this.postRender(this.ctx, el.preRenderCallback);
-        if (el.children) this.depict1(el.children);
-        this.ctx.translate(-el.x, -el.y);
+        el.shapes?.forEach((m: Mesh) => r.draw(this.evCtx, m));
+        el.texts?.forEach((t: Text) => r.write(this.evCtx, t));
+        if (el.preRenderCallback) this.postRender(this.evCtx, el.preRenderCallback);
+        this.depict1(true, el.children);
       }
+      if (!force && el.type === NodeType.HYBRID) this.depict1(false, el.children);
+      this.evCtx.translate(-el.x, -el.y);
     }
     if (deleteTag) {
       for (let i = elements.length - 1; i >= 0; i--) {
@@ -226,7 +219,7 @@ export class Graph {
   }
 
   // render for dynamic nodes
-  depict0(elements: ShadowElement[], delta: number, dynamic: boolean) {
+  depict0(delta: number, force: boolean, elements?: ShadowElement[]) {
     if (!elements) return;
     let deleteTag = false;
     for (let el of elements) {
@@ -234,17 +227,17 @@ export class Graph {
         deleteTag = true;
         continue;
       }
-      if (el.hidden || (!dynamic && (el.type === NodeType.EVENT || el.type === NodeType.STATIC))) continue;
+      if (el.hidden || (!force && (el.type === NodeType.EVENT || el.type === NodeType.STATIC))) continue;
       this.ctx.translate(el.x, el.y);
-      if (!el.type || dynamic) {
+      if (force || !el.type || el.type === NodeType.DYNAMIC) {
         if (el.animate) el.animate(el, delta);
         const r = el.renderer || this.dr;
         el.shapes?.forEach((m: Mesh) => r.draw(this.ctx, m));
         el.texts?.forEach((t: Text) => r.write(this.ctx, t));
         if (el.preRenderCallback) this.postRender(this.ctx, el.preRenderCallback);
-        if (el.children) this.depict0(el.children, delta, true);
+        this.depict0(delta, true, el.children);
       }
-      if (!dynamic && el.type === NodeType.HYBRID && el.children) this.depict0(el.children, delta, false);
+      if (!force && el.type === NodeType.HYBRID) this.depict0(delta, false, el.children);
       this.ctx.translate(-el.x, -el.y);
     }
     if (deleteTag) {
@@ -272,7 +265,7 @@ export class Graph {
     } else {
       this.ctx.drawImage(this.stCanvas, BLUR_OFFSET, BLUR_OFFSET);
     }
-    this.depict0(this.elements, delta, false);
+    this.depict0(delta, false, this.elements);
     // enter the next render process
     requestAnimationFrame(this.animate.bind(this));
   }
@@ -280,7 +273,7 @@ export class Graph {
   start(elements: ShadowElement[]) {
     this.elements = elements;
     if (!this.animation && !this.event) {
-      this.depict9(this.elements);
+      this.depict9(this.ctx, this.elements);
       return;
     }
     // static render
@@ -384,7 +377,7 @@ export class Graph {
   renderEvent() {
     this.evCtx.clearRect(this.x0, this.y0, this.x1, this.y1);
     this.evCtx.drawImage(this.stCanvas, BLUR_OFFSET, BLUR_OFFSET);
-    this.depict1(this.elements);
+    this.depict1(false, this.elements);
   }
 
   // handle event: click
