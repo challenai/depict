@@ -8,7 +8,7 @@ const SCALE_FACTOR = window.devicePixelRatio;
 const BLUR_OFFSET = -0.5;
 
 export interface GraphOptions {
-  canvas: HTMLCanvasElement;
+  root: HTMLDivElement;
   defaultRenderer: Renderer;
   width: number;
   height: number;
@@ -33,6 +33,8 @@ export class Graph {
   animation: boolean;
   // tell if this graph needs to listen to events
   event: boolean;
+  // tell if this graph is waiting to rerender for events
+  evWaiting: boolean;
   // canvas context
   ctx: CanvasRenderingContext2D;
   // off-screen canvas to cache
@@ -55,7 +57,7 @@ export class Graph {
   gdo: DrawableOptions;
 
   constructor({
-    canvas,
+    root,
     defaultRenderer,
     width,
     height,
@@ -76,35 +78,40 @@ export class Graph {
     this.gto = globalTextOptions;
     this.gdo = globalDrawableOptions;
 
-    this.canvas = canvas;
-    this.ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-    this.initializeCanvas(canvas, this.ctx, width, height, true);
-    this.stCanvas = canvas;
+    this.canvas = document.createElement("canvas");
+    root.appendChild(this.canvas);
+    this.ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
+    this.initializeCanvas(this.canvas, this.ctx, width, height);
+    this.stCanvas = this.canvas;
     this.stCtx = this.ctx;
-    this.evCanvas = canvas;
+    this.evCanvas = this.canvas;
     this.evCtx = this.ctx;
 
     if (animation || event) {
       this.stCanvas = document.createElement("canvas");
       this.stCtx = this.stCanvas.getContext("2d") as CanvasRenderingContext2D;
-      this.initializeCanvas(this.stCanvas, this.stCtx, width, height, false);
+      this.initializeCanvas(this.stCanvas, this.stCtx, width, height);
     }
 
     if (event && animation) {
       this.evCanvas = document.createElement("canvas");
       this.evCtx = this.evCanvas.getContext("2d") as CanvasRenderingContext2D;
-      this.initializeCanvas(this.evCanvas, this.evCtx, width, height, false);
+      this.initializeCanvas(this.evCanvas, this.evCtx, width, height);
     }
 
     this.dr = defaultRenderer;
     this.elements = [];
     this.animation = animation;
     this.event = event;
+    // wait to render event frame during bootstrap
+    this.evWaiting = true;
 
     this.focus = new Set();
-    this.registerEvents();
+    // if the global event setting is enabled,
+    // register event listeners to graph
+    if (this.event) this.registerEvents();
 
-    const rect = canvas.getClientRects().item(0);
+    const rect = this.canvas.getClientRects().item(0);
     this.dx = rect ? rect.x : 0;
     this.dy = rect ? rect.y : 0;
 
@@ -118,7 +125,6 @@ export class Graph {
     ctx: CanvasRenderingContext2D,
     w: number,
     h: number,
-    visible: boolean
   ) {
     // nice fix for canvas blur issue
     // from https://stackoverflow.com/questions/8696631/canvas-drawings-like-lines-are-blurry
@@ -129,8 +135,6 @@ export class Graph {
 
     ctx.scale(SCALE_FACTOR, SCALE_FACTOR);
     ctx.translate(BLUR_OFFSET, BLUR_OFFSET);
-
-    if (!visible) canvas.style.display = "none";
   }
 
   registerEvents() {
@@ -138,6 +142,13 @@ export class Graph {
     this.canvas.addEventListener("mouseup", this.onMouseUp.bind(this));
     this.canvas.addEventListener("mousedown", this.onMouseDown.bind(this));
     this.canvas.addEventListener("click", this.onClick.bind(this));
+  }
+
+  // destory the graph munually to remove the doms which won't be used any more
+  destory() {
+    this.canvas.remove();
+    if (this.evCanvas !== this.canvas) this.evCanvas.remove();
+    if (this.stCanvas !== this.canvas) this.stCanvas.remove();
   }
 
   // to check whether the nodes is valid and safe to render
@@ -152,80 +163,94 @@ export class Graph {
     return;
   }
 
-  // render for static graph
-  depict9(elements: ShadowElement[]) {
+  // render given subtree
+  depict9(ctx: CanvasRenderingContext2D, elements?: ShadowElement[]) {
     if (!elements) return;
     for (const el of elements) {
+      if (el.hidden || el.destory) continue;
       const r = el.renderer || this.dr;
-      this.ctx.translate(el.x, el.y);
-      el.shapes?.forEach((m: Mesh) => r.draw(this.ctx, m));
-      el.texts?.forEach((t: Text) => r.write(this.ctx, t));
-      if (el.preRenderCallback) this.postRender(this.ctx, el.preRenderCallback);
-      if (el.children) this.depict9(el.children);
-      this.ctx.translate(-el.x, -el.y);
+      ctx.translate(el.x, el.y);
+      el.shapes?.forEach((m: Mesh) => r.draw(ctx, m));
+      el.texts?.forEach((t: Text) => r.write(ctx, t));
+      if (el.preRenderCallback) this.postRender(ctx, el.preRenderCallback);
+      if (el.children) this.depict9(ctx, el.children);
+      ctx.translate(-el.x, -el.y);
     }
   }
 
   // render for static nodes
-  depict2(elements: ShadowElement[]) {
+  depict2(elements?: ShadowElement[]) {
     if (!elements) return;
     for (const el of elements) {
+      if (el.hidden || el.destory) continue;
       if (el.type !== NodeType.STATIC && el.type !== NodeType.HYBRID) continue;
       const r = el.renderer || this.dr;
       this.stCtx.translate(el.x, el.y);
       el.shapes?.forEach((m: Mesh) => r.draw(this.stCtx, m));
       el.texts?.forEach((t: Text) => r.write(this.stCtx, t));
       if (el.preRenderCallback) this.postRender(this.stCtx, el.preRenderCallback);
-      if (el.children) this.depict2(el.children);
+      if (el.type === NodeType.STATIC) this.depict9(this.stCtx, el.children);
+      if (el.type === NodeType.HYBRID) this.depict2(el.children);
       this.stCtx.translate(-el.x, -el.y);
     }
   }
 
+
   // render for event driven nodes
-  depict1(elements: ShadowElement[]) {
+  depict1(force: boolean, elements?: ShadowElement[]) {
     if (!elements) return;
+    let deleteTag = false;
     for (let el of elements) {
-      if (el.type === NodeType.STATIC) continue;
-      if (this.animation) {
-        if (!el.type) continue;
-        this.evCtx.translate(el.x, el.y);
-        if (el.type === NodeType.EVENT) {
-          const r = el.renderer || this.dr;
-          el.shapes?.forEach((m: Mesh) => r.draw(this.evCtx, m));
-          el.texts?.forEach((t: Text) => r.write(this.evCtx, t));
-          if (el.preRenderCallback) this.postRender(this.evCtx, el.preRenderCallback);
-          if (el.children) this.depict1(el.children);
-        }
-        if (el.type === NodeType.HYBRID && el.children) this.depict1(el.children);
-        this.evCtx.translate(-el.x, -el.y);
-      } else {
-        this.ctx.translate(el.x, el.y);
+      if (el.destory) {
+        deleteTag = true;
+        continue;
+      }
+      if (el.hidden || (!force && (el.type === NodeType.STATIC || el.type === NodeType.DYNAMIC))) continue;
+      this.evCtx.translate(el.x, el.y);
+      if (force || el.type === NodeType.EVENT || (!this.animation && !el.type)) {
+        // if (el.texts && force) console.log("----------- render text: ", el.texts)
         const r = el.renderer || this.dr;
-        el.shapes?.forEach((m: Mesh) => r.draw(this.ctx, m));
-        el.texts?.forEach((t: Text) => r.write(this.ctx, t));
-        if (el.preRenderCallback) this.postRender(this.ctx, el.preRenderCallback);
-        if (el.children) this.depict1(el.children);
-        this.ctx.translate(-el.x, -el.y);
+        el.shapes?.forEach((m: Mesh) => r.draw(this.evCtx, m));
+        el.texts?.forEach((t: Text) => r.write(this.evCtx, t));
+        if (el.preRenderCallback) this.postRender(this.evCtx, el.preRenderCallback);
+        this.depict1(true, el.children);
+      }
+      if (!force && el.type === NodeType.HYBRID) this.depict1(false, el.children);
+      this.evCtx.translate(-el.x, -el.y);
+    }
+    if (deleteTag) {
+      for (let i = elements.length - 1; i >= 0; i--) {
+        if (elements[i].destory) elements.splice(i, 1);
       }
     }
   }
 
   // render for dynamic nodes
-  depict0(elements: ShadowElement[], delta: number, dynamic: boolean) {
+  depict0(delta: number, force: boolean, elements?: ShadowElement[]) {
     if (!elements) return;
+    let deleteTag = false;
     for (let el of elements) {
-      if (!dynamic && (el.type === NodeType.EVENT || el.type === NodeType.STATIC)) continue;
+      if (el.destory) {
+        deleteTag = true;
+        continue;
+      }
+      if (el.hidden || (!force && (el.type === NodeType.EVENT || el.type === NodeType.STATIC))) continue;
       this.ctx.translate(el.x, el.y);
-      if (!el.type || dynamic) {
+      if (force || !el.type || el.type === NodeType.DYNAMIC) {
         if (el.animate) el.animate(el, delta);
         const r = el.renderer || this.dr;
         el.shapes?.forEach((m: Mesh) => r.draw(this.ctx, m));
         el.texts?.forEach((t: Text) => r.write(this.ctx, t));
         if (el.preRenderCallback) this.postRender(this.ctx, el.preRenderCallback);
-        if (el.children) this.depict0(el.children, delta, true);
+        this.depict0(delta, true, el.children);
       }
-      if (!dynamic && el.type === NodeType.HYBRID && el.children) this.depict0(el.children, delta, false);
+      if (!force && el.type === NodeType.HYBRID) this.depict0(delta, false, el.children);
       this.ctx.translate(-el.x, -el.y);
+    }
+    if (deleteTag) {
+      for (let i = elements.length - 1; i >= 0; i--) {
+        if (elements[i].destory) elements.splice(i, 1);
+      }
     }
   }
 
@@ -239,11 +264,15 @@ export class Graph {
   animate(delta: number) {
     this.ctx.clearRect(this.x0, this.y0, this.x1, this.y1);
     if (this.event) {
+      if (this.evWaiting) {
+        this.renderEvent();
+        this.evWaiting = false;
+      }
       this.ctx.drawImage(this.evCanvas, BLUR_OFFSET, BLUR_OFFSET);
     } else {
       this.ctx.drawImage(this.stCanvas, BLUR_OFFSET, BLUR_OFFSET);
     }
-    this.depict0(this.elements, delta, false);
+    this.depict0(delta, false, this.elements);
     // enter the next render process
     requestAnimationFrame(this.animate.bind(this));
   }
@@ -251,7 +280,7 @@ export class Graph {
   start(elements: ShadowElement[]) {
     this.elements = elements;
     if (!this.animation && !this.event) {
-      this.depict9(this.elements);
+      this.depict9(this.ctx, this.elements);
       return;
     }
     // static render
@@ -262,46 +291,55 @@ export class Graph {
     if (this.animation) this.animate(0);
   }
 
-  triggerEvents(elements: ShadowElement[], ev: string, x: number, y: number): boolean {
-    let hit = false;
-    if (!elements) return false;
-    for (let el of elements) {
+  // trigger specific event
+  // current event types could be:
+  // [click, mouseenter, mousemove, mouseleave, mouseup, mousedown]
+  triggerEvents(ev: string, x: number, y: number, elements?: ShadowElement[]): boolean {
+    if (!elements) return true;
+    for (let i = elements.length - 1; i >= 0; i--) {
+      const el = elements[i];
+      if (el.destory || el.hidden) continue;
       x += el.x;
       y += el.y;
+      const hit = this.triggerEvents(ev, x, y, el.children);
+      if (!hit) return false;
+      // there are 2 different types of event in the system,
+      // the global one and the element specific one,
+      // the element specific event will run the contain function which
+      // is input by the user.
+      // the global event will always trigger all the listeners without checking anything
       switch (ev) {
         case "click":
-          if (el.contain && el.contain(this.x - x, this.y - y) && el.onClick) {
-            el.onClick(el, this.x, this.y);
-            hit = true;
+          if (el.onClick && el.contain && el.contain(this.x - x, this.y - y)) {
+            this.evWaiting ||= el.onClick(el, x, y, this.x, this.y);
+            return false;
           }
           break;
         case "mousemove":
           if (el.onMousemove) {
-            el.onMousemove(el, this.x, this.y);
-            hit = true;
+            if (el.onMousemove(el, x, y, this.x, this.y)) this.evWaiting = true;
           }
-          if (el.contain && el.contain(this.x - x, this.y - y)) {
-            if (!this.focus.has(el)) {
-              this.focus.add(el);
-              if (el.onMouseenter) {
-                el.onMouseenter(el, this.x, this.y);
-                hit = true;
+          if (el.contain && (el.onMouseenter || el.onMouseleave)) {
+            if (el.contain(this.x - x, this.y - y)) {
+              if (!this.focus.has(el)) {
+                this.focus.add(el);
+                if (el.onMouseenter) {
+                  this.evWaiting ||= el.onMouseenter(el, x, y, this.x, this.y);
+                }
               }
-            }
-          } else {
-            if (this.focus.has(el)) {
-              this.focus.delete(el);
-              if (el.onMouseleave) {
-                el.onMouseleave(el, this.x, this.y);
-                hit = true;
+            } else {
+              if (this.focus.has(el)) {
+                this.focus.delete(el);
+                if (el.onMouseleave) {
+                  this.evWaiting ||= el.onMouseleave(el, x, y, this.x, this.y);
+                }
               }
             }
           }
           break;
         case "mouseup":
           if (el.onMouseup) {
-            el.onMouseup(el, this.x, this.y);
-            hit = true;
+            this.evWaiting ||= el.onMouseup(el, x, y, this.x, this.y);
           }
           break;
         case "mousedown":
@@ -310,21 +348,17 @@ export class Graph {
             el.contain(this.x - x, this.y - y) &&
             el.onMousedown
           ) {
-            el.onMousedown(el, this.x, this.y);
-            hit = true;
+            this.evWaiting ||= el.onMousedown(el, x, y, this.x, this.y);
+            return false;
           }
           break;
         default:
           break;
       }
-      if (el.children) {
-        const hit_ = this.triggerEvents(el.children, ev, x, y);
-        hit = hit || hit_;
-      }
       x -= el.x;
       y -= el.y;
     }
-    return hit;
+    return true;
   }
 
   handleMouseEvent(e: MouseEvent, ev: string) {
@@ -333,8 +367,13 @@ export class Graph {
     if (!this.event) return;
     this.x = e.clientX - this.dx;
     this.y = e.clientY - this.dy;
-    const hit = this.triggerEvents(this.elements, ev, 0, 0);
-    if (hit) this.renderEvent();
+    this.triggerEvents(ev, 0, 0, this.elements);
+    // if the animation mode is disabled,
+    // render the event frame immediately
+    if (this.evWaiting && !this.animation) {
+      this.renderEvent();
+      this.evWaiting = false;
+    }
   }
 
   renderStatic() {
@@ -345,7 +384,7 @@ export class Graph {
   renderEvent() {
     this.evCtx.clearRect(this.x0, this.y0, this.x1, this.y1);
     this.evCtx.drawImage(this.stCanvas, BLUR_OFFSET, BLUR_OFFSET);
-    this.depict1(this.elements);
+    this.depict1(false, this.elements);
   }
 
   // handle event: click
