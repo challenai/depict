@@ -291,47 +291,55 @@ export class Graph {
     if (this.animation) this.animate(0);
   }
 
-  triggerEvents(elements: ShadowElement[], ev: string, x: number, y: number): boolean {
-    let hit = false;
-    if (!elements) return false;
-    for (let el of elements) {
+  // trigger specific event
+  // current event types could be:
+  // [click, mouseenter, mousemove, mouseleave, mouseup, mousedown]
+  triggerEvents(ev: string, x: number, y: number, elements?: ShadowElement[]): boolean {
+    if (!elements) return true;
+    for (let i = elements.length - 1; i >= 0; i--) {
+      const el = elements[i];
       if (el.destory || el.hidden) continue;
       x += el.x;
       y += el.y;
+      const hit = this.triggerEvents(ev, x, y, el.children);
+      if (!hit) return false;
+      // there are 2 different types of event in the system,
+      // the global one and the element specific one,
+      // the element specific event will run the contain function which
+      // is input by the user.
+      // the global event will always trigger all the listeners without checking anything
       switch (ev) {
         case "click":
-          if (el.contain && el.contain(this.x - x, this.y - y) && el.onClick) {
-            el.onClick(el, this.x, this.y);
-            hit = true;
+          if (el.onClick && el.contain && el.contain(this.x - x, this.y - y)) {
+            this.evWaiting ||= el.onClick(el, x, y, this.x, this.y);
+            return false;
           }
           break;
         case "mousemove":
           if (el.onMousemove) {
-            el.onMousemove(el, this.x, this.y);
-            hit = true;
+            if (el.onMousemove(el, x, y, this.x, this.y)) this.evWaiting = true;
           }
-          if (el.contain && el.contain(this.x - x, this.y - y)) {
-            if (!this.focus.has(el)) {
-              this.focus.add(el);
-              if (el.onMouseenter) {
-                el.onMouseenter(el, this.x, this.y);
-                hit = true;
+          if (el.contain && (el.onMouseenter || el.onMouseleave)) {
+            if (el.contain(this.x - x, this.y - y)) {
+              if (!this.focus.has(el)) {
+                this.focus.add(el);
+                if (el.onMouseenter) {
+                  this.evWaiting ||= el.onMouseenter(el, x, y, this.x, this.y);
+                }
               }
-            }
-          } else {
-            if (this.focus.has(el)) {
-              this.focus.delete(el);
-              if (el.onMouseleave) {
-                el.onMouseleave(el, this.x, this.y);
-                hit = true;
+            } else {
+              if (this.focus.has(el)) {
+                this.focus.delete(el);
+                if (el.onMouseleave) {
+                  this.evWaiting ||= el.onMouseleave(el, x, y, this.x, this.y);
+                }
               }
             }
           }
           break;
         case "mouseup":
           if (el.onMouseup) {
-            el.onMouseup(el, this.x, this.y);
-            hit = true;
+            this.evWaiting ||= el.onMouseup(el, x, y, this.x, this.y);
           }
           break;
         case "mousedown":
@@ -340,21 +348,17 @@ export class Graph {
             el.contain(this.x - x, this.y - y) &&
             el.onMousedown
           ) {
-            el.onMousedown(el, this.x, this.y);
-            hit = true;
+            this.evWaiting ||= el.onMousedown(el, x, y, this.x, this.y);
+            return false;
           }
           break;
         default:
           break;
       }
-      if (el.children) {
-        const hit_ = this.triggerEvents(el.children, ev, x, y);
-        hit = hit || hit_;
-      }
       x -= el.x;
       y -= el.y;
     }
-    return hit;
+    return true;
   }
 
   handleMouseEvent(e: MouseEvent, ev: string) {
@@ -363,7 +367,7 @@ export class Graph {
     if (!this.event) return;
     this.x = e.clientX - this.dx;
     this.y = e.clientY - this.dy;
-    this.triggerEvents(this.elements, ev, 0, 0);
+    this.triggerEvents(ev, 0, 0, this.elements);
     // if the animation mode is disabled,
     // render the event frame immediately
     if (this.evWaiting && !this.animation) {
