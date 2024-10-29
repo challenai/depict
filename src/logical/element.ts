@@ -17,8 +17,6 @@ export type RenderHooksFn = (ctx: CanvasRenderingContext2D) => void;
 // ShadowElement is the basic unit which stores shapes and texts
 // it contains a children property so that it is organized as a tree
 export interface ShadowElement {
-  // unique id of current element
-  id: string;
   // offset x
   x: number;
   // offset y
