@@ -55,12 +55,11 @@ export class MinimalistRenderer extends Renderer {
 
     if (!text.opts || !text.opts.height || !text.opts.width) {
       let content = text.content;
-      if (text.opts && text.opts.ellipsis && text.opts.width) {
-        // content = this.ellipsisLine(ctx, text.content, 0, text.opts.width, -1, text.opts.wordBasedWrap);
+      if (text.opts && text.opts.width) {
         content = cutLastLine(text.content, text.opts.width, 0, caculateWidth, text.opts.wordBased, text.opts.ellipsis);
       }
-      if (border) ctx.strokeText(content, text.x || 0, text.y || 0, text.opts?.width);
-      if (fill) ctx.fillText(content, text.x || 0, text.y || 0, text.opts?.width);
+      if (border) ctx.strokeText(content, text.x || 0, text.y || 0);
+      if (fill) ctx.fillText(content, text.x || 0, text.y || 0);
       ctx.restore();
       return;
     }
