@@ -7,7 +7,7 @@ import { Renderer } from "@physical/render";
 import { cutLastLine, seperateText2MultiLines } from '@physical/text';
 
 // TODO: extra rough options
-export interface MinimalistOptions {
+export interface SketchyOptions {
   textContextBuilder: TextContextBuilder;
 }
 
@@ -17,7 +17,7 @@ export class SketchyRenderer extends Renderer {
   gen: RoughGenerator;
   seed: number;
 
-  constructor(opts: MinimalistOptions) {
+  constructor(opts: SketchyOptions) {
     super();
     this.seed = randomSeed();
     this.tcb = opts.textContextBuilder;
