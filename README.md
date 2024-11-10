@@ -1,6 +1,6 @@
 # depict
 
-WARNING: This project is working on progress, the APIs are not promised to stable before v1.0.0.
+WARNING: This project is currently developed positively, the APIs are not promised to be stable before v1.0.0.
 
 Depict is a JavaScript library for building canvas based user interface.
 
