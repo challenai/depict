@@ -1,20 +1,41 @@
 {
-  "name": "dipict",
-  "module": "index.ts",
+  "name": "@pattaya/dipict",
+  "module": "lib/index.js",
   "version": "0.0.5",
   "type": "module",
-  "description": "make it easy to design dynamic graph in web environment",
+  "description": "make it easy to design dynamic graph in canvas environment",
   "author": "Challen Ai <fengyiai@gmail.com>",
+  "typings": "types/index.d.ts",
+  "types": "types/index.d.ts",
+  "keywords": [
+    "canvas",
+    "graph",
+    "path",
+    "shape",
+    "event",
+    "render"
+  ],
+  "files": [
+    "lib",
+    "types"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/challenai/dipict.git"
   },
-  "license": "GPL-3.0-only",
-  "devDependencies": {
-    "@types/bun": "latest"
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc && esbuild dist/**/*.js --bundle --minify --format=esm --outdir=lib/ --out-extension:.js=.min.js",
+    "lint": "eslint src/**"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "esbuild": "0.23.1",
+    "eslint": "^9.10.0",
+    "typescript-eslint": "^8.6.0"
   },
   "dependencies": {
     "roughjs": "^4.6.6"
