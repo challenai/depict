@@ -1,5 +1,5 @@
 {
-  "name": "@pattaya/dipict",
+  "name": "@pattaya/depict",
   "module": "lib/index.js",
   "version": "0.0.5",
   "type": "module",
