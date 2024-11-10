@@ -26,7 +26,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc && esbuild dist/**/*.js --bundle --minify --format=esm --outdir=lib/ --out-extension:.js=.min.js",
-    "lint": "eslint lib/**"
+    "lint": "eslint src/**"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
