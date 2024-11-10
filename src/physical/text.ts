@@ -1,4 +1,4 @@
-type WidthCaculator = (text: string, start: number, end?: number) => number;
+export type WidthCaculator = (text: string, start: number, end?: number) => number;
 
 // nextLine search potiential end position.
 const nextEnding = (text: string, width: number, start: number, caculateWidth: WidthCaculator): number => {
