@@ -1,3 +1,5 @@
+import { Type } from "../defs/events";
+
 class Layer {
   // layer index
   idx: number;
@@ -25,3 +27,18 @@ class GraphWorker {
 
   destory() { }
 }
+
+const gw = new GraphWorker();
+
+onmessage = (ev: MessageEvent) => {
+  const eventType = ev.data.type;
+  const msg = ev.data.message;
+  switch (eventType) {
+    case Type.INIT:
+      gw.initializeGraph();
+      break;
+    case Type.DESTORY:
+      gw.destory();
+      break;
+  }
+};
