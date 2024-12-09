@@ -1,5 +1,5 @@
 import type { Renderer } from "@physical/render";
-import { type ShadowElement, NodeType } from "./element";
+import { type ShadowElement, NodeType } from "../element";
 import type { DrawableOptions, Mesh, MeshOptions, MeshSpecificOptions, Text, TextOptions, TextSpecificOptions } from "@physical/drawable";
 import { initializeContext } from "@physical/context";
 
