@@ -1,4 +1,4 @@
-import { Type } from "../defs/events";
+import { Type } from "./defs/types";
 
 class Layer {
   // layer index
