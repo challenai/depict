@@ -1,20 +1,20 @@
 import type { DrawableOptions, MeshOptions, MeshSpecificOptions, TextOptions, TextSpecificOptions } from './drawable';
 
-export type InitializeContextBuilder = (ctx: CanvasRenderingContext2D, mo: MeshOptions, to: TextOptions, o: DrawableOptions) => void;
+export type InitializeContextBuilder = (ctx: OffscreenCanvasRenderingContext2D, mo: MeshOptions, to: TextOptions, o: DrawableOptions) => void;
 
-export type MeshContextBuilder = (ctx: CanvasRenderingContext2D, mo: MeshOptions) => void;
+export type MeshContextBuilder = (ctx: OffscreenCanvasRenderingContext2D, mo: MeshOptions) => void;
 
-export type TextContextBuilder = (ctx: CanvasRenderingContext2D, to: TextOptions) => void;
+export type TextContextBuilder = (ctx: OffscreenCanvasRenderingContext2D, to: TextOptions) => void;
 
 // build global options for context
-export const initializeContext: InitializeContextBuilder = (ctx: CanvasRenderingContext2D, mo: MeshSpecificOptions, to: TextSpecificOptions, o: DrawableOptions) => {
+export const initializeContext: InitializeContextBuilder = (ctx: OffscreenCanvasRenderingContext2D, mo: MeshSpecificOptions, to: TextSpecificOptions, o: DrawableOptions) => {
   buildMeshContext(ctx, mo);
   buildTextContext(ctx, to);
   buildDrawableContext(ctx, o);
 }
 
 // default mesh context builder
-export const buildMeshContext: MeshContextBuilder = (ctx: CanvasRenderingContext2D, o: MeshOptions) => {
+export const buildMeshContext: MeshContextBuilder = (ctx: OffscreenCanvasRenderingContext2D, o: MeshOptions) => {
   for (const key in o) {
     const match = buildDrawableContextWithKey(ctx, o, key);
     if (match) continue;
@@ -36,7 +36,7 @@ export const buildMeshContext: MeshContextBuilder = (ctx: CanvasRenderingContext
 };
 
 // default text context builder
-export const buildTextContext: TextContextBuilder = (ctx: CanvasRenderingContext2D, o: TextOptions) => {
+export const buildTextContext: TextContextBuilder = (ctx: OffscreenCanvasRenderingContext2D, o: TextOptions) => {
   for (const key in o) {
     if (key === "font") {
       ctx.font = o.font as any;
@@ -47,13 +47,13 @@ export const buildTextContext: TextContextBuilder = (ctx: CanvasRenderingContext
 };
 
 // default drawable context builder
-const buildDrawableContext = (ctx: CanvasRenderingContext2D, o: DrawableOptions) => {
+const buildDrawableContext = (ctx: OffscreenCanvasRenderingContext2D, o: DrawableOptions) => {
   for (const key in o) {
     buildDrawableContextWithKey(ctx, o, key);
   }
 };
 
-const buildDrawableContextWithKey = (ctx: CanvasRenderingContext2D, o: DrawableOptions, key: string): boolean => {
+const buildDrawableContextWithKey = (ctx: OffscreenCanvasRenderingContext2D, o: DrawableOptions, key: string): boolean => {
   switch (key) {
     case "stroke":
       ctx.strokeStyle = o.stroke as any;
