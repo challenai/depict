@@ -1,6 +1,7 @@
 import type { DrawableOptions, Mesh, MeshSpecificOptions, Text, TextSpecificOptions } from "@physical/drawable";
 import { Renderer } from "./physical/render";
 import { initializeContext } from "@physical/context";
+import { BinaryEventHandler } from "./events";
 
 export interface LayerOptions {
   renderer: Renderer;
@@ -22,6 +23,11 @@ export class Layer {
   dto: TextSpecificOptions;
   ddo: DrawableOptions;
 
+  evClick: BinaryEventHandler;
+  evMouseUp: BinaryEventHandler;
+  evMouseDown: BinaryEventHandler;
+  evActive: BinaryEventHandler;
+  evMove: BinaryEventHandler;
 
   constructor(
     idx: number,
@@ -41,6 +47,13 @@ export class Layer {
     this.dmo = meshOptions;
     this.dto = textOptions;
     this.ddo = drawableOptions;
+
     initializeContext(this.ctx, this.dmo, this.dto, this.ddo);
+
+    this.evClick = new BinaryEventHandler();
+    this.evMouseUp = new BinaryEventHandler();
+    this.evMouseDown = new BinaryEventHandler();
+    this.evActive = new BinaryEventHandler();
+    this.evMove = new BinaryEventHandler();
   }
 }

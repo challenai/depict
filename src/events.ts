@@ -7,7 +7,7 @@ export class BinaryEventHandler {
   // TODO: 3. unrefered nodes gabarge collection
   nodes: ShadowElement[];
 
-  constructor(type: string) {
+  constructor() {
     this.nodes = [];
   }
 
