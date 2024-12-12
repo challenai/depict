@@ -1,21 +1,12 @@
 import { MessageType } from "./defs/types";
-
-class Layer {
-  // layer index
-  idx: number;
-  // canvas
-  canvas: OffscreenCanvas;
-  // canvas context
-  ctx: OffscreenCanvasRenderingContext2D;
-
-  constructor(idx: number, canvas: OffscreenCanvas) {
-    this.idx = idx;
-    this.canvas = canvas;
-    this.ctx = this.canvas.getContext("2d") as OffscreenCanvasRenderingContext2D;
-  }
-}
+import type { Layer } from "./layer";
 
 class GraphWorker {
+  // TODO: 1. add offset API
+  // TODO: 2. events trigger
+  // TODO: 3. impl initialize/destory process
+  // TODO: 4. design and impl events hooks
+  // TODO: 5. user self-coustomed messages from main thread
   // the layers of the graph
   layers: Layer[];
 
