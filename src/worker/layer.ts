@@ -9,6 +9,7 @@ export interface LayerOptions {
   meshOptions: MeshSpecificOptions;
   textOptions: TextSpecificOptions;
   drawableOptions: DrawableOptions;
+  update: boolean;
 }
 
 export class Layer {
@@ -18,13 +19,26 @@ export class Layer {
   canvas: OffscreenCanvas;
   // canvas context
   ctx: OffscreenCanvasRenderingContext2D;
+
+  // render queue to store all the layer elements
+  queue: ShadowElement[];
+  // previous elements set
+  prev: Set<ShadowElement>;
+  // current frame elements set
+  next: Set<ShadowElement>;
+
+  // should we update the elements before render ?
+  update: boolean;
+
   // default renderer when not specified
   dr: Renderer;
   dmo: MeshSpecificOptions;
   dto: TextSpecificOptions;
   ddo: DrawableOptions;
 
+  // width of the graph
   w: number;
+  // height of the graph
   h: number;
 
   evClick: BinaryEventHandler;
@@ -40,12 +54,19 @@ export class Layer {
       renderer,
       meshOptions,
       textOptions,
-      drawableOptions
+      drawableOptions,
+      update,
     }: LayerOptions
   ) {
     this.idx = idx;
     this.canvas = canvas;
     this.ctx = this.canvas.getContext("2d") as OffscreenCanvasRenderingContext2D;
+
+    this.queue = [];
+    this.prev = new Set();
+    this.next = new Set();
+
+    this.update = update;
 
     this.dr = renderer;
     this.dmo = meshOptions;
@@ -64,7 +85,15 @@ export class Layer {
     this.evMove = new BinaryEventHandler();
   }
 
-  updateQueue() { }
+  // update elements in queue before render
+  private updateElements(delta: number) {
+    if (!this.update || !this.queue) return;
+    for (const element of this.queue) {
+      if (element.update) {
+        element.update(element, delta)
+      }
+    }
+  }
 
   renderQueue() { }
 
@@ -84,5 +113,5 @@ export class Layer {
 
   // reset the render queue to render from scratch, if a group of new elements are given.
   // on this way, we don't compare to find the difference, instead, we destory all the built events, rebuild from scratch
-  resetQueue(element: ShadowElement[]) { }
+  updateQueue(element: ShadowElement[]) { }
 }
