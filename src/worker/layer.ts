@@ -2,6 +2,7 @@ import type { DrawableOptions, Mesh, MeshSpecificOptions, Text, TextSpecificOpti
 import { Renderer } from "@physical/render";
 import { initializeContext } from "@physical/context";
 import { BinaryEventHandler } from "./events";
+import type { ShadowElement } from "./element";
 
 export interface LayerOptions {
   renderer: Renderer;
@@ -22,6 +23,9 @@ export class Layer {
   dmo: MeshSpecificOptions;
   dto: TextSpecificOptions;
   ddo: DrawableOptions;
+
+  w: number;
+  h: number;
 
   evClick: BinaryEventHandler;
   evMouseUp: BinaryEventHandler;
@@ -50,10 +54,31 @@ export class Layer {
 
     initializeContext(this.ctx, this.dmo, this.dto, this.ddo);
 
+    this.w = this.canvas.width;
+    this.h = this.canvas.height;
+
     this.evClick = new BinaryEventHandler();
     this.evMouseUp = new BinaryEventHandler();
     this.evMouseDown = new BinaryEventHandler();
     this.evActive = new BinaryEventHandler();
     this.evMove = new BinaryEventHandler();
   }
+
+  updateQueue() { }
+
+  renderQueue() { }
+
+  // build events trigger for a single given element
+  buildElementEvents(element: ShadowElement) { }
+
+  triggerEvents() { }
+
+  private draw(x: number, y: number, elements?: ShadowElement[]) { }
+
+  // run an extra render callback hook after an element finished its draw for pathes and texts
+  postRender() { }
+
+  // reset the render queue to render from scratch, if a group of new elements are given.
+  // on this way, we don't compare to find the difference, instead, we destory all the built events, rebuild from scratch
+  resetQueue(element: ShadowElement[]) { }
 }
