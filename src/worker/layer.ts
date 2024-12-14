@@ -76,7 +76,11 @@ export class Layer {
   private draw(x: number, y: number, elements?: ShadowElement[]) { }
 
   // run an extra render callback hook after an element finished its draw for pathes and texts
-  postRender() { }
+  private postRender(callback: (ctx: OffscreenCanvasRenderingContext2D) => void) {
+    this.ctx.save();
+    callback(this.ctx);
+    this.ctx.restore();
+  }
 
   // reset the render queue to render from scratch, if a group of new elements are given.
   // on this way, we don't compare to find the difference, instead, we destory all the built events, rebuild from scratch
