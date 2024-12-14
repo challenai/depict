@@ -280,10 +280,12 @@ export class Layer {
     }
   }
 
+  // should this layer rerender now ?
   shouldRender(): boolean {
     return this.dynamic || this.dirty;
   }
 
+  // ask for rendering current layer
   render() {
     if (this.shouldRender()) return;
     this.dirty = true;
