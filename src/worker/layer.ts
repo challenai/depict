@@ -134,5 +134,10 @@ export class Layer {
 
   // reset the render queue to render from scratch, if a group of new elements are given.
   // on this way, we don't compare to find the difference, instead, we destory all the built events, rebuild from scratch
-  updateQueue(element: ShadowElement[]) { }
+  updateQueue(elements: ShadowElement[]) {
+    this.queue = elements;
+    this.prev.clear();
+    this.next.clear();
+    this.dirty = true;
+  }
 }
