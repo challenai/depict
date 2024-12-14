@@ -92,7 +92,7 @@ export class Layer {
   }
 
   // update elements in queue before render
-  private updateElements(delta: number) {
+  updateElements(delta: number) {
     if (!this.update || !this.queue) return;
     for (const element of this.queue) {
       if (element.update) {
