@@ -29,6 +29,10 @@ export class Layer {
 
   // should we update the elements before render ?
   update: boolean;
+  // whether the layer should be rerendered ?
+  dirty: boolean;
+  // element counter to produce index, to provide sequential layout in event trigger
+  counter: number;
 
   // default renderer when not specified
   dr: Renderer;
@@ -67,6 +71,8 @@ export class Layer {
     this.next = new Set();
 
     this.update = update;
+    this.dirty = true;
+    this.counter = 0;
 
     this.dr = renderer;
     this.dmo = meshOptions;
@@ -95,14 +101,29 @@ export class Layer {
     }
   }
 
-  renderQueue() { }
+  // render elements at coordinates (x, y)
+  renderQueue(x: number, y: number) {
+    this.ctx.clearRect(0, 0, this.w, this.h);
+    this.counter = 0;
+    this.ctx.translate(x, y);
+    this.renderElements(x, y, this.queue);
+    this.ctx.translate(-x, -y);
+    this.dirty = false;
+    for (const el of this.prev) {
+      el._state.destory = true;
+    }
+    this.prev.clear();
+    this.prev, this.next = this.next, this.prev;
+  }
 
   // build events trigger for a single given element
   buildElementEvents(element: ShadowElement) { }
 
   triggerEvents() { }
 
-  private draw(x: number, y: number, elements?: ShadowElement[]) { }
+  private renderElements(x: number, y: number, elements?: ShadowElement[]) {
+    // TODO
+  }
 
   // run an extra render callback hook after an element finished its draw for pathes and texts
   private postRender(callback: (ctx: OffscreenCanvasRenderingContext2D) => void) {
