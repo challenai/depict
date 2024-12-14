@@ -1,4 +1,4 @@
-import type { MsgInit } from "@defs/messages";
+import type { MsgEvent, MsgInit } from "@defs/messages";
 import { Layer, type LayerOptions } from "./layer";
 import { MinimalistRenderer } from "@stylize/minimallist/minimallist";
 import { buildMeshContext, buildTextContext } from "@physical/context";
@@ -6,11 +6,11 @@ import type { Renderer } from "@physical/render";
 import type { ShadowElement } from "./element";
 
 export class Graph {
-  // TODO: 1. add offset API
+  // TODO: 1. [ok] add offset API
   // TODO: 2. events trigger
-  // TODO: 3. impl initialize/destory process
+  // TODO: 3. [ok] impl initialize/destory process
   // TODO: 4. design and impl events hooks
-  // TODO: 5. user self-coustomed messages from main thread
+  // TODO: 5. [ok] user self-coustomed messages from main thread
 
   // the layers of the graph
   private layers: Layer[];
@@ -40,28 +40,45 @@ export class Graph {
     }
   }
 
-  triggerEvent() { }
+  triggerEvent({ typ, x, y }: MsgEvent) { }
 
   private renderLayers(delta: number) {
-    for (const l of this.layers) {
-      if (!l.dirty) return;
-      l.updateElements(delta)
-      l.renderQueue(0, 0);
+    // store the current (dx, dy) to promise all the layer share a single offset coordinates
+    const cdx = this.dx;
+    const cdy = this.dy;
+    for (const layer of this.layers) {
+      if (layer.shouldRender()) {
+        layer.updateElements(delta)
+        layer.renderQueue(cdx, cdy);
+      }
     }
+  }
+
+  private loopFrame(delta: number) {
+    this.renderLayers(delta);
+    this.looping = requestAnimationFrame(this.loopFrame.bind(this));
+  }
+
+  // start the graph
+  start() {
+    this.loopFrame(0);
   }
 
   // update elements of a specific layer
   updateQueue(layer: number, elements: ShadowElement[]) {
     if (layer < 0 || layer >= this.layers.length) return;
-    const layerPtr = this.layers[layer];
-    layerPtr.updateQueue(elements);
+    this.layers[layer].updateQueue(elements);
+  }
+
+  updateLayerOptions(layer: number, options: LayerOptions) {
+    if (layer < 0 || layer >= this.layers.length) return;
+    this.layers[layer].updateOptions(options);
   }
 
   // ask for rendering a specific layer
   render(layer: number) {
     if (layer < 0 || layer >= this.layers.length) return;
-    const layerPtr = this.layers[layer];
-    layerPtr.dirty = true;
+    this.layers[layer].render();
   }
 
   // destory the graph

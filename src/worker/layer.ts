@@ -30,9 +30,9 @@ export class Layer {
   // should we update the elements before render ?
   private update: boolean;
   // whether the layer should be rerendered ?
-  dirty: boolean;
+  private dirty: boolean;
   // whether the layer should be rerendered each time ?
-  dynamic: boolean;
+  private dynamic: boolean;
   // element counter to produce index, to provide sequential layout in event trigger
   private counter: number;
 
@@ -174,5 +174,14 @@ export class Layer {
     if (options.meshOptions || options.textOptions || options.drawableOptions) {
       initializeContext(this.ctx, this.dmo, this.dto, this.ddo);
     }
+  }
+
+  shouldRender(): boolean {
+    return this.dynamic || this.dirty;
+  }
+
+  render() {
+    if (this.shouldRender()) return;
+    this.dirty = true;
   }
 }
