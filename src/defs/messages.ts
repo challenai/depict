@@ -1,11 +1,11 @@
-import type { EventType } from "./types";
+import type { CanvasEvent } from "./types";
 
 export interface MsgInit {
   layers: OffscreenCanvas[];
 };
 
 export interface MsgEvent {
-  typ: EventType;
+  typ: CanvasEvent;
   x: number;
   y: number;
 };
