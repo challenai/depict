@@ -6,11 +6,12 @@ import type { ShadowElement } from "./element";
 import type { CanvasEvent } from "@defs/types";
 
 export interface LayerOptions {
-  renderer: Renderer;
-  meshOptions: MeshSpecificOptions;
-  textOptions: TextSpecificOptions;
-  drawableOptions: DrawableOptions;
-  update: boolean;
+  renderer?: Renderer;
+  meshOptions?: MeshSpecificOptions;
+  textOptions?: TextSpecificOptions;
+  drawableOptions?: DrawableOptions;
+  update?: boolean;
+  dynamic?: boolean;
 }
 
 export class Layer {
@@ -30,6 +31,8 @@ export class Layer {
   private update: boolean;
   // whether the layer should be rerendered ?
   dirty: boolean;
+  // whether the layer should be rerendered each time ?
+  dynamic: boolean;
   // element counter to produce index, to provide sequential layout in event trigger
   private counter: number;
 
@@ -77,6 +80,7 @@ export class Layer {
 
     // elements update
     this.dirty = true;
+    this.dynamic = false;
     this.counter = 0;
 
     // events
@@ -158,20 +162,17 @@ export class Layer {
   }
 
   // update layer options to turn on/off some function flags or change base styles.
-  updateOptions({
-    update,
-    renderer,
-    meshOptions,
-    textOptions,
-    drawableOptions
-  }: LayerOptions) {
-    this.dr = renderer;
-    this.dmo = meshOptions;
-    this.dto = textOptions;
-    this.ddo = drawableOptions;
+  updateOptions(options: LayerOptions) {
+    if (options.renderer) this.dr = options.renderer;
+    if (options.meshOptions) this.dmo = options.meshOptions;
+    if (options.textOptions) this.dto = options.textOptions;
+    if (options.drawableOptions) this.ddo = options.drawableOptions;
 
-    this.update = update;
+    if (typeof options.update === "boolean") this.update = options.update;
+    if (typeof options.dynamic === "boolean") this.dynamic = options.dynamic;
 
-    initializeContext(this.ctx, this.dmo, this.dto, this.ddo);
+    if (options.meshOptions || options.textOptions || options.drawableOptions) {
+      initializeContext(this.ctx, this.dmo, this.dto, this.ddo);
+    }
   }
 }
