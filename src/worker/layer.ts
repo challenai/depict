@@ -3,6 +3,7 @@ import { Renderer } from "@physical/render";
 import { initializeContext } from "@physical/context";
 import { BinaryEventHandler } from "./events";
 import type { ShadowElement } from "./element";
+import type { CanvasEvent } from "../defs/types";
 
 export interface LayerOptions {
   renderer: Renderer;
@@ -117,9 +118,29 @@ export class Layer {
   }
 
   // build events trigger for a single given element
-  buildElementEvents(element: ShadowElement) { }
+  private buildElementEvents(element: ShadowElement) {
+    if (!element.contain) return;
+    if (element.onClick) {
+      this.evClick.add(element);
+    }
+    if (element.onMouseup) {
+      this.evMouseUp.add(element);
+    }
+    if (element.onMousedown) {
+      this.evMouseDown.add(element);
+    }
+    if (element.onMouseenter || element.onMouseleave) {
+      this.evActive.add(element);
+    }
+    if (element.onMousemove) {
+      this.evMove.add(element);
+    }
+  }
 
-  triggerEvents() { }
+  triggerEvents(typ: CanvasEvent, renderLayer: (layer: number) => void, x: number, y: number): boolean {
+    // TODO
+    return false;
+  }
 
   private renderElements(x: number, y: number, elements?: ShadowElement[]) {
     // TODO
