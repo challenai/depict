@@ -30,6 +30,8 @@ export interface ShadowElement {
   contain?: (x: number, y: number) => boolean;
   // specify renderer for this element
   renderer?: Renderer;
+  // update hook
+  update?: UpdateFn;
   // render hook
   postRenderCallback?: RenderHooksFn;
   // handle event: click
