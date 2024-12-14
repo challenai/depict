@@ -1,5 +1,5 @@
 import { Graph } from "./graph";
-import { MessageType } from "../defs/types";
+import { MessageType } from "@defs/types";
 
 export const messageHandler = {
   callback: (_: MessageEvent<any>) => { },
@@ -12,13 +12,13 @@ onmessage = (ev: MessageEvent) => {
   const msg = ev.data.message;
   switch (eventType) {
     case MessageType.INIT:
-      gw.initializeGraph();
+      gw.initialize(msg);
       break;
     case MessageType.DESTORY:
       gw.destory();
       break;
     case MessageType.EVENT:
-      gw.triggerEvent();
+      gw.triggerEvent(msg);
       break;
     default:
       messageHandler.callback(ev);
