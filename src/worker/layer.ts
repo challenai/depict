@@ -110,7 +110,7 @@ export class Layer {
     this.ctx.translate(-x, -y);
     this.dirty = false;
     for (const el of this.prev) {
-      el._state.destory = true;
+      if (el._state) el._state.destory = true;
     }
     this.prev.clear();
     this.prev, this.next = this.next, this.prev;
@@ -141,8 +141,56 @@ export class Layer {
     return false;
   }
 
+  // render a group of elements with given (x, y)
   private renderElements(x: number, y: number, elements?: ShadowElement[]) {
-    // TODO
+    if (!elements) return;
+    for (const el of elements) {
+      // build events for current element
+      if (this.prev.has(el)) {
+        this.prev.delete(el);
+      } else {
+        this.buildElementEvents(el);
+      }
+      this.next.add(el);
+      this.counter++
+
+      // check internal _state
+      if (!el._state) el._state = { idx: this.counter };
+      if (el.hidden || el._state.destory) continue;
+      const r = el.renderer || this.dr;
+
+      // caculate the offset for the current element
+      let dx = x + el.x;
+      let dy = y + el.y;
+      let tx = el.x;
+      let ty = el.y;
+      if (el.layerUp) {
+        if (el._state.liftUp) {
+          // shift parent element
+          dx = el._state.dx || 0 + el.x;
+          dy = el._state.dy || 0 + el.y;
+          tx = dx - x;
+          ty = dy - y;
+        } else {
+          // save the (x, y) in current layer as offset for the next layer
+          el._state.dx = x;
+          el._state.dy = y;
+          el._state.liftUp = true;
+          continue;
+        }
+      } else {
+        el._state.dx = x;
+        el._state.dy = y;
+      }
+      if (el.shapes || el.texts || el.postRenderCallback) {
+        this.ctx.translate(tx, ty);
+        el.shapes?.forEach((m: Mesh) => r.draw(this.ctx, m));
+        el.texts?.forEach((t: Text) => r.write(this.ctx, t));
+        if (el.postRenderCallback) this.postRender(el.postRenderCallback);
+        this.ctx.translate(-tx, -ty);
+      }
+      this.renderElements(dx, dy, el.children);
+    }
   }
 
   // run an extra render callback hook after an element finished its draw for pathes and texts
