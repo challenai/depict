@@ -17,5 +17,13 @@ export class Graph {
 
   triggerEvent() { }
 
+  private renderLayers(delta: number) {
+    for (const l of this.layers) {
+      if (!l.dirty) return;
+      l.updateElements(delta)
+      l.renderQueue(0, 0);
+    }
+  }
+
   destory() { }
 }
