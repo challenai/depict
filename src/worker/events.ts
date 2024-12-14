@@ -14,7 +14,10 @@ export class BinaryEventHandler {
   trigger(x: number, y: number): ShadowElement | null {
     for (let i = this.nodes.length - 1; i >= 0; i--) {
       const current = this.nodes[i];
-      // TODO: gc here
+      if (current._state?.destory) {
+        this.nodes.splice(i, 1);
+        continue;
+      }
       if (current.contain && current.contain(x - current._state.dx - current.x, y - current._state.dy - current.y)) {
         return current;
       }
@@ -41,6 +44,7 @@ export class BinaryEventHandler {
     this.nodes.push(el);
     // bubble to right position
     for (let i = this.nodes.length - 1; i > 0; i--) {
+      // TODO: insert sort
       if (this.nodes[i]._state.idx > this.nodes[i - 1]._state.idx) return;
       this.nodes[i], this.nodes[i - 1] = this.nodes[i - 1], this.nodes[i];
     }
