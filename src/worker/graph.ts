@@ -3,6 +3,7 @@ import { Layer, type LayerOptions } from "./layer";
 import { MinimalistRenderer } from "@stylize/minimallist/minimallist";
 import { buildMeshContext, buildTextContext } from "@physical/context";
 import type { Renderer } from "@physical/render";
+import type { ShadowElement } from "./element";
 
 export class Graph {
   // TODO: 1. add offset API
@@ -12,10 +13,10 @@ export class Graph {
   // TODO: 5. user self-coustomed messages from main thread
 
   // the layers of the graph
-  layers: Layer[];
+  private layers: Layer[];
 
   // animation handle
-  looping: number;
+  private looping: number;
 
   // overall offset of the graph
   dx: number;
@@ -49,7 +50,24 @@ export class Graph {
     }
   }
 
-  // render() {}
+  // update elements of a specific layer
+  updateQueue(layer: number, elements: ShadowElement[]) {
+    if (layer < 0 || layer >= this.layers.length) return;
+    const layerPtr = this.layers[layer];
+    layerPtr.updateQueue(elements);
+  }
 
-  destory() { }
+  // ask for rendering a specific layer
+  render(layer: number) {
+    if (layer < 0 || layer >= this.layers.length) return;
+    const layerPtr = this.layers[layer];
+    layerPtr.dirty = true;
+  }
+
+  // destory the graph
+  destory() {
+    // release all the offscreen canvas memory
+    this.layers.length = 0;
+    cancelAnimationFrame(this.looping);
+  }
 }

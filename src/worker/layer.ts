@@ -15,40 +15,40 @@ export interface LayerOptions {
 
 export class Layer {
   // canvas
-  canvas: OffscreenCanvas;
+  private canvas: OffscreenCanvas;
   // canvas context
-  ctx: OffscreenCanvasRenderingContext2D;
+  private ctx: OffscreenCanvasRenderingContext2D;
 
   // render queue to store all the layer elements
-  queue: ShadowElement[];
+  private queue: ShadowElement[];
   // previous elements set
-  prev: Set<ShadowElement>;
+  private prev: Set<ShadowElement>;
   // current frame elements set
-  next: Set<ShadowElement>;
+  private next: Set<ShadowElement>;
 
   // should we update the elements before render ?
-  update: boolean;
+  private update: boolean;
   // whether the layer should be rerendered ?
   dirty: boolean;
   // element counter to produce index, to provide sequential layout in event trigger
-  counter: number;
+  private counter: number;
 
   // default renderer when not specified
-  dr: Renderer;
-  dmo: MeshSpecificOptions;
-  dto: TextSpecificOptions;
-  ddo: DrawableOptions;
+  private dr: Renderer;
+  private dmo: MeshSpecificOptions;
+  private dto: TextSpecificOptions;
+  private ddo: DrawableOptions;
 
   // width of the graph
-  w: number;
+  private w: number;
   // height of the graph
-  h: number;
+  private h: number;
 
-  evClick: BinaryEventHandler;
-  evMouseUp: BinaryEventHandler;
-  evMouseDown: BinaryEventHandler;
-  evActive: BinaryEventHandler;
-  evMove: BinaryEventHandler;
+  private evClick: BinaryEventHandler;
+  private evMouseUp: BinaryEventHandler;
+  private evMouseDown: BinaryEventHandler;
+  private evActive: BinaryEventHandler;
+  private evMove: BinaryEventHandler;
 
   constructor(
     canvas: OffscreenCanvas,
