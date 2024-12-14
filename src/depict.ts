@@ -1,10 +1,10 @@
-export interface GraphOptions {
+export interface DepictOptions {
   root: HTMLDivElement;
   width: number;
   height: number;
 };
 
-export class Graph {
+export class Depict {
   root: HTMLElement;
   layers: HTMLCanvasElement[];
   x: number;

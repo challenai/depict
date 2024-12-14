@@ -1,5 +1,5 @@
 import type { DrawableOptions, Mesh, MeshSpecificOptions, Text, TextSpecificOptions } from "@physical/drawable";
-import { Renderer } from "./physical/render";
+import { Renderer } from "@physical/render";
 import { initializeContext } from "@physical/context";
 import { BinaryEventHandler } from "./events";
 
