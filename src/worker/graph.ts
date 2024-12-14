@@ -40,7 +40,13 @@ export class Graph {
     }
   }
 
-  triggerEvent({ typ, x, y }: MsgEvent) { }
+  triggerEvent({ typ, x, y }: MsgEvent) {
+    let triggered = false;
+    for (let i = this.layers.length - 1; i >= 0; i--) {
+      triggered = this.layers[i].triggerEvent(typ, this.render.bind(this), x, y);
+      if (triggered) break;
+    }
+  }
 
   private renderLayers(delta: number) {
     // store the current (dx, dy) to promise all the layer share a single offset coordinates
@@ -79,6 +85,13 @@ export class Graph {
   render(layer: number) {
     if (layer < 0 || layer >= this.layers.length) return;
     this.layers[layer].render();
+  }
+
+  // ask for rendering all layers, the whole graph
+  renderAll() {
+    for (const layer of this.layers) {
+      layer.render();
+    }
   }
 
   // destory the graph
