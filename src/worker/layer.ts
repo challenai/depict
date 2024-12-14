@@ -3,7 +3,9 @@ import { Renderer } from "@physical/render";
 import { initializeContext } from "@physical/context";
 import { BinaryEventHandler } from "./events";
 import type { ShadowElement } from "./element";
-import type { CanvasEvent } from "@defs/types";
+import { CanvasEvent } from "@defs/types";
+
+export type ExplicitRenderLayer = (layer: number) => void;
 
 export interface LayerOptions {
   renderer?: Renderer;
@@ -53,6 +55,8 @@ export class Layer {
   private evActive: BinaryEventHandler;
   private evMove: BinaryEventHandler;
 
+  private active: Set<ShadowElement>;
+
   constructor(
     canvas: OffscreenCanvas,
     defaultRenderer: Renderer,
@@ -89,6 +93,9 @@ export class Layer {
     this.evMouseDown = new BinaryEventHandler();
     this.evActive = new BinaryEventHandler();
     this.evMove = new BinaryEventHandler();
+
+    // active elements
+    this.active = new Set();
   }
 
   // update elements in queue before render
@@ -136,8 +143,62 @@ export class Layer {
     }
   }
 
-  triggerEvents(typ: CanvasEvent, renderLayer: (layer: number) => void, x: number, y: number): boolean {
-    // TODO
+  // try to trigger given event
+  triggerEvent(typ: CanvasEvent, renderLayer: ExplicitRenderLayer, x: number, y: number): boolean {
+    const renderLayerDefault = (layer?: number) => {
+      if (layer === undefined) {
+        this.render();
+      } else {
+        renderLayer(layer);
+      }
+    };
+    let element: ShadowElement | null;
+    switch (typ) {
+      case CanvasEvent.CLICK:
+        element = this.evClick.trigger(x, y);
+        if (element && element.onClick) {
+          element.onClick(element, renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
+          return true;
+        }
+        return false;
+      case CanvasEvent.MOUSE_UP:
+        element = this.evMouseUp.trigger(x, y);
+        if (element && element.onMouseup) {
+          element.onMouseup(element, renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
+          return true;
+        }
+        return false;
+      case CanvasEvent.MOUSE_DOWN:
+        element = this.evMouseDown.trigger(x, y);
+        if (element && element.onMousedown) {
+          element.onMousedown(element, renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
+          return true;
+        }
+        return false;
+      case CanvasEvent.MOUSE_MOVE:
+        const els = this.evMove.elements;
+        for (const element of els) {
+          if (element.onMousemove) {
+            element.onMousemove(element, renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
+          }
+        }
+
+        // mouse enter and leave
+        const actives = this.evActive.triggerAll(x, y);
+        const activesSet = new Set(actives);
+        for (const element of this.active) {
+          if (element.onMouseleave && !activesSet.has(element)) {
+            element.onMouseleave(element, renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
+          }
+        }
+        for (const element of activesSet) {
+          if (element.onMouseenter && !this.active.has(element)) {
+            element.onMouseenter(element, renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
+          }
+        }
+        this.active = activesSet;
+        return false;
+    }
     return false;
   }
 
@@ -155,7 +216,7 @@ export class Layer {
       this.counter++
 
       // check internal _state
-      if (!el._state) el._state = { idx: this.counter };
+      if (!el._state) el._state = { idx: this.counter, dx: x, dy: y };
       if (el.hidden || el._state.destory) continue;
       const r = el.renderer || this.dr;
 
@@ -173,14 +234,9 @@ export class Layer {
           ty = dy - y;
         } else {
           // save the (x, y) in current layer as offset for the next layer
-          el._state.dx = x;
-          el._state.dy = y;
           el._state.liftUp = true;
           continue;
         }
-      } else {
-        el._state.dx = x;
-        el._state.dy = y;
       }
       if (el.shapes || el.texts || el.postRenderCallback) {
         this.ctx.translate(tx, ty);

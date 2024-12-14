@@ -9,8 +9,8 @@ export type RenderLayer = (layer?: number) => void;
 
 export interface RuntimeState {
   idx: number;
-  dx?: number;
-  dy?: number;
+  dx: number;
+  dy: number;
   liftUp?: boolean;
   destory?: boolean;
 };
