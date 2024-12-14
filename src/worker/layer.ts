@@ -3,7 +3,7 @@ import { Renderer } from "@physical/render";
 import { initializeContext } from "@physical/context";
 import { BinaryEventHandler } from "./events";
 import type { ShadowElement } from "./element";
-import type { CanvasEvent } from "../defs/types";
+import type { CanvasEvent } from "@defs/types";
 
 export interface LayerOptions {
   renderer: Renderer;
@@ -14,8 +14,6 @@ export interface LayerOptions {
 }
 
 export class Layer {
-  // layer index
-  idx: number;
   // canvas
   canvas: OffscreenCanvas;
   // canvas context
@@ -53,38 +51,35 @@ export class Layer {
   evMove: BinaryEventHandler;
 
   constructor(
-    idx: number,
     canvas: OffscreenCanvas,
-    {
-      renderer,
-      meshOptions,
-      textOptions,
-      drawableOptions,
-      update,
-    }: LayerOptions
+    defaultRenderer: Renderer,
   ) {
-    this.idx = idx;
+    // canvas
     this.canvas = canvas;
     this.ctx = this.canvas.getContext("2d") as OffscreenCanvasRenderingContext2D;
 
+    // elements
     this.queue = [];
     this.prev = new Set();
     this.next = new Set();
 
-    this.update = update;
-    this.dirty = true;
-    this.counter = 0;
-
-    this.dr = renderer;
-    this.dmo = meshOptions;
-    this.dto = textOptions;
-    this.ddo = drawableOptions;
-
+    // render context
+    this.dr = defaultRenderer;
+    this.dmo = {};
+    this.dto = {};
+    this.ddo = {};
+    this.update = true;
     initializeContext(this.ctx, this.dmo, this.dto, this.ddo);
 
+    // width and height
     this.w = this.canvas.width;
     this.h = this.canvas.height;
 
+    // elements update
+    this.dirty = true;
+    this.counter = 0;
+
+    // events
     this.evClick = new BinaryEventHandler();
     this.evMouseUp = new BinaryEventHandler();
     this.evMouseDown = new BinaryEventHandler();
@@ -160,5 +155,23 @@ export class Layer {
     this.prev.clear();
     this.next.clear();
     this.dirty = true;
+  }
+
+  // update layer options to turn on/off some function flags or change base styles.
+  updateOptions({
+    update,
+    renderer,
+    meshOptions,
+    textOptions,
+    drawableOptions
+  }: LayerOptions) {
+    this.dr = renderer;
+    this.dmo = meshOptions;
+    this.dto = textOptions;
+    this.ddo = drawableOptions;
+
+    this.update = update;
+
+    initializeContext(this.ctx, this.dmo, this.dto, this.ddo);
   }
 }
