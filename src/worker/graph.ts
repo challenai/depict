@@ -4,14 +4,13 @@ import { MinimalistRenderer } from "@stylize/minimallist/minimallist";
 import { buildMeshContext, buildTextContext } from "@physical/context";
 import type { Renderer } from "@physical/render";
 import type { ShadowElement } from "./element";
+import type { CanvasEvent } from "@defs/types";
+
+export type EventPreHandler = (typ: CanvasEvent, x: number, y: number) => boolean;
+
+export type EventPostHandler = (triggered: boolean, typ: CanvasEvent, x: number, y: number) => void;
 
 export class Graph {
-  // TODO: 1. [ok] add offset API
-  // TODO: 2. events trigger
-  // TODO: 3. [ok] impl initialize/destory process
-  // TODO: 4. design and impl events hooks
-  // TODO: 5. [ok] user self-coustomed messages from main thread
-
   // the layers of the graph
   private layers: Layer[];
 
@@ -22,11 +21,16 @@ export class Graph {
   dx: number;
   dy: number;
 
+  preHandle: EventPreHandler | null;
+  postHandle: EventPostHandler | null;
+
   constructor() {
     this.layers = [];
     this.looping = -1;
     this.dx = 0;
     this.dy = 0;
+    this.preHandle = null;
+    this.postHandle = null;
   }
 
   initialize({ layers }: MsgInit) {
@@ -41,11 +45,17 @@ export class Graph {
   }
 
   triggerEvent({ typ, x, y }: MsgEvent) {
+    let stopFlag = false;
+    if (this.preHandle) stopFlag = this.preHandle(typ, x, y);
+    if (stopFlag) return;
+
     let triggered = false;
     for (let i = this.layers.length - 1; i >= 0; i--) {
       triggered = this.layers[i].triggerEvent(typ, this.render.bind(this), x, y);
       if (triggered) break;
     }
+
+    if (this.postHandle) this.postHandle(triggered, typ, x, y);
   }
 
   private renderLayers(delta: number) {
