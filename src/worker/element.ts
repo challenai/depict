@@ -7,6 +7,14 @@ export type UpdateFn = (self: ShadowElement, delta: number) => void;
 
 export type RenderLayer = (layer?: number) => void;
 
+export interface RuntimeState {
+  idx: number;
+  dx: number;
+  dy: number;
+  liftUp?: boolean;
+  destory?: boolean;
+};
+
 // ShadowElement is the basic unit which stores shapes and texts
 // it contains a children property so that it is organized as a tree
 export interface ShadowElement {
@@ -30,6 +38,8 @@ export interface ShadowElement {
   contain?: (x: number, y: number) => boolean;
   // specify renderer for this element
   renderer?: Renderer;
+  // update hook
+  update?: UpdateFn;
   // render hook
   postRenderCallback?: RenderHooksFn;
   // handle event: click
@@ -49,5 +59,5 @@ export interface ShadowElement {
   // user data
   data?: any;
   // internal state, not control by user
-  _state?: any;
+  _state?: RuntimeState;
 }

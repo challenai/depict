@@ -24,7 +24,7 @@ export class SketchyRenderer extends Renderer {
     this.gen = new RoughGenerator();
   };
 
-  draw(ctx: CanvasRenderingContext2D, mesh: Mesh) {
+  draw(ctx: OffscreenCanvasRenderingContext2D, mesh: Mesh) {
     ctx.save();
 
     // set current mesh offset
@@ -43,7 +43,7 @@ export class SketchyRenderer extends Renderer {
   };
 
   // TODO: sketchy style text + default fonts?
-  write(ctx: CanvasRenderingContext2D, text: Text) {
+  write(ctx: OffscreenCanvasRenderingContext2D, text: Text) {
     ctx.save();
     // text border: default value == false
     const border = text.opts?.border;
@@ -102,7 +102,7 @@ export class SketchyRenderer extends Renderer {
     return Math.floor(mh / lh);
   }
 
-  drawRough(ctx: CanvasRenderingContext2D, drawable: Drawable): void {
+  drawRough(ctx: OffscreenCanvasRenderingContext2D, drawable: Drawable): void {
     const sets = drawable.sets || [];
     const o = drawable.options || this.gen.defaultOptions;
     const precision = drawable.options.fixedDecimalPlaceDigits;
@@ -136,7 +136,7 @@ export class SketchyRenderer extends Renderer {
     }
   }
 
-  private fillSketch(ctx: CanvasRenderingContext2D, drawing: OpSet, o: ResolvedOptions) {
+  private fillSketch(ctx: OffscreenCanvasRenderingContext2D, drawing: OpSet, o: ResolvedOptions) {
     let fweight = o.fillWeight;
     if (fweight < 0) {
       fweight = o.strokeWidth / 2;
@@ -154,7 +154,7 @@ export class SketchyRenderer extends Renderer {
     ctx.restore();
   }
 
-  private _drawToContext(ctx: CanvasRenderingContext2D, drawing: OpSet, fixedDecimals?: number, rule: CanvasFillRule = 'nonzero') {
+  private _drawToContext(ctx: OffscreenCanvasRenderingContext2D, drawing: OpSet, fixedDecimals?: number, rule: CanvasFillRule = 'nonzero') {
     ctx.beginPath();
     for (const item of drawing.ops) {
       const data = ((typeof fixedDecimals === 'number') && fixedDecimals >= 0) ? (item.data.map((d) => +d.toFixed(fixedDecimals))) : item.data;

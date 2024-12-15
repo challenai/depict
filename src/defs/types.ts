@@ -6,9 +6,9 @@ export enum MessageType {
 };
 
 // browser dom event type
-export enum EventType {
+export enum CanvasEvent {
   CLICK = 1,
-  MOUSE_MOVE = 1,
-  MOUSE_UP = 1,
-  MOUSE_DOWN = 1,
+  MOUSE_MOVE = 2,
+  MOUSE_UP = 3,
+  MOUSE_DOWN = 4,
 }

@@ -20,7 +20,7 @@ export class MinimalistRenderer extends Renderer {
     this.tcb = opts.textContextBuilder;
   };
 
-  draw(ctx: CanvasRenderingContext2D, mesh: Mesh) {
+  draw(ctx: OffscreenCanvasRenderingContext2D, mesh: Mesh) {
     ctx.save();
     if (mesh.opts) this.mcb(ctx, mesh.opts);
 
@@ -40,7 +40,7 @@ export class MinimalistRenderer extends Renderer {
     ctx.restore();
   };
 
-  write(ctx: CanvasRenderingContext2D, text: Text) {
+  write(ctx: OffscreenCanvasRenderingContext2D, text: Text) {
     ctx.save();
     // text border: default value == false
     const border = text.opts?.border;
