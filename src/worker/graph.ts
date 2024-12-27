@@ -1,4 +1,3 @@
-import type { MsgEvent, MsgInit } from "@defs/messages";
 import { Layer, type LayerOptions } from "./layer";
 import { MinimalistRenderer } from "@stylize/minimallist/minimallist";
 import { buildMeshContext, buildTextContext } from "@physical/context";
@@ -33,7 +32,7 @@ export class Graph {
     this.postHandle = null;
   }
 
-  initialize({ layers }: MsgInit) {
+  initialize(layers: OffscreenCanvas[]) {
     const defaultRenderer: Renderer = new MinimalistRenderer({
       meshContextBuilder: buildMeshContext,
       textContextBuilder: buildTextContext,
@@ -44,14 +43,17 @@ export class Graph {
     }
   }
 
-  triggerEvent({ typ, x, y }: MsgEvent) {
+  triggerEvent(typ: CanvasEvent, x: number, y: number) {
     let stopFlag = false;
     if (this.preHandle) stopFlag = this.preHandle(typ, x, y);
     if (stopFlag) return;
 
+    const dx = this.dx;
+    const dy = this.dy;
+
     let triggered = false;
     for (let i = this.layers.length - 1; i >= 0; i--) {
-      triggered = this.layers[i].triggerEvent(typ, this.render.bind(this), x, y);
+      triggered = this.layers[i].triggerEvent(typ, this.render.bind(this), x - dx, y - dy);
       if (triggered) break;
     }
 
@@ -109,5 +111,23 @@ export class Graph {
     // release all the offscreen canvas memory
     this.layers.length = 0;
     cancelAnimationFrame(this.looping);
+  }
+
+  handleMessageEvent(ev: MessageEvent): boolean {
+    const eventType = ev.data.type;
+    const msg = ev.data.msg;
+    switch (eventType) {
+      case MessageType.INIT:
+        this.initialize(msg.layers);
+        this.start();
+        return true;
+      case MessageType.DESTORY:
+        this.destory();
+        return true;
+      case MessageType.EVENT:
+        this.triggerEvent(msg.typ, msg.x, msg.y);
+        return true;
+    };
+    return false;
   }
 }
