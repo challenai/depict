@@ -1,9 +1,9 @@
-import type { DrawableOptions, Mesh, MeshSpecificOptions, Text, TextSpecificOptions } from "@physical/drawable";
-import { Renderer } from "@physical/render";
-import { initializeContext } from "@physical/context";
+import type { DrawableOptions, Mesh, MeshSpecificOptions, Text, TextSpecificOptions } from "../physical/drawable";
+import { Renderer } from "../physical/render";
+import { initializeContext } from "../physical/context";
 import { BinaryEventHandler } from "./events";
 import type { ShadowElement } from "./element";
-import { CanvasEvent } from "@defs/types";
+import { CanvasEvent } from "../defs/types";
 
 export type ExplicitRenderLayer = (layer: number) => void;
 

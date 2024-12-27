@@ -1,5 +1,5 @@
-import type { Mesh, Text } from "@physical/drawable";
-import type { Renderer } from "@physical/render";
+import type { Mesh, Text } from "../physical/drawable";
+import type { Renderer } from "../physical/render";
 
 export type RenderHooksFn = (ctx: OffscreenCanvasRenderingContext2D) => void;
 

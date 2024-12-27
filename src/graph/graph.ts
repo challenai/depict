@@ -1,9 +1,9 @@
 import { Layer, type LayerOptions } from "./layer";
-import { MinimalistRenderer } from "@stylize/minimallist/minimallist";
-import { buildMeshContext, buildTextContext } from "@physical/context";
-import type { Renderer } from "@physical/render";
+import { MinimalistRenderer } from "../stylize/minimallist/minimallist";
+import { buildMeshContext, buildTextContext } from "../physical/context";
+import type { Renderer } from "../physical/render";
 import type { ShadowElement } from "./element";
-import type { CanvasEvent } from "@defs/types";
+import { MessageType, type CanvasEvent } from "../defs/types";
 
 export type EventPreHandler = (typ: CanvasEvent, x: number, y: number) => boolean;
 
