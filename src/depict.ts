@@ -1,7 +1,7 @@
-import type { MsgInit } from "./defs/messages";
-import { CanvasEvent, MessageType } from "./defs/types";
+import type { MsgInit } from "@defs/messages";
+import { CanvasEvent, MessageType } from "@defs/types";
 
-export interface GraphOptions {
+export interface DepictOptions {
   maxLayers: number;
   root: HTMLDivElement;
   worker: Worker;
@@ -29,7 +29,7 @@ export class Depict {
     maxLayers,
     root,
     worker,
-  }: GraphOptions) {
+  }: DepictOptions) {
     this.root = root;
     this.maxLayers = maxLayers;
     this.layers = [];
