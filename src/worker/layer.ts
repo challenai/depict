@@ -206,6 +206,11 @@ export class Layer {
   private renderElements(x: number, y: number, elements?: ShadowElement[]) {
     if (!elements) return;
     for (const el of elements) {
+      // check internal _state
+      if (!el._state) el._state = { idx: this.counter, dx: x, dy: y };
+      this.counter++
+      if (el.hidden || el._state.destory) continue;
+
       // build events for current element
       if (this.prev.has(el)) {
         this.prev.delete(el);
@@ -213,11 +218,7 @@ export class Layer {
         this.buildElementEvents(el);
       }
       this.next.add(el);
-      this.counter++
 
-      // check internal _state
-      if (!el._state) el._state = { idx: this.counter, dx: x, dy: y };
-      if (el.hidden || el._state.destory) continue;
       const r = el.renderer || this.dr;
 
       // caculate the offset for the current element
@@ -243,9 +244,9 @@ export class Layer {
         el.shapes?.forEach((m: Mesh) => r.draw(this.ctx, m));
         el.texts?.forEach((t: Text) => r.write(this.ctx, t));
         if (el.postRenderCallback) this.postRender(el.postRenderCallback);
+        this.renderElements(dx, dy, el.children);
         this.ctx.translate(-tx, -ty);
       }
-      this.renderElements(dx, dy, el.children);
     }
   }
 
