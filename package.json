@@ -1,7 +1,7 @@
 {
   "name": "@pattaya/depict",
   "module": "lib/index.js",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "make it easy to design dynamic graph in canvas environment",
   "author": "Challen Ai <fengyiai@gmail.com>",
