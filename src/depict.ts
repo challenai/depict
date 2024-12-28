@@ -1,5 +1,5 @@
-import type { MsgInit } from "@defs/messages";
-import { CanvasEvent, MessageType } from "@defs/types";
+import type { MsgInit } from "./defs/messages";
+import { CanvasEvent, MessageType } from "./defs/types";
 
 export interface DepictOptions {
   maxLayers: number;
