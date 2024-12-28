@@ -4,7 +4,6 @@ import type { ShadowElement } from "./element";
 export class BinaryEventHandler {
   // TODO: 1. if we should pass event type ?
   // TODO: 2. improve sort logic, maybe insert sort, is it possible to insert in a batch?
-  // TODO: 3. unrefered nodes gabarge collection
   nodes: ShadowElement[];
 
   constructor() {
@@ -14,6 +13,7 @@ export class BinaryEventHandler {
   trigger(x: number, y: number): ShadowElement | null {
     for (let i = this.nodes.length - 1; i >= 0; i--) {
       const current = this.nodes[i];
+      if (current.hidden) continue;
       if (current._state?.destory) {
         this.nodes.splice(i, 1);
         continue;
@@ -29,6 +29,11 @@ export class BinaryEventHandler {
     const active = [];
     for (let i = this.nodes.length - 1; i >= 0; i--) {
       const current = this.nodes[i];
+      if (current.hidden) continue;
+      if (current._state?.destory) {
+        this.nodes.splice(i, 1);
+        continue;
+      }
       if (current.contain && current.contain(x - current._state!.dx - current.x, y - current._state!.dy - current.y)) {
         active.push(current);
       }

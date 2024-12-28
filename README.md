@@ -1,4 +1,4 @@
-# depict
+# Depict
 
 WARNING: This project is currently developed positively, the APIs are not promised to be stable before v1.0.0.
 
@@ -12,7 +12,73 @@ Depict is a JavaScript library for building canvas based user interface.
 
 `npm install @pattaya/depict --save`
 
+## Quick Start 
+
+First, you should create a depict instance to hold the graph canvas DOM.
+
+```ts
+import { Depict } from "@pattaya/depict";
+
+const worker = new Worker(new URL('xxx/worker.ts', import.meta.url), {
+  type: "module"
+})
+
+const graphContainer = new Depict({
+  root: canvasHTMLDivElement,
+  maxLayers: 3,
+  worker,
+});
+
+graphContainer.start();
+```
+
+then you should create a web worker file to actually run the graph.
+
+```ts
+import { Graph, MessageType } from "@pattaya/depict/graph";
+
+const graph = new Graph();
+
+onmessage = (ev) => {
+  graph.handleMessageEvent(ev);
+};
+```
+
+Now, you can build your image with an array of nodes.  
+You can add events, animation or even state system if you want to build something big.
+
+```ts
+const node = {
+  x: 150,
+  y: 145,
+  shapes: [
+    {
+      path: "M 20 20 l 0 100",
+      opts: {
+        stroke: "#666",
+        fill: "#333",
+      }
+    }
+  ],
+};
+graph.updateQueue(2, [node]);
+```
+
 ## Examples
+
+### examples/react-graph
+
+This is an example app which shows how to use depict with react.
+
+you can run the application with the following steps.
+
+```shell
+cd exmaples/react-graph
+
+npm install
+
+npm run dev
+```
 
 ### License
 

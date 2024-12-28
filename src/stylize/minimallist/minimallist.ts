@@ -1,7 +1,7 @@
-import type { MeshContextBuilder, TextContextBuilder } from "@physical/context";
-import type { Mesh, Text } from "@physical/drawable";
-import { Renderer } from "@physical/render";
-import { cutLastLine, seperateText2MultiLines } from "@physical/text";
+import type { MeshContextBuilder, TextContextBuilder } from "../../physical/context";
+import type { Mesh, Text } from "../../physical/drawable";
+import { Renderer } from "../../physical/render";
+import { cutLastLine, seperateText2MultiLines } from "../../physical/text";
 
 export interface MinimalistOptions {
   meshContextBuilder: MeshContextBuilder;

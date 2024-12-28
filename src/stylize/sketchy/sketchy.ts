@@ -1,10 +1,10 @@
 import type { ResolvedOptions, Drawable, OpSet } from 'roughjs/bin/core';
 import { RoughGenerator } from "roughjs/bin/generator";
 import { randomSeed } from "roughjs/bin/math";
-import type { TextContextBuilder } from "@physical/context";
-import type { Mesh, Text } from "@physical/drawable";
-import { Renderer } from "@physical/render";
-import { cutLastLine, seperateText2MultiLines } from '@physical/text';
+import type { TextContextBuilder } from "../../physical/context";
+import type { Mesh, Text } from "../../physical/drawable";
+import { Renderer } from "../../physical/render";
+import { cutLastLine, seperateText2MultiLines } from '../../physical/text';
 
 // TODO: extra rough options
 export interface SketchyOptions {
@@ -157,7 +157,7 @@ export class SketchyRenderer extends Renderer {
   private _drawToContext(ctx: OffscreenCanvasRenderingContext2D, drawing: OpSet, fixedDecimals?: number, rule: CanvasFillRule = 'nonzero') {
     ctx.beginPath();
     for (const item of drawing.ops) {
-      const data = ((typeof fixedDecimals === 'number') && fixedDecimals >= 0) ? (item.data.map((d) => +d.toFixed(fixedDecimals))) : item.data;
+      const data = ((typeof fixedDecimals === 'number') && fixedDecimals >= 0) ? (item.data.map((d: number) => +d.toFixed(fixedDecimals))) : item.data;
       switch (item.op) {
         case 'move':
           ctx.moveTo(data[0], data[1]);

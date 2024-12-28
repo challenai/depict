@@ -1,8 +1,22 @@
 {
   "name": "@pattaya/depict",
   "module": "lib/index.js",
-  "version": "0.1.0",
+  "version": "0.2.2",
   "type": "module",
+  "exports": {
+    ".": {
+      "default": "./lib/index.min.js",
+      "types": "./types/index.d.ts"
+    },
+    "./depict": {
+      "default": "./lib/index.min.js",
+      "types": "./types/index.d.ts"
+    },
+    "./graph": {
+      "default": "./lib/graph/index.min.js",
+      "types": "./types/graph/index.d.ts"
+    }
+  },
   "description": "make it easy to design dynamic graph in canvas environment",
   "author": "Challen Ai <fengyiai@gmail.com>",
   "typings": "types/index.d.ts",
