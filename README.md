@@ -1,7 +1,5 @@
 # Depict
 
-WARNING: This project is currently developed positively, the APIs are not promised to be stable before v1.0.0.
-
 Depict is a JavaScript library for building canvas based user interface.
 
 - Maintainable: Organize simple and clear nodes to Create complex shapes, there are no specific positioning or layout engines included, the only thing you need to care about is its offset, nothing specific to learn. You don't need to consider the relationship among different components, nodes or shapes, and try to manage complex application state or communication.
