@@ -1,30 +1,21 @@
 import { ShadowElement } from "@pattaya/depict/graph";
-
-const rectangle = (x: number, y: number, width: number, height: number): string => {
-  return `
-    M${x} ${y}
-    l${width} 0
-    l0 ${height}
-    l${-width} 0
-    Z
-  `;
-};
+import { Rectangle } from "@pattaya/pather";
 
 export const fooGraph: ShadowElement[] = [
   {
-    x: 150,
-    y: 145,
+    x: 198,
+    y: 181,
     shapes: [
       {
-        path: rectangle(0, 0, 96, 72),
+        path: Rectangle.Basic(0, 0, 96, 72),
         opts: {
           stroke: "#666",
           fill: "#333",
         }
-      }
+      },
     ],
     contain(x, y) {
-      return x > 0 && x < 96 && y > 0 && y < 72;
+      return x > -48 && x < 48 && y > -36 && y < 36;
     },
     onMouseenter(self, render) {
       self.shapes![0].opts!.fill = "#222";
