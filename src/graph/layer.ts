@@ -209,7 +209,10 @@ export class Layer {
       // check internal _state
       if (!el._state) el._state = { idx: this.counter, dx: x, dy: y };
       this.counter++
-      if (el.hidden || el._state.destory) continue;
+      if (el.hidden || el._state.destory) {
+        if (this.prev.has(el)) this.prev.delete(el);
+        continue;
+      }
 
       // build events for current element
       if (this.prev.has(el)) {
