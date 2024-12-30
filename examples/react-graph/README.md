@@ -3,6 +3,8 @@
 This is an example app which shows how to use depict with react.  
 The shapes are generated from npm package [@pattaya/pather](github.com/challenai/pather).
 
+![example application](docs/images/screenshot.png)
+
 ## Quick Start 
 
 you can run the application with the following steps.
@@ -15,7 +17,11 @@ npm install
 npm run dev
 ```
 
-# TODO
+## TODO
 
 - dispatch state
 - example without worker
+
+## License
+
+MIT
