@@ -77,7 +77,6 @@ export class Depict {
 
     const c = this.layers[this.layers.length - 1];
     c.onclick = (ev: MouseEvent) => {
-      // console.log(ev.clientX - this.x, ev.clientY - this.y);
       this.worker.postMessage({ type: MessageType.EVENT, msg: { x: ev.clientX - this.x, y: ev.clientY - this.y, typ: CanvasEvent.CLICK } });
     };
     c.onmouseup = (ev: MouseEvent) => {
