@@ -17,11 +17,6 @@ npm install
 npm run dev
 ```
 
-## TODO
-
-- dispatch state
-- example without worker
-
 ## License
 
 MIT

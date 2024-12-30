@@ -1,5 +1,6 @@
 import { Depict } from "@pattaya/depict";
 import { useEffect, useRef, useState } from "react";
+import { MsgUpdateReactState } from "./msg";
 
 const worker = new Worker(new URL('./worker.ts', import.meta.url), {
   type: "module"
@@ -31,7 +32,7 @@ function GraphContainer({ count }: GraphContainerProps) {
   }, []);
 
   useEffect(() => {
-    worker.postMessage({ type: 1, msg: count });
+    worker.postMessage({ type: MsgUpdateReactState, msg: count });
   }, [count]);
 
   return (

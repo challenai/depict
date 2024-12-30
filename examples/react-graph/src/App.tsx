@@ -10,7 +10,7 @@ function App() {
       <div>
         <GraphContainer count={count} />
       </div>
-      <h1>Vite + React + Depict</h1>
+      <h1>React + Depict</h1>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
