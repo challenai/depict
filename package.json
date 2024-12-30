@@ -1,20 +1,20 @@
 {
   "name": "@pattaya/depict",
   "module": "lib/index.js",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "type": "module",
   "exports": {
     ".": {
-      "default": "./lib/index.min.js",
-      "types": "./types/index.d.ts"
+      "types": "./types/index.d.ts",
+      "default": "./lib/index.min.js"
     },
     "./depict": {
-      "default": "./lib/index.min.js",
-      "types": "./types/index.d.ts"
+      "types": "./types/index.d.ts",
+      "default": "./lib/index.min.js"
     },
     "./graph": {
-      "default": "./lib/graph/index.min.js",
-      "types": "./types/graph/index.d.ts"
+      "types": "./types/graph/index.d.ts",
+      "default": "./lib/graph/index.min.js"
     }
   },
   "description": "make it easy to design dynamic graph in canvas environment",

@@ -1,4 +1,5 @@
 import { ShadowElement } from "@pattaya/depict/graph";
+import { reactState } from "./state";
 
 export const barGraph: ShadowElement[] = [
   {
@@ -16,8 +17,11 @@ export const barGraph: ShadowElement[] = [
         }
       },
     ],
-    update(self, delta) {
-      self.shapes![0].opts!.rotation = delta / 1000;
+    data: { rotation: 0, timestamp: 0 },
+    update(timestamp: number) {
+      this.data.rotation += (reactState.count % 10 + 3) * (timestamp - this.data.timestamp) / 3000;
+      this.shapes![0].opts!.rotation = this.data.rotation;
+      this.data.timestamp = timestamp;
     }
   },
 ];

@@ -8,7 +8,7 @@ function App() {
   return (
     <>
       <div>
-        <GraphContainer />
+        <GraphContainer count={count} />
       </div>
       <h1>Vite + React + Depict</h1>
       <div className="card">

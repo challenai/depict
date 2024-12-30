@@ -5,7 +5,7 @@ export const textGraph: ShadowElement[] = [
     x: 130,
     y: 360,
     texts: [{
-      content: "Please click the rectangle to update React state",
+      content: "Please hover the rectangle to trigger events.",
       opts: {
         fill: "#aaa",
         font: "18px san-serf",
