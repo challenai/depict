@@ -1,7 +1,26 @@
 import { ShadowElement } from "@pattaya/depict/graph";
 import { Rectangle } from "@pattaya/pather";
+import { reactState } from "./state";
 
 export const fooGraph: ShadowElement[] = [
+  {
+    x: 64,
+    y: 36,
+    texts: [
+      {
+        x: -28,
+        y: 4,
+        content: "",
+        opts: {
+          fill: "#888",
+          font: "16px san-serf",
+        }
+      }
+    ],
+    update() {
+      this.texts![0].content = `react count: ${reactState.count}, speed level: ${reactState.count % 10}`;
+    },
+  },
   {
     x: 198,
     y: 181,

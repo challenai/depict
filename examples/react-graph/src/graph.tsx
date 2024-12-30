@@ -3,9 +3,13 @@ import { useEffect, useRef, useState } from "react";
 
 const worker = new Worker(new URL('./worker.ts', import.meta.url), {
   type: "module"
-})
+});
 
-function GraphContainer() {
+export interface GraphContainerProps {
+  count: number;
+};
+
+function GraphContainer({ count }: GraphContainerProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const [graph, setGraph] = useState<Depict | undefined>(undefined);
 
@@ -25,6 +29,10 @@ function GraphContainer() {
 
     return () => g?.destory();
   }, []);
+
+  useEffect(() => {
+    worker.postMessage({ type: 1, msg: count });
+  }, [count]);
 
   return (
     <div
