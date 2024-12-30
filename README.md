@@ -66,12 +66,14 @@ graph.updateQueue(2, [node]);
 
 ### examples/react-graph
 
-This is an example app which shows how to use depict with react.
+You can create graph application with React, Vue, Svelte or any other framework you like,  
 
-you can run the application with the following steps.
+there are some examples applications which include React, Vue or Svelte based graph applications.
+
+for **every** application in the `examples` directory, you can run the application with the following steps.
 
 ```shell
-cd exmaples/react-graph
+cd exmaples/xxx
 
 npm install
 
