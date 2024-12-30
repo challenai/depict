@@ -17,13 +17,13 @@ export const fooGraph: ShadowElement[] = [
     contain(x, y) {
       return x > -48 && x < 48 && y > -36 && y < 36;
     },
-    onMouseenter(self, render) {
-      self.shapes![0].opts!.fill = "#222";
+    onMouseenter(render) {
+      this.shapes![0].opts!.fill = "#222";
       render();
       return false;
     },
-    onMouseleave(self, render) {
-      self.shapes![0].opts!.fill = "#333";
+    onMouseleave(render) {
+      this.shapes![0].opts!.fill = "#333";
       render();
       return false;
     },

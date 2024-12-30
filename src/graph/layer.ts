@@ -103,7 +103,7 @@ export class Layer {
     if (!this.update || !this.queue) return;
     for (const element of this.queue) {
       if (element.update) {
-        element.update(element, delta)
+        element.update(delta)
       }
     }
   }
@@ -157,21 +157,21 @@ export class Layer {
       case CanvasEvent.CLICK:
         element = this.evClick.trigger(x, y);
         if (element && element.onClick) {
-          element.onClick(element, renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
+          element.onClick(renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
           return true;
         }
         return false;
       case CanvasEvent.MOUSE_UP:
         element = this.evMouseUp.trigger(x, y);
         if (element && element.onMouseup) {
-          element.onMouseup(element, renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
+          element.onMouseup(renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
           return true;
         }
         return false;
       case CanvasEvent.MOUSE_DOWN:
         element = this.evMouseDown.trigger(x, y);
         if (element && element.onMousedown) {
-          element.onMousedown(element, renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
+          element.onMousedown(renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
           return true;
         }
         return false;
@@ -179,7 +179,7 @@ export class Layer {
         const els = this.evMove.elements;
         for (const element of els) {
           if (element.onMousemove) {
-            element.onMousemove(element, renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
+            element.onMousemove(renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
           }
         }
 
@@ -188,12 +188,12 @@ export class Layer {
         const activesSet = new Set(actives);
         for (const element of this.active) {
           if (element.onMouseleave && !activesSet.has(element)) {
-            element.onMouseleave(element, renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
+            element.onMouseleave(renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
           }
         }
         for (const element of activesSet) {
           if (element.onMouseenter && !this.active.has(element)) {
-            element.onMouseenter(element, renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
+            element.onMouseenter(renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
           }
         }
         this.active = activesSet;

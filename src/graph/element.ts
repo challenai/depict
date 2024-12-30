@@ -3,7 +3,7 @@ import type { Renderer } from "../physical/render";
 
 export type RenderHooksFn = (ctx: OffscreenCanvasRenderingContext2D) => void;
 
-export type UpdateFn = (self: ShadowElement, delta: number) => void;
+export type UpdateFn = (delta: number) => void;
 
 export type RenderLayer = (layer?: number) => void;
 
@@ -43,17 +43,17 @@ export interface ShadowElement {
   // render hook
   postRenderCallback?: RenderHooksFn;
   // handle event: click
-  onClick?: (self: ShadowElement, render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => boolean;
+  onClick?: (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => boolean;
   // handle event: mouse enter
-  onMouseenter?: (self: ShadowElement, render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => boolean;
+  onMouseenter?: (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => boolean;
   // handle event: mouse leave
-  onMouseleave?: (self: ShadowElement, render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => boolean;
+  onMouseleave?: (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => boolean;
   // handle event: mouse up
-  onMouseup?: (self: ShadowElement, render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => boolean;
+  onMouseup?: (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => boolean;
   // handle event: mouse down
-  onMousedown?: (self: ShadowElement, render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => boolean;
+  onMousedown?: (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => boolean;
   // handle event: mouse move
-  onMousemove?: (self: ShadowElement, render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => boolean;
+  onMousemove?: (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => boolean;
   // // TODO: decide if bounding box works
   // boundingBox?: number[];
   // user data

@@ -16,8 +16,8 @@ export const barGraph: ShadowElement[] = [
         }
       },
     ],
-    update(self, delta) {
-      self.shapes![0].opts!.rotation = delta / 1000;
+    update(delta) {
+      this.shapes![0].opts!.rotation = delta / 1000;
     }
   },
 ];
