@@ -207,12 +207,11 @@ export class Layer {
     if (!elements) return;
     for (const el of elements) {
       // check internal _state
-      if (!el._state) el._state = { idx: this.counter, dx: x, dy: y };
       this.counter++
-      if (el.hidden || el._state.destory) {
-        if (this.prev.has(el)) this.prev.delete(el);
-        continue;
-      }
+      if (!el._state) el._state = { idx: this.counter, dx: x, dy: y };
+      if (el._state.destory) el._state.destory = false;
+      if (el.hidden) continue;
+      this.next.add(el);
 
       // build events for current element
       if (this.prev.has(el)) {
