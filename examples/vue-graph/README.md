@@ -1,9 +1,9 @@
-# react-graph
+# vue-graph
 
-This is an example app which shows how to use depict with react.  
+This is an example app which shows how to use depict with Vue.js.  
 The shapes are generated from npm package [@pattaya/pather](github.com/challenai/pather).
 
-![example application](docs/images/screenshot.png)
+![example application](docs/images/vue-depict.png)
 
 ## Quick Start 
 
