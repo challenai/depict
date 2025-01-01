@@ -60,10 +60,18 @@ export class Layer {
   constructor(
     canvas: OffscreenCanvas,
     defaultRenderer: Renderer,
+    w: number,
+    h: number,
   ) {
     // canvas
     this.canvas = canvas;
     this.ctx = this.canvas.getContext("2d") as OffscreenCanvasRenderingContext2D;
+
+    // width and height
+    this.w = w;
+    this.h = h;
+    this.canvas.width = w;
+    this.canvas.height = h;
 
     // elements
     this.queue = [];
@@ -77,10 +85,6 @@ export class Layer {
     this.ddo = {};
     this.update = true;
     initializeContext(this.ctx, this.dmo, this.dto, this.ddo);
-
-    // width and height
-    this.w = this.canvas.width;
-    this.h = this.canvas.height;
 
     // elements update
     this.dirty = true;
@@ -106,6 +110,13 @@ export class Layer {
         element.update(delta)
       }
     }
+  }
+
+  resize(w: number, h: number) {
+    this.w = w;
+    this.h = h;
+    this.canvas.width = w;
+    this.canvas.height = h;
   }
 
   // render elements at coordinates (x, y)

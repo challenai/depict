@@ -2,6 +2,7 @@ import type { CanvasEvent } from "./types";
 
 export interface MsgInit {
   layers: OffscreenCanvas[];
+  size: MsgSize;
 };
 
 export interface MsgEvent {
@@ -10,7 +11,7 @@ export interface MsgEvent {
   y: number;
 };
 
-export interface MsgResize {
+export interface MsgSize {
   w: number
   h: number
 };

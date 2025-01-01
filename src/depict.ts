@@ -1,4 +1,4 @@
-import type { MsgInit, MsgResize } from "./defs/messages";
+import type { MsgInit, MsgSize } from "./defs/messages";
 import { CanvasEvent, MessageType } from "./defs/types";
 
 export interface DepictOptions {
@@ -46,7 +46,7 @@ export class Depict {
 
     for (let i = 0; i < this.maxLayers; i++) {
       const canvas = document.createElement("canvas");
-      this.initializeCanvas(canvas, this.w, this.h, i === 0);
+      this.initializeCanvas(canvas, i === 0);
       root.appendChild(canvas);
       this.layers.push(canvas);
     }
@@ -57,14 +57,10 @@ export class Depict {
 
   initializeCanvas(
     canvas: HTMLCanvasElement,
-    w: number,
-    h: number,
     base: boolean,
   ) {
-    canvas.width = w;
-    canvas.height = h;
-    canvas.style.width = `${w}px`;
-    canvas.style.height = `${h}px`;
+    canvas.style.width = `${this.w}px`;
+    canvas.style.height = `${this.h}px`;
     canvas.style.position = "absolute";
     canvas.style.top = "0";
     canvas.style.left = "0";
@@ -100,6 +96,10 @@ export class Depict {
 
     const msg: MsgInit = {
       layers: transfers,
+      size: {
+        w: this.w,
+        h: this.h,
+      },
     };
     this.worker.postMessage({ type: MessageType.INIT, msg }, transfers);
   }
@@ -112,10 +112,10 @@ export class Depict {
     this.h = rect ? rect.height : 0;
 
     for (let i = 0; i < this.maxLayers; i++) {
-      this.initializeCanvas(this.layers[i], this.w, this.h, i === 0);
+      this.initializeCanvas(this.layers[i], i === 0);
     }
 
-    const msg: MsgResize = {
+    const msg: MsgSize = {
       w: this.w,
       h: this.h,
     };
