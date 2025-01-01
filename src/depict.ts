@@ -122,8 +122,8 @@ export class Depict {
     this.worker.postMessage({ type: MessageType.RESIZE, msg }, []);
   }
 
-  destory() {
-    this.worker.postMessage({ type: MessageType.DESTORY }, []);
+  destroy() {
+    this.worker.postMessage({ type: MessageType.DESTROY }, []);
     for (const c of this.layers) {
       c.remove();
     }

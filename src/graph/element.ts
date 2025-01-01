@@ -12,7 +12,7 @@ export interface RuntimeState {
   dx: number;
   dy: number;
   liftUp?: boolean;
-  destory?: boolean;
+  destroy?: boolean;
 };
 
 // ShadowElement is the basic unit which stores shapes and texts

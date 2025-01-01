@@ -12,7 +12,7 @@ export class BinaryEventHandler {
     for (let i = this.nodes.length - 1; i >= 0; i--) {
       const current = this.nodes[i];
       if (current.hidden) continue;
-      if (current._state?.destory) {
+      if (current._state?.destroy) {
         this.nodes.splice(i, 1);
         continue;
       }
@@ -28,7 +28,7 @@ export class BinaryEventHandler {
     for (let i = this.nodes.length - 1; i >= 0; i--) {
       const current = this.nodes[i];
       if (current.hidden) continue;
-      if (current._state?.destory) {
+      if (current._state?.destroy) {
         this.nodes.splice(i, 1);
         continue;
       }

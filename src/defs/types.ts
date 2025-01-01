@@ -1,7 +1,7 @@
 // canvas message type
 export enum MessageType {
   INIT = -1,
-  DESTORY = -2,
+  DESTROY = -2,
   EVENT = -3,
   RESIZE = -4,
 };

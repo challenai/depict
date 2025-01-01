@@ -113,8 +113,8 @@ export class Graph {
     }
   }
 
-  // destory the graph
-  destory() {
+  // destroy the graph
+  destroy() {
     // release all the offscreen canvas memory
     this.layers.length = 0;
     cancelAnimationFrame(this.looping);
@@ -128,8 +128,8 @@ export class Graph {
         this.initialize(msg.layers, msg.size.w, msg.size.h);
         this.start();
         return true;
-      case MessageType.DESTORY:
-        this.destory();
+      case MessageType.DESTROY:
+        this.destroy();
         return true;
       case MessageType.EVENT:
         this.triggerEvent(msg.typ, msg.x, msg.y);

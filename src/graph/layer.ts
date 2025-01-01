@@ -128,7 +128,7 @@ export class Layer {
     this.ctx.translate(-x, -y);
     this.dirty = false;
     for (const el of this.prev) {
-      if (el._state) el._state.destory = true;
+      if (el._state) el._state.destroy = true;
     }
     this.prev = this.next;
     this.next = new Set();
@@ -220,7 +220,7 @@ export class Layer {
       // check internal _state
       this.counter++
       if (!el._state) el._state = { idx: this.counter, dx: x, dy: y };
-      if (el._state.destory) el._state.destory = false;
+      if (el._state.destroy) el._state.destroy = false;
       if (el.hidden) continue;
       this.next.add(el);
 
@@ -271,7 +271,7 @@ export class Layer {
   }
 
   // reset the render queue to render from scratch, if a group of new elements are given.
-  // on this way, we don't compare to find the difference, instead, we destory all the built events, rebuild from scratch
+  // on this way, we don't compare to find the difference, instead, we destroy all the built events, rebuild from scratch
   updateQueue(elements: ShadowElement[]) {
     this.queue = elements;
     // this.next.clear();
