@@ -2,8 +2,6 @@ import type { ShadowElement } from "./element";
 
 // default event handler
 export class BinaryEventHandler {
-  // TODO: 1. if we should pass event type ?
-  // TODO: 2. improve sort logic, maybe insert sort, is it possible to insert in a batch?
   nodes: ShadowElement[];
 
   constructor() {
@@ -14,7 +12,7 @@ export class BinaryEventHandler {
     for (let i = this.nodes.length - 1; i >= 0; i--) {
       const current = this.nodes[i];
       if (current.hidden) continue;
-      if (current._state?.destory) {
+      if (current._state?.destroy) {
         this.nodes.splice(i, 1);
         continue;
       }
@@ -30,7 +28,7 @@ export class BinaryEventHandler {
     for (let i = this.nodes.length - 1; i >= 0; i--) {
       const current = this.nodes[i];
       if (current.hidden) continue;
-      if (current._state?.destory) {
+      if (current._state?.destroy) {
         this.nodes.splice(i, 1);
         continue;
       }
@@ -46,12 +44,19 @@ export class BinaryEventHandler {
   }
 
   add(el: ShadowElement) {
-    this.nodes.push(el);
-    // bubble to right position
-    for (let i = this.nodes.length - 1; i > 0; i--) {
-      // TODO: insert sort
-      if (this.nodes[i]._state!.idx > this.nodes[i - 1]._state!.idx) return;
-      this.nodes[i], this.nodes[i - 1] = this.nodes[i - 1], this.nodes[i];
+    // Find the correct insertion point using binary search
+    let left = 0;
+    let right = this.nodes.length - 1;
+    while (left <= right) {
+      const mid = Math.floor((left + right) / 2);
+      if (this.nodes[mid]._state!.idx < el._state!.idx) {
+        left = mid + 1;
+      } else {
+        right = mid - 1;
+      }
     }
+
+    // Insert the element at the found position
+    this.nodes.splice(left, 0, el);
   }
 }

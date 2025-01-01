@@ -32,15 +32,22 @@ export class Graph {
     this.postHandle = null;
   }
 
-  initialize(layers: OffscreenCanvas[]) {
+  initialize(layers: OffscreenCanvas[], w: number, h: number) {
     const defaultRenderer: Renderer = new MinimalistRenderer({
       meshContextBuilder: buildMeshContext,
       textContextBuilder: buildTextContext,
     });
     for (const canvas of layers) {
-      const layer = new Layer(canvas, defaultRenderer);
+      const layer = new Layer(canvas, defaultRenderer, w, h);
       this.layers.push(layer);
     }
+  }
+
+  resize(w: number, h: number) {
+    for (const layer of this.layers) {
+      layer.resize(w, h);
+    }
+    this.renderAll();
   }
 
   triggerEvent(typ: CanvasEvent, x: number, y: number) {
@@ -106,8 +113,8 @@ export class Graph {
     }
   }
 
-  // destory the graph
-  destory() {
+  // destroy the graph
+  destroy() {
     // release all the offscreen canvas memory
     this.layers.length = 0;
     cancelAnimationFrame(this.looping);
@@ -118,14 +125,17 @@ export class Graph {
     const msg = ev.data.msg;
     switch (eventType) {
       case MessageType.INIT:
-        this.initialize(msg.layers);
+        this.initialize(msg.layers, msg.size.w, msg.size.h);
         this.start();
         return true;
-      case MessageType.DESTORY:
-        this.destory();
+      case MessageType.DESTROY:
+        this.destroy();
         return true;
       case MessageType.EVENT:
         this.triggerEvent(msg.typ, msg.x, msg.y);
+        return true;
+      case MessageType.RESIZE:
+        this.resize(msg.w, msg.h);
         return true;
     };
     return false;

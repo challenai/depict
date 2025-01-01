@@ -27,7 +27,7 @@
       graph.start();
     }
 
-    return () => graph?.destory();
+    return () => graph?.destroy();
   });
 </script>
 

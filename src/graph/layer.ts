@@ -60,10 +60,18 @@ export class Layer {
   constructor(
     canvas: OffscreenCanvas,
     defaultRenderer: Renderer,
+    w: number,
+    h: number,
   ) {
     // canvas
     this.canvas = canvas;
     this.ctx = this.canvas.getContext("2d") as OffscreenCanvasRenderingContext2D;
+
+    // width and height
+    this.w = w;
+    this.h = h;
+    this.canvas.width = w;
+    this.canvas.height = h;
 
     // elements
     this.queue = [];
@@ -77,10 +85,6 @@ export class Layer {
     this.ddo = {};
     this.update = true;
     initializeContext(this.ctx, this.dmo, this.dto, this.ddo);
-
-    // width and height
-    this.w = this.canvas.width;
-    this.h = this.canvas.height;
 
     // elements update
     this.dirty = true;
@@ -108,6 +112,13 @@ export class Layer {
     }
   }
 
+  resize(w: number, h: number) {
+    this.w = w;
+    this.h = h;
+    this.canvas.width = w;
+    this.canvas.height = h;
+  }
+
   // render elements at coordinates (x, y)
   renderQueue(x: number, y: number) {
     this.ctx.clearRect(0, 0, this.w, this.h);
@@ -117,7 +128,7 @@ export class Layer {
     this.ctx.translate(-x, -y);
     this.dirty = false;
     for (const el of this.prev) {
-      if (el._state) el._state.destory = true;
+      if (el._state) el._state.destroy = true;
     }
     this.prev = this.next;
     this.next = new Set();
@@ -209,7 +220,7 @@ export class Layer {
       // check internal _state
       this.counter++
       if (!el._state) el._state = { idx: this.counter, dx: x, dy: y };
-      if (el._state.destory) el._state.destory = false;
+      if (el._state.destroy) el._state.destroy = false;
       if (el.hidden) continue;
       this.next.add(el);
 
@@ -260,7 +271,7 @@ export class Layer {
   }
 
   // reset the render queue to render from scratch, if a group of new elements are given.
-  // on this way, we don't compare to find the difference, instead, we destory all the built events, rebuild from scratch
+  // on this way, we don't compare to find the difference, instead, we destroy all the built events, rebuild from scratch
   updateQueue(elements: ShadowElement[]) {
     this.queue = elements;
     // this.next.clear();

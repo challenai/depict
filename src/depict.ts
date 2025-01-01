@@ -1,4 +1,4 @@
-import type { MsgInit } from "./defs/messages";
+import type { MsgInit, MsgSize } from "./defs/messages";
 import { CanvasEvent, MessageType } from "./defs/types";
 
 export interface DepictOptions {
@@ -7,7 +7,6 @@ export interface DepictOptions {
   worker: Worker;
 };
 
-// TODO: listen resize event
 // TODO: support dynamic layers?
 export class Depict {
   // root element to hold graph
@@ -23,7 +22,8 @@ export class Depict {
   // minimum event trigger interval
   private moveThrottle: number;
   // worker thread
-  worker: Worker;
+  private worker: Worker;
+  private resizeObserver: ResizeObserver;
 
   constructor({
     maxLayers,
@@ -45,22 +45,21 @@ export class Depict {
 
     for (let i = 0; i < this.maxLayers; i++) {
       const canvas = document.createElement("canvas");
-      this.initializeCanvas(canvas, this.w, this.h, i === 0);
+      this.initializeCanvas(canvas, i === 0);
       root.appendChild(canvas);
       this.layers.push(canvas);
     }
+
+    this.resizeObserver = new ResizeObserver(this.handleResize.bind(this));
+    this.resizeObserver.observe(this.root);
   }
 
   initializeCanvas(
     canvas: HTMLCanvasElement,
-    w: number,
-    h: number,
     base: boolean,
   ) {
-    canvas.width = w;
-    canvas.height = h;
-    canvas.style.width = `${w}px`;
-    canvas.style.height = `${h}px`;
+    canvas.style.width = `${this.w}px`;
+    canvas.style.height = `${this.h}px`;
     canvas.style.position = "absolute";
     canvas.style.top = "0";
     canvas.style.left = "0";
@@ -96,14 +95,37 @@ export class Depict {
 
     const msg: MsgInit = {
       layers: transfers,
+      size: {
+        w: this.w,
+        h: this.h,
+      },
     };
     this.worker.postMessage({ type: MessageType.INIT, msg }, transfers);
   }
 
-  destory() {
-    this.worker.postMessage({ type: MessageType.DESTORY }, []);
+  private handleResize() {
+    const rect = this.root.getClientRects().item(0);
+    this.x = rect ? rect.x : 0;
+    this.y = rect ? rect.y : 0;
+    this.w = rect ? rect.width : 0;
+    this.h = rect ? rect.height : 0;
+
+    for (let i = 0; i < this.maxLayers; i++) {
+      this.initializeCanvas(this.layers[i], i === 0);
+    }
+
+    const msg: MsgSize = {
+      w: this.w,
+      h: this.h,
+    };
+    this.worker.postMessage({ type: MessageType.RESIZE, msg }, []);
+  }
+
+  destroy() {
+    this.worker.postMessage({ type: MessageType.DESTROY }, []);
     for (const c of this.layers) {
       c.remove();
     }
+    this.resizeObserver.disconnect();
   }
 };
