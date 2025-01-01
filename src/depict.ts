@@ -1,4 +1,4 @@
-import type { MsgInit } from "./defs/messages";
+import type { MsgInit, MsgResize } from "./defs/messages";
 import { CanvasEvent, MessageType } from "./defs/types";
 
 export interface DepictOptions {
@@ -24,6 +24,7 @@ export class Depict {
   private moveThrottle: number;
   // worker thread
   worker: Worker;
+  private resizeObserver: ResizeObserver;
 
   constructor({
     maxLayers,
@@ -49,6 +50,9 @@ export class Depict {
       root.appendChild(canvas);
       this.layers.push(canvas);
     }
+
+    this.resizeObserver = new ResizeObserver(this.handleResize.bind(this));
+    this.resizeObserver.observe(this.root);
   }
 
   initializeCanvas(
@@ -100,10 +104,29 @@ export class Depict {
     this.worker.postMessage({ type: MessageType.INIT, msg }, transfers);
   }
 
+  handleResize() {
+    const rect = this.root.getClientRects().item(0);
+    this.x = rect ? rect.x : 0;
+    this.y = rect ? rect.y : 0;
+    this.w = rect ? rect.width : 0;
+    this.h = rect ? rect.height : 0;
+
+    for (let i = 0; i < this.maxLayers; i++) {
+      this.initializeCanvas(this.layers[i], this.w, this.h, i === 0);
+    }
+
+    const msg: MsgResize = {
+      w: this.w,
+      h: this.h,
+    };
+    this.worker.postMessage({ type: MessageType.RESIZE, msg }, []);
+  }
+
   destory() {
     this.worker.postMessage({ type: MessageType.DESTORY }, []);
     for (const c of this.layers) {
       c.remove();
     }
+    this.resizeObserver.disconnect();
   }
 };

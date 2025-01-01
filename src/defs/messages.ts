@@ -9,3 +9,8 @@ export interface MsgEvent {
   x: number;
   y: number;
 };
+
+export interface MsgResize {
+  w: number
+  h: number
+};
