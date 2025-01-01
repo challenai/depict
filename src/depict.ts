@@ -7,7 +7,6 @@ export interface DepictOptions {
   worker: Worker;
 };
 
-// TODO: listen resize event
 // TODO: support dynamic layers?
 export class Depict {
   // root element to hold graph
@@ -23,7 +22,7 @@ export class Depict {
   // minimum event trigger interval
   private moveThrottle: number;
   // worker thread
-  worker: Worker;
+  private worker: Worker;
   private resizeObserver: ResizeObserver;
 
   constructor({
@@ -104,7 +103,7 @@ export class Depict {
     this.worker.postMessage({ type: MessageType.INIT, msg }, transfers);
   }
 
-  handleResize() {
+  private handleResize() {
     const rect = this.root.getClientRects().item(0);
     this.x = rect ? rect.x : 0;
     this.y = rect ? rect.y : 0;
