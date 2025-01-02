@@ -104,11 +104,14 @@ export class Layer {
 
   // update elements in queue before render
   updateElements(delta: number) {
-    if (!this.update || !this.queue) return;
-    for (const element of this.queue) {
-      if (element.update) {
-        element.update(delta)
-      }
+    this.updateElementsInQueue(delta, this.queue);
+  }
+
+  private updateElementsInQueue(delta: number, elements?: ShadowElement[]) {
+    if (!this.update || !elements) return;
+    for (const element of elements) {
+      if (element.update) element.update(delta)
+      this.updateElementsInQueue(delta, element.children);
     }
   }
 
