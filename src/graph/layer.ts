@@ -7,6 +7,9 @@ import { CanvasEvent } from "../defs/types";
 
 export type ExplicitRenderLayer = (layer: number) => void;
 
+/**
+ * layer options
+ */
 export interface LayerOptions {
   renderer?: Renderer;
   meshOptions?: MeshSpecificOptions;

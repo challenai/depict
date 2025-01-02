@@ -9,6 +9,44 @@ export type EventPreHandler = (typ: CanvasEvent, x: number, y: number) => boolea
 
 export type EventPostHandler = (triggered: boolean, typ: CanvasEvent, x: number, y: number) => void;
 
+/**
+ * Graph hold all your shapes, it could run in the worker thread.
+ * 
+ * It could be used to draw any styles of graph, a chart, or a diagram, or even an interactive button with only a single layer.
+ * 
+ * The graph could be either simple event-driven or state-driven, or even a combination of both.
+ * 
+ * since it only depends on the canvas API, it could be used in any popular framework like React, Vue, Angular, or even vanilla JS.
+ *
+ * **Example Usage**
+ * 
+ * in web worker style, the graph will run in another thread,
+ * 
+ * and you don't need to handle the life cycle of the graph:
+ * 
+ * ```jsx
+ * const graph = new Graph();
+ * 
+ * // worker thread listen to the message event.
+ * onmessage = (ev) => {
+ *   graph.handleMessageEvent(ev);
+ * };
+ * ```
+ * 
+ * directly run the graph in your main thread style: (currently not recommended)
+ * 
+ * you need to munually handle the life cycle of the graph.
+ * 
+ * ```jsx
+ * const graph = new Graph();
+ * 
+ * // initialize the graph with layers and size.
+ * graph.initialize(layers, width, height);
+ * 
+ * // you need to destroy the graph when you don't need it anymore.
+ * graph.destory();
+ * ```
+ */
 export class Graph {
   // the layers of the graph
   private layers: Layer[];
@@ -89,24 +127,82 @@ export class Graph {
     this.loopFrame(0);
   }
 
-  // update elements of a specific layer
+
+  /**
+   * update elements render queue of a specific layer
+   * 
+   * if you want to draw another graph, you can set up a group of new elements of a specific layer.
+   * 
+   * @param layer layer to update, for exmaple, to update the second layer, you should pass 1.
+   * 
+   * @param elements an arraylist of elements to render for the next frame.
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * const node = {
+   *   x: 24,
+   *   y: 36,
+   *     shapes: [{
+   *       path: "M 20 20 l 0 100",
+   *       opts: {
+   *         stroke: "#666",
+   *         fill: "#333",
+   *     }],
+   * };
+   * graph.updateQueue(0, [node]);
+   * ```
+   */
   updateQueue(layer: number, elements: ShadowElement[]) {
     if (layer < 0 || layer >= this.layers.length) return;
     this.layers[layer].updateQueue(elements);
   }
 
+  /**
+   * update layer options of a specific layer
+   * 
+   * @param layer layer to update, for exmaple, to update the second layer, you should pass 1.
+   * 
+   * @param options layer options to update
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * graph.updateLayerOptions(1, { dynamic: true, update: true });
+   * ```
+   */
   updateLayerOptions(layer: number, options: LayerOptions) {
     if (layer < 0 || layer >= this.layers.length) return;
     this.layers[layer].updateOptions(options);
   }
 
-  // ask for rendering a specific layer
+  /**
+   * ask for rerendering a specific layer
+   * 
+   * for example, rerender the second layer.
+   * 
+   * @param layer layer to rerender, for exmaple, to render to second layer, you should pass 1.
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * graph.render(1);
+   * ```
+   */
   render(layer: number) {
     if (layer < 0 || layer >= this.layers.length) return;
     this.layers[layer].render();
   }
 
-  // ask for rendering all layers, the whole graph
+  /**
+   * ask for rerendering all layers(the whole graph)
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * graph.renderAll();
+   * ```
+   */
   renderAll() {
     for (const layer of this.layers) {
       layer.render();
