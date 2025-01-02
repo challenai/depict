@@ -2,13 +2,47 @@ import type { MsgInit, MsgSize } from "./defs/messages";
 import { CanvasEvent, MessageType } from "./defs/types";
 
 export interface DepictOptions {
+  /**
+   * max layers count of the graph
+   */
   maxLayers: number;
+  /**
+   * root element to hold graph,
+   * 
+   * the graph will automatically resize to fit the root element.
+   */
   root: HTMLDivElement;
+  /**
+   * worker thread to run the graph,
+   * 
+   * you can run multiple graphs in a single one worker.
+   * 
+   * or you can run only one graph per worker.
+   */
   worker: Worker;
 };
 
-// TODO: support dynamic layers?
+/**
+ * Depict runs in the main thread,
+ * 
+ * it's the entrance of a multithread graph.
+ * 
+ * It will communite with the worker thread to draw the graph.
+ *
+ * **Example Usage**
+ *
+ * ```jsx
+ * const depict = new Depict({
+ *   maxLayers: 2,
+ *   root: document.getElementById("root"),
+ *   worker: new Worker("./worker.js"),
+ * });
+ * 
+ * depict.start();
+ * ```
+ */
 export class Depict {
+  // TODO: support dynamic layers?
   // root element to hold graph
   private root: HTMLElement;
   // canvas layers
@@ -54,7 +88,7 @@ export class Depict {
     this.resizeObserver.observe(this.root);
   }
 
-  initializeCanvas(
+  private initializeCanvas(
     canvas: HTMLCanvasElement,
     base: boolean,
   ) {
@@ -68,6 +102,18 @@ export class Depict {
     }
   }
 
+  /**
+   * start the graph now.
+   * 
+   * the graph will be initialized and start to run.
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * const depict = new Depict(opts);
+   * depict.start();
+   * ```
+   */
   start() {
     const transfers: OffscreenCanvas[] = [];
     for (const c of this.layers) {
@@ -121,6 +167,15 @@ export class Depict {
     this.worker.postMessage({ type: MessageType.RESIZE, msg }, []);
   }
 
+  /**
+   * destroy the graph to release all the resources and memories.
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * depict.destroy();
+   * ```
+   */
   destroy() {
     this.worker.postMessage({ type: MessageType.DESTROY }, []);
     for (const c of this.layers) {
