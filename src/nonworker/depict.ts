@@ -16,9 +16,9 @@ export interface NonWorkerDepictOptions {
 };
 
 /**
- * NonWorkerDepict runs the graph in the main thread,
+ * NonWorkerDepict runs the graph in the main thread directly,
  * 
- * the NonWorkerDepict entrance is currently experimental.
+ * the NonWorkerDepict entrance is currently **experimental**.
  * 
  * **Example Usage**
  *
