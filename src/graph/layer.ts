@@ -204,6 +204,7 @@ export class Layer {
         const actives = this.evActive.triggerAll(x, y);
         const activesSet = new Set(actives);
         for (const element of this.active) {
+          if (element._state?.destroy) continue;
           if (element.onMouseleave && !activesSet.has(element)) {
             element.onMouseleave(renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
           }
