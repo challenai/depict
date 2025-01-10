@@ -131,7 +131,7 @@ export class Graph {
   /**
    * update elements render queue of a specific layer
    * 
-   * if you want to draw another graph, you can set up a group of new elements of a specific layer.
+   * if you want to update a part of this layer, you can update only a part of some elements of a specific layer.
    * 
    * @param layer layer to update, for exmaple, to update the second layer, you should pass 1.
    * 
@@ -156,6 +156,77 @@ export class Graph {
   updateQueue(layer: number, elements: ShadowElement[]) {
     if (layer < 0 || layer >= this.layers.length) return;
     this.layers[layer].updateQueue(elements);
+  }
+
+  /**
+   * reset elements render queue of a specific layer
+   * 
+   * if you want to draw a whole new layer, you can reset the layer with a group of new elements
+   * 
+   * the only difference with `updateQueue` is that it could be a bit faster.
+   * 
+   * @param layer layer to update, for exmaple, to update the second layer, you should pass 1.
+   * 
+   * @param elements an arraylist of elements to render for the next frame.
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * const node = {
+   *   x: 24,
+   *   y: 36,
+   *     shapes: [{
+   *       path: "M 20 20 l 0 100",
+   *       opts: {
+   *         stroke: "#666",
+   *         fill: "#333",
+   *     }],
+   * };
+   * graph.resetQueue(0, [node]);
+   * ```
+   */
+  resetQueue(layer: number, elements: ShadowElement[]) {
+    if (layer < 0 || layer >= this.layers.length) return;
+    this.layers[layer].resetQueue(elements);
+  }
+
+  /**
+   * reset the whole graph
+   * 
+   * if you want to draw a whole new graph, you can reset all the layers
+   * 
+   * you can still reuse the previous elements.
+   * 
+   * if you don't specify the elements of the specific layer, the layer will be reset empty.
+   * 
+   * @param elements an arraylist of new layers.
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * const node = {
+   *   x: 24,
+   *   y: 36,
+   *     shapes: [{
+   *       path: "M 20 20 l 0 100",
+   *       opts: {
+   *         stroke: "#666",
+   *         fill: "#333",
+   *     }],
+   * };
+   * graph.resetGraph([[node]]);
+   * // the second layer will be empty since we don't provide the elements of second layer.
+   * ```
+   */
+  resetGraph(elements: ShadowElement[][]) {
+    if (!elements || elements.length > this.layers.length) return;
+    this.layers.forEach((layer, idx) => {
+      if (idx >= elements.length) {
+        layer.resetQueue([]);
+        return;
+      }
+      layer.resetQueue(elements[idx]);
+    });
   }
 
   /**

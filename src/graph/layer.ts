@@ -285,6 +285,25 @@ export class Layer {
     this.dirty = true;
   }
 
+  // reset the whole queue for a new group of elements
+  // destory all the current elements directly.
+  resetQueue(elements: ShadowElement[]) {
+    this.uninstallEvents();
+    this.prev.clear();
+    this.next.clear();
+    this.queue = elements;
+    this.dirty = true;
+  }
+
+  uninstallEvents() {
+    this.evClick.clear();
+    this.evMouseUp.clear();
+    this.evMouseDown.clear();
+    this.evActive.clear();
+    this.evMove.clear();
+    this.active.clear();
+  }
+
   // update layer options to turn on/off some function flags or change base styles.
   updateOptions(options: LayerOptions) {
     if (options.renderer) this.dr = options.renderer;

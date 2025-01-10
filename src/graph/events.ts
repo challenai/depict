@@ -59,4 +59,8 @@ export class BinaryEventHandler {
     // Insert the element at the found position
     this.nodes.splice(left, 0, el);
   }
+
+  clear() {
+    this.nodes = [];
+  }
 }
