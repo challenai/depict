@@ -5,8 +5,55 @@ import type { Renderer } from "../physical/render";
 import type { ShadowElement } from "./element";
 import { MessageType, type CanvasEvent } from "../defs/types";
 
+/**
+ * preHandle runs before all events.
+ * 
+ * if you want to catch the event and do something before the graph get the event,
+ * 
+ * use it if you return true, the event **will not** be passed to graph.
+ * 
+ * @param {CanvasEvent} typ the type of the event
+ * 
+ * @param {number} x the position x of the event
+ * 
+ * @param {number} y the position y of the event
+ * 
+ * @return {boolean} the stop the event if true.
+ * 
+ * **Example Usage**
+ * 
+ * ```jsx
+ * graph.preHandle = (typ, x, y) => {
+ *   console.log("event happens at position: ", x, y);
+ *   return false;
+ * }
+ * ```
+ */
 export type EventPreHandler = (typ: CanvasEvent, x: number, y: number) => boolean;
 
+/**
+ * postHandle runs before all events.
+ * 
+ * use it if you want to catch the event and do something after the graph handle the event,
+ * 
+ * if you return true, the event **will not** be passed to graph.
+ * 
+ * @param triggered triggered is used to tell you if the event has triggered some elements in the graphy
+ * 
+ * @param typ the type of the event
+ * 
+ * @param x the position x of the event
+ * 
+ * @param y the position y of the event
+ * 
+ * **Example Usage**
+ * 
+ * ```jsx
+ * graph.postHandle = (triggered, typ, x, y) => {
+ *   console.log("event happens at position: ", x, y);
+ * }
+ * ```
+ */
 export type EventPostHandler = (triggered: boolean, typ: CanvasEvent, x: number, y: number) => void;
 
 /**
@@ -54,11 +101,69 @@ export class Graph {
   // animation handle
   private looping: number;
 
-  // overall offset of the graph
+  /**
+   * overall graph offset x
+   * 
+   * the graph will render according this delta x.
+   */
   dx: number;
+
+  /**
+   * overall graph offset y, 
+   * 
+   * the graph will render according this delta y.
+   */
   dy: number;
 
+  /**
+   * preHandle runs before all events.
+   * 
+   * if you want to catch the event and do something before the graph get the event,
+   * 
+   * use it if you return true, the event **will not** be passed to graph.
+   * 
+   * @param {CanvasEvent} typ the type of the event
+   * 
+   * @param {number} x the position x of the event
+   * 
+   * @param {number} y the position y of the event
+   * 
+   * @return {boolean} the stop the event if true.
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * graph.preHandle = (typ, x, y) => {
+   *   console.log("event happens at position: ", x, y);
+   *   return false;
+   * }
+   * ```
+   */
   preHandle: EventPreHandler | null;
+
+  /**
+   * postHandle runs before all events.
+   * 
+   * use it if you want to catch the event and do something after the graph handle the event,
+   * 
+   * if you return true, the event **will not** be passed to graph.
+   * 
+   * @param triggered triggered is used to tell you if the event has triggered some elements in the graphy
+   * 
+   * @param typ the type of the event
+   * 
+   * @param x the position x of the event
+   * 
+   * @param y the position y of the event
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * graph.postHandle = (triggered, typ, x, y) => {
+   *   console.log("event happens at position: ", x, y);
+   * }
+   * ```
+   */
   postHandle: EventPostHandler | null;
 
   constructor() {
@@ -70,6 +175,11 @@ export class Graph {
     this.postHandle = null;
   }
 
+  /**
+   * initialize the graph
+   * 
+   * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to intialize munually.
+   */
   initialize(layers: OffscreenCanvas[], w: number, h: number) {
     const defaultRenderer: Renderer = new MinimalistRenderer({
       meshContextBuilder: buildMeshContext,
@@ -81,6 +191,11 @@ export class Graph {
     }
   }
 
+  /**
+   * resize the graph
+   * 
+   * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to resize munually.
+   */
   resize(w: number, h: number) {
     for (const layer of this.layers) {
       layer.resize(w, h);
@@ -88,6 +203,11 @@ export class Graph {
     this.renderAll();
   }
 
+  /**
+   * trigger the events
+   * 
+   * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to triggerEvent munually.
+   */
   triggerEvent(typ: CanvasEvent, x: number, y: number) {
     let stopFlag = false;
     if (this.preHandle) stopFlag = this.preHandle(typ, x, y);
@@ -122,7 +242,11 @@ export class Graph {
     this.looping = requestAnimationFrame(this.loopFrame.bind(this));
   }
 
-  // start the graph
+  /**
+   * start the graph
+   * 
+   * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to start graph munually.
+   */
   start() {
     this.loopFrame(0);
   }
@@ -280,13 +404,40 @@ export class Graph {
     }
   }
 
-  // destroy the graph
+  /**
+   * destroy the graph
+   * 
+   * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to destory munually.
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * graph.destory();
+   * ```
+   */
   destroy() {
     // release all the offscreen canvas memory
     this.layers.length = 0;
     cancelAnimationFrame(this.looping);
   }
 
+  /**
+   * handleMessageEvent handles messages from main thread.
+   * 
+   * @param {MessageEvent} ev the message event
+   * 
+   * @return {boolean} does the given event could been handled by this function? the user defined events can't be handled automatically
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * const graph = new Graph();
+   * 
+   * onmessage = (ev: MessageEvent) => {
+   *   if (graph.handleMessageEvent(ev)) return;
+   * }
+   * ```
+   */
   handleMessageEvent(ev: MessageEvent): boolean {
     const eventType = ev.data.type;
     const msg = ev.data.msg;

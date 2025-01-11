@@ -1,5 +1,5 @@
 {
-  "name": "vue-graph",
+  "name": "vanilla",
   "version": "1.0.0",
   "type": "module",
   "repository": {
@@ -9,18 +9,14 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
+    "build": "vite build",
     "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.4.10"
   },
   "dependencies": {
     "@pattaya/depict": "^0.4.2",
-    "@pattaya/pather": "^1.0.0",
-    "vue": "^3.5.12"
-  },
-  "devDependencies": {
-    "@vitejs/plugin-vue": "^5.1.4",
-    "typescript": "~5.6.2",
-    "vite": "^5.4.10",
-    "vue-tsc": "^2.1.8"
+    "@pattaya/pather": "^1.0.0"
   }
 }
