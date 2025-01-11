@@ -16,12 +16,13 @@ Depict is a JavaScript library for building canvas based user interface.
 ### examples
 
 You can create graph application with any other framework you like,    
-there are some demo applications which include **React**, **Vue** or **Svelte** based graph,  
+there are some demo applications which include **React**, **Vue**, **Svelte**, or **vanilla javascript** based graph,  
 listed as follows:  
 
-- [react graph example](https://github.com/challenai/depict/blob/main/examples/react-graph/README.md)
-- [vue graph example](https://github.com/challenai/depict/blob/main/examples/vue-graph/README.md)
-- [svelte graph example](https://github.com/challenai/depict/blob/main/examples/svelte-graph/README.md)
+- [React graph example](https://github.com/challenai/depict/blob/main/examples/react-graph/README.md)
+- [Vue graph example](https://github.com/challenai/depict/blob/main/examples/vue-graph/README.md)
+- [Svelte graph example](https://github.com/challenai/depict/blob/main/examples/svelte-graph/README.md)
+- [HTML + Javascript example](https://github.com/challenai/depict/blob/main/examples/vanilla/README.md)
 
 for **every application** in the `examples` directory, you can run the application with the following steps.  
 
