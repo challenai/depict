@@ -1,6 +1,9 @@
 import type { Graph } from "../graph";
 import { CanvasEvent } from "../defs/types";
 
+/**
+ * Options to initialize NonWorkerDepict
+ */
 export interface NonWorkerDepictOptions {
   /**
    * max layers count of the graph
@@ -12,13 +15,18 @@ export interface NonWorkerDepictOptions {
    * the graph will automatically resize to fit the root element.
    */
   root: HTMLDivElement;
+  /**
+   * the graph to run
+   */
   graph: Graph;
 };
 
 /**
  * NonWorkerDepict runs the graph in the main thread directly,
  * 
- * the NonWorkerDepict entrance is currently **experimental**.
+ * It's not recommended to run a complex graph in main thread for sake of performance.
+ * 
+ * But it's enough for the graph with less than 100 event driven nodes or 1000 nodes in a static graph.
  * 
  * **Example Usage**
  *
@@ -46,7 +54,7 @@ export class NonWorkerDepict {
   private h: number;
   // minimum event trigger interval
   private moveThrottle: number;
-  // worker thread
+  // graph
   private g: Graph;
   private resizeObserver: ResizeObserver;
 
