@@ -1,6 +1,9 @@
 import type { MsgInit, MsgSize } from "./defs/messages";
 import { CanvasEvent, MessageType } from "./defs/types";
 
+/**
+ * Options to initialize Depict
+ */
 export interface DepictOptions {
   /**
    * max layers count of the graph
@@ -25,7 +28,7 @@ export interface DepictOptions {
 /**
  * Depict runs in the main thread,
  * 
- * it's the entrance of a multithread graph.
+ * it's the entrance of a multi-thread graph.
  * 
  * It will communite with the worker thread to draw the graph.
  *
