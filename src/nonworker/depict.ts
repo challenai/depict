@@ -47,7 +47,7 @@ export class NonWorkerDepict {
   // minimum event trigger interval
   private moveThrottle: number;
   // worker thread
-  private graph: Graph;
+  private g: Graph;
   private resizeObserver: ResizeObserver;
 
   constructor({
@@ -58,7 +58,7 @@ export class NonWorkerDepict {
     this.root = root;
     this.maxLayers = maxLayers;
     this.layers = [];
-    this.graph = graph;
+    this.g = graph;
 
     const rect = this.root.getClientRects().item(0);
     this.x = rect ? rect.x : 0;
@@ -113,25 +113,25 @@ export class NonWorkerDepict {
 
     const c = this.layers[this.layers.length - 1];
     c.onclick = (ev: MouseEvent) => {
-      this.graph.triggerEvent(CanvasEvent.CLICK, ev.clientX - this.x, ev.clientY - this.y);
+      this.g.triggerEvent(CanvasEvent.CLICK, ev.clientX - this.x, ev.clientY - this.y);
     };
     c.onmouseup = (ev: MouseEvent) => {
-      this.graph.triggerEvent(CanvasEvent.MOUSE_UP, ev.clientX - this.x, ev.clientY - this.y);
+      this.g.triggerEvent(CanvasEvent.MOUSE_UP, ev.clientX - this.x, ev.clientY - this.y);
     };
     c.onmousedown = (ev: MouseEvent) => {
-      this.graph.triggerEvent(CanvasEvent.MOUSE_DOWN, ev.clientX - this.x, ev.clientY - this.y);
+      this.g.triggerEvent(CanvasEvent.MOUSE_DOWN, ev.clientX - this.x, ev.clientY - this.y);
     };
     c.onmousemove = (ev: MouseEvent) => {
       const interval = 16;
       const now = (new Date()).getTime();
       if (now > this.moveThrottle + interval) {
         this.moveThrottle = now;
-        this.graph.triggerEvent(CanvasEvent.MOUSE_MOVE, ev.clientX - this.x, ev.clientY - this.y);
+        this.g.triggerEvent(CanvasEvent.MOUSE_MOVE, ev.clientX - this.x, ev.clientY - this.y);
       }
     };
 
-    this.graph.initialize(transfers, this.w, this.h);
-    this.graph.start();
+    this.g.initialize(transfers, this.w, this.h);
+    this.g.start();
   }
 
   private handleResize() {
@@ -145,7 +145,7 @@ export class NonWorkerDepict {
       this.initializeCanvas(this.layers[i], i === 0);
     }
 
-    this.graph.resize(this.w, this.h);
+    this.g.resize(this.w, this.h);
   }
 
   /**
@@ -154,14 +154,29 @@ export class NonWorkerDepict {
    * **Example Usage**
    * 
    * ```jsx
+   * const depict = new Depict(opts);
    * depict.destroy();
    * ```
    */
-  destroy() {
-    this.graph.destroy();
+  destory() {
+    this.g.destroy();
     for (const c of this.layers) {
       c.remove();
     }
     this.resizeObserver.disconnect();
+  }
+
+  /**
+   * get the graph
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * const depict = new Depict(opts);
+   * const graph = depict.graph;
+   * ```
+   */
+  get graph(): Graph {
+    return this.g;
   }
 };
