@@ -133,7 +133,7 @@ export class NonWorkerDepict {
       }
     };
 
-    this.g.initialize(transfers, this.w, this.h);
+    this.g.initialize(transfers, this.w, this.h, window.devicePixelRatio || 1);
     this.g.start();
   }
 
@@ -146,7 +146,7 @@ export class NonWorkerDepict {
       this.initializeCanvas(this.layers[i], i === 0);
     }
 
-    this.g.resize(this.w, this.h);
+    this.g.resize(this.w, this.h, window.devicePixelRatio || 1);
   }
 
   /**

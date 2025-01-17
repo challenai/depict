@@ -147,6 +147,7 @@ export class Depict {
       size: {
         w: this.w,
         h: this.h,
+        scale: window.devicePixelRatio || 1,
       },
     };
     this.worker.postMessage({ type: MessageType.INIT, msg }, transfers);
@@ -164,6 +165,7 @@ export class Depict {
     const msg: MsgSize = {
       w: this.w,
       h: this.h,
+      scale: window.devicePixelRatio || 1,
     };
     this.worker.postMessage({ type: MessageType.RESIZE, msg }, []);
   }

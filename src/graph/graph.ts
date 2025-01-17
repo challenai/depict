@@ -180,13 +180,13 @@ export class Graph {
    * 
    * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to intialize munually.
    */
-  initialize(layers: OffscreenCanvas[], w: number, h: number) {
+  initialize(layers: OffscreenCanvas[], w: number, h: number, scale: number) {
     const defaultRenderer: Renderer = new MinimalistRenderer({
       meshContextBuilder: buildMeshContext,
       textContextBuilder: buildTextContext,
     });
     for (const canvas of layers) {
-      const layer = new Layer(canvas, defaultRenderer, w, h);
+      const layer = new Layer(canvas, defaultRenderer, w, h, scale);
       this.layers.push(layer);
     }
   }
@@ -196,9 +196,9 @@ export class Graph {
    * 
    * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to resize munually.
    */
-  resize(w: number, h: number) {
+  resize(w: number, h: number, scale: number) {
     for (const layer of this.layers) {
-      layer.resize(w, h);
+      layer.resize(w, h, scale);
     }
     this.renderAll();
   }
@@ -443,7 +443,7 @@ export class Graph {
     const msg = ev.data.msg;
     switch (eventType) {
       case MessageType.INIT:
-        this.initialize(msg.layers, msg.size.w, msg.size.h);
+        this.initialize(msg.layers, msg.size.w, msg.size.h, msg.size.scale);
         this.start();
         return true;
       case MessageType.DESTROY:
@@ -453,7 +453,7 @@ export class Graph {
         this.triggerEvent(msg.typ, msg.x, msg.y);
         return true;
       case MessageType.RESIZE:
-        this.resize(msg.w, msg.h);
+        this.resize(msg.w, msg.h, msg.scale);
         return true;
     };
     return false;
