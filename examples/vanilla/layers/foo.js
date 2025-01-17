@@ -38,12 +38,10 @@ export const fooGraph = [
     onMouseenter(render) {
       this.shapes[0].opts.fill = "#222";
       render();
-      return false;
     },
     onMouseleave(render) {
       this.shapes[0].opts.fill = "#333";
       render();
-      return false;
     },
   },
 ];
