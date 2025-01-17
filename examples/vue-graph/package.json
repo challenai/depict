@@ -13,8 +13,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@pattaya/depict": "^0.4.3",
-    "@pattaya/pather": "^1.0.0",
+    "@pattaya/depict": "^0.5.0",
+    "@pattaya/pather": "^1.0.1",
     "vue": "^3.5.12"
   },
   "devDependencies": {

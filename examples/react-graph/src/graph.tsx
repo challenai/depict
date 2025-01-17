@@ -28,7 +28,7 @@ function GraphContainer({ count }: GraphContainerProps) {
       g.start();
     }
 
-    return () => g?.destory();
+    return () => g?.destroy();
   }, []);
 
   useEffect(() => {

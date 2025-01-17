@@ -88,6 +88,17 @@ const node = {
 graph.updateQueue(2, [node]);
 ```
 
+### features
+
+works in the todo list:   
+- [x] support single thread version.
+- [ ] provide api to get text rect information.
+- [ ] support text align.
+- [ ] support change element render priority.
+- [ ] support bounding box ?
+- [ ] provide a new animated renderer ?
+- [ ] more examples: render image, animation
+
 ### License
 
 MIT

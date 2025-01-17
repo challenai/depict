@@ -1,10 +1,25 @@
 import type { Mesh, Text } from "../physical/drawable";
 import type { Renderer } from "../physical/render";
 
+/**
+ * RenderHooksFn is a render hook
+ * 
+ * @param ctx canvas context
+ */
 export type RenderHooksFn = (ctx: OffscreenCanvasRenderingContext2D) => void;
 
+/**
+ * UpdateFn runs updates before render
+ * 
+ * @param delta delta time from previous render, it's commonly used to animate.
+ */
 export type UpdateFn = (delta: number) => void;
 
+/**
+ * RenderLayer request render the given layer
+ * 
+ * @param layer specify the layer to render, if no layer was given, the whole graph will be rerender.
+ */
 export type RenderLayer = (layer?: number) => void;
 
 /**
@@ -103,27 +118,27 @@ export interface ShadowElement {
   /**
    * onClick would be called when the element is clicked.
    */
-  onClick?: (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => boolean;
+  onClick?: (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => void;
   /**
    * onMouseenter would be called when the mouse enters the element.
    */
-  onMouseenter?: (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => boolean;
+  onMouseenter?: (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => void;
   /**
    * onMouseleave would be called when the mouse leaves the element.
    */
-  onMouseleave?: (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => boolean;
+  onMouseleave?: (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => void;
   /**
    * onMouseup would be called when the mouse up event is triggered.
    */
-  onMouseup?: (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => boolean;
+  onMouseup?: (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => void;
   /**
    * onMousedown would be called when the mouse down event is triggered.
    */
-  onMousedown?: (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => boolean;
+  onMousedown?: (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => void;
   /**
    * onMousemove would be called when the mouse move event is triggered.
    */
-  onMousemove?: (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => boolean;
+  onMousemove?: (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => void;
   // TODO: decide if bounding box works
   // boundingBox?: number[];
   /**
