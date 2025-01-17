@@ -91,7 +91,7 @@ export type EventPostHandler = (triggered: boolean, typ: CanvasEvent, x: number,
  * graph.initialize(layers, width, height);
  * 
  * // you need to destroy the graph when you don't need it anymore.
- * graph.destory();
+ * graph.destroy();
  * ```
  */
 export class Graph {
@@ -407,12 +407,12 @@ export class Graph {
   /**
    * destroy the graph
    * 
-   * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to destory munually.
+   * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to destroy munually.
    * 
    * **Example Usage**
    * 
    * ```jsx
-   * graph.destory();
+   * graph.destroy();
    * ```
    */
   destroy() {

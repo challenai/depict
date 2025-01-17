@@ -286,7 +286,7 @@ export class Layer {
   }
 
   // reset the whole queue for a new group of elements
-  // destory all the current elements directly.
+  // destroy all the current elements directly.
   resetQueue(elements: ShadowElement[]) {
     this.uninstallEvents();
     this.prev.clear();
