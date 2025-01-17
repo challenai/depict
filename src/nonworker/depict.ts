@@ -166,7 +166,7 @@ export class NonWorkerDepict {
    * depict.destroy();
    * ```
    */
-  destory() {
+  destroy() {
     this.g.destroy();
     for (const c of this.layers) {
       c.remove();
