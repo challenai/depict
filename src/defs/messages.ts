@@ -12,6 +12,7 @@ export interface MsgEvent {
 };
 
 export interface MsgSize {
-  w: number
-  h: number
+  w: number;
+  h: number;
+  scale: number;
 };

@@ -51,9 +51,7 @@ export class Depict {
   // canvas layers
   private layers: HTMLCanvasElement[];
   private maxLayers: number;
-  // dom posistion of current graph
-  private x: number;
-  private y: number;
+  // size of current graph
   private w: number;
   private h: number;
   // minimum event trigger interval
@@ -72,9 +70,7 @@ export class Depict {
     this.layers = [];
     this.worker = worker;
 
-    const rect = this.root.getClientRects().item(0);
-    this.x = rect ? rect.x : 0;
-    this.y = rect ? rect.y : 0;
+    const rect = this.root.getBoundingClientRect();
     this.w = rect ? rect.width : 0;
     this.h = rect ? rect.height : 0;
 
@@ -125,20 +121,24 @@ export class Depict {
 
     const c = this.layers[this.layers.length - 1];
     c.onclick = (ev: MouseEvent) => {
-      this.worker.postMessage({ type: MessageType.EVENT, msg: { x: ev.clientX - this.x, y: ev.clientY - this.y, typ: CanvasEvent.CLICK } });
+      const rect = c.getBoundingClientRect();
+      this.worker.postMessage({ type: MessageType.EVENT, msg: { x: ev.clientX - rect.left, y: ev.clientY - rect.top, typ: CanvasEvent.CLICK } });
     };
     c.onmouseup = (ev: MouseEvent) => {
-      this.worker.postMessage({ type: MessageType.EVENT, msg: { x: ev.clientX - this.x, y: ev.clientY - this.y, typ: CanvasEvent.MOUSE_UP } });
+      const rect = c.getBoundingClientRect();
+      this.worker.postMessage({ type: MessageType.EVENT, msg: { x: ev.clientX - rect.left, y: ev.clientY - rect.top, typ: CanvasEvent.MOUSE_UP } });
     };
     c.onmousedown = (ev: MouseEvent) => {
-      this.worker.postMessage({ type: MessageType.EVENT, msg: { x: ev.clientX - this.x, y: ev.clientY - this.y, typ: CanvasEvent.MOUSE_DOWN } });
+      const rect = c.getBoundingClientRect();
+      this.worker.postMessage({ type: MessageType.EVENT, msg: { x: ev.clientX - rect.left, y: ev.clientY - rect.top, typ: CanvasEvent.MOUSE_DOWN } });
     };
     c.onmousemove = (ev: MouseEvent) => {
+      const rect = c.getBoundingClientRect();
       const interval = 16;
       const now = (new Date()).getTime();
       if (now > this.moveThrottle + interval) {
         this.moveThrottle = now;
-        this.worker.postMessage({ type: MessageType.EVENT, msg: { x: ev.clientX - this.x, y: ev.clientY - this.y, typ: CanvasEvent.MOUSE_MOVE } });
+        this.worker.postMessage({ type: MessageType.EVENT, msg: { x: ev.clientX - rect.left, y: ev.clientY - rect.top, typ: CanvasEvent.MOUSE_MOVE } });
       }
     };
 
@@ -147,15 +147,14 @@ export class Depict {
       size: {
         w: this.w,
         h: this.h,
+        scale: window.devicePixelRatio || 1,
       },
     };
     this.worker.postMessage({ type: MessageType.INIT, msg }, transfers);
   }
 
   private handleResize() {
-    const rect = this.root.getClientRects().item(0);
-    this.x = rect ? rect.x : 0;
-    this.y = rect ? rect.y : 0;
+    const rect = this.root.getBoundingClientRect();
     this.w = rect ? rect.width : 0;
     this.h = rect ? rect.height : 0;
 
@@ -166,6 +165,7 @@ export class Depict {
     const msg: MsgSize = {
       w: this.w,
       h: this.h,
+      scale: window.devicePixelRatio || 1,
     };
     this.worker.postMessage({ type: MessageType.RESIZE, msg }, []);
   }

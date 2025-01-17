@@ -65,6 +65,7 @@ export class Layer {
     defaultRenderer: Renderer,
     w: number,
     h: number,
+    scale: number,
   ) {
     // canvas
     this.canvas = canvas;
@@ -73,8 +74,9 @@ export class Layer {
     // width and height
     this.w = w;
     this.h = h;
-    this.canvas.width = w;
-    this.canvas.height = h;
+    this.canvas.width = Math.round(w * scale);
+    this.canvas.height = Math.round(h * scale);
+    this.ctx.scale(scale, scale);
 
     // elements
     this.queue = [];
@@ -118,11 +120,15 @@ export class Layer {
     }
   }
 
-  resize(w: number, h: number) {
+  // resize the layer
+  resize(w: number, h: number, scale: number) {
     this.w = w;
     this.h = h;
-    this.canvas.width = w;
-    this.canvas.height = h;
+    // reset the transform
+    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+    this.canvas.width = Math.round(w * scale);
+    this.canvas.height = Math.round(h * scale);
+    this.ctx.scale(scale, scale);
   }
 
   // render elements at coordinates (x, y)

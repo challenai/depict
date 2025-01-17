@@ -1,4 +1,4 @@
-import type { Graph } from "../graph";
+import { Graph } from "../graph";
 import { CanvasEvent } from "../defs/types";
 
 /**
@@ -15,10 +15,6 @@ export interface NonWorkerDepictOptions {
    * the graph will automatically resize to fit the root element.
    */
   root: HTMLDivElement;
-  /**
-   * the graph to run
-   */
-  graph: Graph;
 };
 
 /**
@@ -48,8 +44,6 @@ export class NonWorkerDepict {
   private layers: HTMLCanvasElement[];
   private maxLayers: number;
   // dom posistion of current graph
-  private x: number;
-  private y: number;
   private w: number;
   private h: number;
   // minimum event trigger interval
@@ -61,16 +55,13 @@ export class NonWorkerDepict {
   constructor({
     maxLayers,
     root,
-    graph,
   }: NonWorkerDepictOptions) {
     this.root = root;
     this.maxLayers = maxLayers;
     this.layers = [];
-    this.g = graph;
+    this.g = new Graph();
 
-    const rect = this.root.getClientRects().item(0);
-    this.x = rect ? rect.x : 0;
-    this.y = rect ? rect.y : 0;
+    const rect = this.root.getBoundingClientRect();
     this.w = rect ? rect.width : 0;
     this.h = rect ? rect.height : 0;
 
@@ -121,31 +112,33 @@ export class NonWorkerDepict {
 
     const c = this.layers[this.layers.length - 1];
     c.onclick = (ev: MouseEvent) => {
-      this.g.triggerEvent(CanvasEvent.CLICK, ev.clientX - this.x, ev.clientY - this.y);
+      const rect = c.getBoundingClientRect();
+      this.g.triggerEvent(CanvasEvent.CLICK, ev.clientX - rect.left, ev.clientY - rect.top);
     };
     c.onmouseup = (ev: MouseEvent) => {
-      this.g.triggerEvent(CanvasEvent.MOUSE_UP, ev.clientX - this.x, ev.clientY - this.y);
+      const rect = c.getBoundingClientRect();
+      this.g.triggerEvent(CanvasEvent.MOUSE_UP, ev.clientX - rect.left, ev.clientY - rect.top);
     };
     c.onmousedown = (ev: MouseEvent) => {
-      this.g.triggerEvent(CanvasEvent.MOUSE_DOWN, ev.clientX - this.x, ev.clientY - this.y);
+      const rect = c.getBoundingClientRect();
+      this.g.triggerEvent(CanvasEvent.MOUSE_DOWN, ev.clientX - rect.left, ev.clientY - rect.top);
     };
     c.onmousemove = (ev: MouseEvent) => {
+      const rect = c.getBoundingClientRect();
       const interval = 16;
       const now = (new Date()).getTime();
       if (now > this.moveThrottle + interval) {
         this.moveThrottle = now;
-        this.g.triggerEvent(CanvasEvent.MOUSE_MOVE, ev.clientX - this.x, ev.clientY - this.y);
+        this.g.triggerEvent(CanvasEvent.MOUSE_MOVE, ev.clientX - rect.left, ev.clientY - rect.top);
       }
     };
 
-    this.g.initialize(transfers, this.w, this.h);
+    this.g.initialize(transfers, this.w, this.h, window.devicePixelRatio || 1);
     this.g.start();
   }
 
   private handleResize() {
-    const rect = this.root.getClientRects().item(0);
-    this.x = rect ? rect.x : 0;
-    this.y = rect ? rect.y : 0;
+    const rect = this.root.getBoundingClientRect();
     this.w = rect ? rect.width : 0;
     this.h = rect ? rect.height : 0;
 
@@ -153,7 +146,7 @@ export class NonWorkerDepict {
       this.initializeCanvas(this.layers[i], i === 0);
     }
 
-    this.g.resize(this.w, this.h);
+    this.g.resize(this.w, this.h, window.devicePixelRatio || 1);
   }
 
   /**
