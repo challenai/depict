@@ -1,7 +1,7 @@
 {
   "name": "@pattaya/depict",
   "module": "lib/index.min.js",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "type": "module",
   "exports": {
     ".": {

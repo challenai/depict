@@ -3,6 +3,7 @@ import type { CanvasEvent } from "./types";
 export interface MsgInit {
   layers: OffscreenCanvas[];
   size: MsgSize;
+  background?: OffscreenCanvas;
 };
 
 export interface MsgEvent {

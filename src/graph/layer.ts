@@ -1,8 +1,8 @@
+import type { RenderHooksFn, ShadowElement } from "./element";
 import type { DrawableOptions, Mesh, MeshSpecificOptions, Text, TextSpecificOptions } from "../physical/drawable";
 import { Renderer } from "../physical/render";
 import { initializeContext } from "../physical/context";
 import { BinaryEventHandler } from "./events";
-import type { ShadowElement } from "./element";
 import { CanvasEvent } from "../defs/types";
 
 export type ExplicitRenderLayer = (layer: number) => void;
@@ -22,6 +22,7 @@ export interface LayerOptions {
 export class Layer {
   // canvas
   private canvas: OffscreenCanvas;
+  private background?: OffscreenCanvas;
   // canvas context
   private ctx: OffscreenCanvasRenderingContext2D;
 
@@ -66,9 +67,11 @@ export class Layer {
     w: number,
     h: number,
     scale: number,
+    background?: OffscreenCanvas,
   ) {
     // canvas
     this.canvas = canvas;
+    this.background = background;
     this.ctx = this.canvas.getContext("2d") as OffscreenCanvasRenderingContext2D;
 
     // width and height
@@ -269,7 +272,7 @@ export class Layer {
         this.ctx.translate(tx, ty);
         el.shapes?.forEach((m: Mesh) => r.draw(this.ctx, m));
         el.texts?.forEach((t: Text) => r.write(this.ctx, t));
-        if (el.postRenderCallback) this.postRender(el.postRenderCallback);
+        if (el.postRenderCallback) this.postRender(el.postRenderCallback.bind(el));
         this.renderElements(dx, dy, el.children);
         this.ctx.translate(-tx, -ty);
       }
@@ -277,9 +280,9 @@ export class Layer {
   }
 
   // run an extra render callback hook after an element finished its draw for pathes and texts
-  private postRender(callback: (ctx: OffscreenCanvasRenderingContext2D) => void) {
+  private postRender(callback: RenderHooksFn) {
     this.ctx.save();
-    callback(this.ctx);
+    callback(this.ctx, this.background);
     this.ctx.restore();
   }
 
