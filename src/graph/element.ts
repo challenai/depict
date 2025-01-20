@@ -6,7 +6,7 @@ import type { Renderer } from "../physical/render";
  * 
  * @param ctx canvas context
  */
-export type RenderHooksFn = (ctx: OffscreenCanvasRenderingContext2D) => void;
+export type RenderHooksFn = (ctx: OffscreenCanvasRenderingContext2D, offscreen?: OffscreenCanvas) => void;
 
 /**
  * UpdateFn runs updates before render

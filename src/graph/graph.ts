@@ -180,13 +180,13 @@ export class Graph {
    * 
    * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to intialize munually.
    */
-  initialize(layers: OffscreenCanvas[], w: number, h: number, scale: number) {
+  initialize(layers: OffscreenCanvas[], w: number, h: number, scale: number, background?: OffscreenCanvas) {
     const defaultRenderer: Renderer = new MinimalistRenderer({
       meshContextBuilder: buildMeshContext,
       textContextBuilder: buildTextContext,
     });
     for (const canvas of layers) {
-      const layer = new Layer(canvas, defaultRenderer, w, h, scale);
+      const layer = new Layer(canvas, defaultRenderer, w, h, scale, background);
       this.layers.push(layer);
     }
   }
@@ -443,7 +443,7 @@ export class Graph {
     const msg = ev.data.msg;
     switch (eventType) {
       case MessageType.INIT:
-        this.initialize(msg.layers, msg.size.w, msg.size.h, msg.size.scale);
+        this.initialize(msg.layers, msg.size.w, msg.size.h, msg.size.scale, msg.background);
         this.start();
         return true;
       case MessageType.DESTROY:

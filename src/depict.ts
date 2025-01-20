@@ -23,6 +23,12 @@ export interface DepictOptions {
    * or you can run only one graph per worker.
    */
   worker: Worker;
+  /**
+   * provide an offscreen canvas which doesn't show in the viewport,
+   * 
+   * you can use this offscreen canvas to draw and cache graph.
+   */
+  offscreenCanvas?: boolean;
 };
 
 /**
@@ -59,11 +65,13 @@ export class Depict {
   // worker thread
   private worker: Worker;
   private resizeObserver: ResizeObserver;
+  private offscreenCanvas?: HTMLCanvasElement;
 
   constructor({
     maxLayers,
     root,
     worker,
+    offscreenCanvas,
   }: DepictOptions) {
     this.root = root;
     this.maxLayers = maxLayers;
@@ -76,6 +84,13 @@ export class Depict {
 
     this.moveThrottle = 0;
 
+    if (offscreenCanvas) {
+      const backgroundCanvas = document.createElement("canvas");
+      backgroundCanvas.hidden = true;
+      this.initializeCanvas(backgroundCanvas, false);
+      root.appendChild(backgroundCanvas);
+      this.offscreenCanvas = backgroundCanvas;
+    }
     for (let i = 0; i < this.maxLayers; i++) {
       const canvas = document.createElement("canvas");
       this.initializeCanvas(canvas, i === 0);
@@ -114,9 +129,9 @@ export class Depict {
    * ```
    */
   start() {
-    const transfers: OffscreenCanvas[] = [];
+    const layers: OffscreenCanvas[] = [];
     for (const c of this.layers) {
-      transfers.push(c.transferControlToOffscreen());
+      layers.push(c.transferControlToOffscreen());
     }
 
     const c = this.layers[this.layers.length - 1];
@@ -142,14 +157,20 @@ export class Depict {
       }
     };
 
+    const transfers: OffscreenCanvas[] = [...layers];
     const msg: MsgInit = {
-      layers: transfers,
+      layers,
       size: {
         w: this.w,
         h: this.h,
         scale: window.devicePixelRatio || 1,
       },
     };
+    if (this.offscreenCanvas) {
+      const background = this.offscreenCanvas.transferControlToOffscreen();
+      msg.background = background;
+      transfers.push(background);
+    }
     this.worker.postMessage({ type: MessageType.INIT, msg }, transfers);
   }
 

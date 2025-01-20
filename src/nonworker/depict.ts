@@ -15,6 +15,12 @@ export interface NonWorkerDepictOptions {
    * the graph will automatically resize to fit the root element.
    */
   root: HTMLDivElement;
+  /**
+   * provide a offline canvas which doesn't show in the viewport,
+   * 
+   * you can use this offline canvas to draw and cache graph.
+   */
+  offscreenCanvas?: boolean;
 };
 
 /**
@@ -51,10 +57,12 @@ export class NonWorkerDepict {
   // graph
   private g: Graph;
   private resizeObserver: ResizeObserver;
+  private offscreenCanvas?: HTMLCanvasElement;
 
   constructor({
     maxLayers,
     root,
+    offscreenCanvas,
   }: NonWorkerDepictOptions) {
     this.root = root;
     this.maxLayers = maxLayers;
@@ -67,6 +75,13 @@ export class NonWorkerDepict {
 
     this.moveThrottle = 0;
 
+    if (offscreenCanvas) {
+      const backgroundCanvas = document.createElement("canvas");
+      backgroundCanvas.hidden = true;
+      this.initializeCanvas(backgroundCanvas, false);
+      root.appendChild(backgroundCanvas);
+      this.offscreenCanvas = backgroundCanvas;
+    }
     for (let i = 0; i < this.maxLayers; i++) {
       const canvas = document.createElement("canvas");
       this.initializeCanvas(canvas, i === 0);
@@ -105,9 +120,9 @@ export class NonWorkerDepict {
    * ```
    */
   start() {
-    const transfers: OffscreenCanvas[] = [];
+    const layers: OffscreenCanvas[] = [];
     for (const c of this.layers) {
-      transfers.push(c.transferControlToOffscreen());
+      layers.push(c.transferControlToOffscreen());
     }
 
     const c = this.layers[this.layers.length - 1];
@@ -133,7 +148,11 @@ export class NonWorkerDepict {
       }
     };
 
-    this.g.initialize(transfers, this.w, this.h, window.devicePixelRatio || 1);
+    if (this.offscreenCanvas) {
+      this.g.initialize(layers, this.w, this.h, window.devicePixelRatio || 1, this.offscreenCanvas.transferControlToOffscreen());
+    } else {
+      this.g.initialize(layers, this.w, this.h, window.devicePixelRatio || 1);
+    }
     this.g.start();
   }
 
