@@ -58,6 +58,12 @@ export interface Text {
   _state?: any;
 };
 
+// TextRect is the rect size of a given text
+export interface TextRect {
+  width: number;
+  height: number;
+};
+
 // text style options
 export interface TextOptions extends TextSpecificOptions, DrawableOptions { };
 

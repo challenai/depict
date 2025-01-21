@@ -1,5 +1,5 @@
 import type { MeshContextBuilder, TextContextBuilder } from "../../physical/context";
-import type { Mesh, Text } from "../../physical/drawable";
+import type { Mesh, Text, TextRect } from "../../physical/drawable";
 import { Renderer } from "../../physical/render";
 import { cutLastLine, seperateText2MultiLines } from "../../physical/text";
 
@@ -40,46 +40,69 @@ export class MinimalistRenderer extends Renderer {
     ctx.restore();
   };
 
-  write(ctx: OffscreenCanvasRenderingContext2D, text: Text) {
+  boundingBox(ctx: OffscreenCanvasRenderingContext2D, text: Text): TextRect {
     ctx.save();
-    // text border: default value == false
-    const border = text.opts?.border;
-    // fill the text, default value == true
-    const fill = !text.opts || text.opts.background !== false || text.opts.fill;
+
+    const lineHeight = text.opts?.lineHeight || 18;
+    if (text.opts) this.tcb(ctx, text.opts);
+    this.layout(ctx, text, lineHeight);
+
+    ctx.restore();
+
+    const lines = text._state.ls;
+    if (lines.length === 1) {
+      return {
+        width: ctx.measureText(lines[0]).width,
+        height: lineHeight,
+      }
+    }
+    return {
+      width: text._state.w,
+      height: text._state.h,
+    };
+  }
+
+  layout(ctx: OffscreenCanvasRenderingContext2D, text: Text, lineHeight: number) {
+    if (text._state && text._state.t === text.content && (!text.opts || !text.opts.relayout)) return;
 
     const caculateWidth = (text: string, start: number, end?: number) => {
       return ctx.measureText(text.substring(start, end)).width;
     };
 
-    if (text.opts) this.tcb(ctx, text.opts);
-
+    const cacheContent = text.content.slice();
     if (!text.opts || !text.opts.height || !text.opts.width) {
       let content = text.content;
+      let width: number;
       if (text.opts && text.opts.width) {
+        width = text.opts.width;
         content = cutLastLine(text.content, text.opts.width, 0, caculateWidth, text.opts.wordBased, text.opts.ellipsis);
       }
-      if (border) ctx.strokeText(content, text.x || 0, text.y || 0);
-      if (fill) ctx.fillText(content, text.x || 0, text.y || 0);
-      ctx.restore();
+      text._state = { t: cacheContent, ls: [content], w: 0, h: 0 };
       return;
     }
 
     const width = text.opts.width;
     const height = text.opts.height;
-    const lineHeight = text.opts?.lineHeight || 18;
 
+    const targetLines = this.estimateLines(lineHeight, height);
+    const lines = seperateText2MultiLines(cacheContent, width, caculateWidth, targetLines, text.opts.wordBased, text.opts.ellipsis);
+    text._state = { t: cacheContent, ls: lines, w: width, h: lineHeight * lines.length };
+  };
+
+  write(ctx: OffscreenCanvasRenderingContext2D, text: Text) {
+    ctx.save();
+
+    const lineHeight = text.opts?.lineHeight || 18;
+    if (text.opts) this.tcb(ctx, text.opts);
+    this.layout(ctx, text, lineHeight);
+
+    // text border: default value == false
+    const border = text.opts?.border;
+    // fill the text, default value == true
+    const fill = !text.opts || text.opts.background !== false || text.opts.fill;
 
     // lines to render
-    let lines: string[];
-    if (text._state && text._state.t === text.content && !text.opts.relayout) {
-      lines = text._state.ls;
-    } else {
-      const cacheContent = text.content.slice();
-      const targetLines = this.estimateLines(lineHeight, height);
-      lines = seperateText2MultiLines(cacheContent, width, caculateWidth, targetLines, text.opts.wordBased, text.opts.ellipsis);
-      text._state = { t: cacheContent, ls: lines };
-    }
-
+    const lines = text._state.ls;
     let y = text.y || 0;
     for (let ln of lines) {
       if (border) ctx.strokeText(ln, text.x || 0, y);
@@ -88,7 +111,7 @@ export class MinimalistRenderer extends Renderer {
     }
 
     ctx.restore();
-  };
+  }
 
   // estimate how many lines should it wraps.
   // TODO: optional inner padding ?
