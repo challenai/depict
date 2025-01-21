@@ -333,6 +333,16 @@ export class Layer {
     return this.dynamic || this.dirty;
   }
 
+  // set default renderer
+  setDefaultRenderer(renderer: Renderer) {
+    this.dr = renderer;
+  }
+
+  // get default renderer
+  get defaultRenderer(): Renderer {
+    return this.dr;
+  }
+
   // ask for rendering current layer
   render() {
     if (this.shouldRender()) return;

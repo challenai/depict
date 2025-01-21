@@ -179,6 +179,12 @@ export class Graph {
    * initialize the graph
    * 
    * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to intialize munually.
+   * 
+   * the default renderer is a minimalist renderer which provides only basic line and curve drawing,
+   * 
+   * if you want to create some highly stylized graph (for examples: curves, lines and background with animations; hand drawn style graph),
+   * 
+   * setting a customized renderer by setDefaultRenderer would be a better choice.
    */
   initialize(layers: OffscreenCanvas[], w: number, h: number, scale: number, background?: OffscreenCanvas) {
     const defaultRenderer: Renderer = new MinimalistRenderer({
@@ -188,6 +194,43 @@ export class Graph {
     for (const canvas of layers) {
       const layer = new Layer(canvas, defaultRenderer, w, h, scale, background);
       this.layers.push(layer);
+    }
+  }
+
+  /**
+   * set default renderer for a specific layer
+   * 
+   * @param layer layer to update, for exmaple, to update the second layer, you should pass 1.
+   * 
+   * @param renderer the default renderer
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * const dr: Renderer = new MinimalistRenderer({...});
+   * graph.setDefaultRenderer(0, dr);
+   * ```
+   */
+  setDefaultRenderer(layer: number, renderer: Renderer) {
+    if (layer < 0 || layer >= this.layers.length) return;
+    this.layers[layer].setDefaultRenderer(renderer);
+  }
+
+  /**
+   * set default renderer for the whole graph
+   * 
+   * @param renderer the default renderer
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * const dr: Renderer = new MinimalistRenderer({...});
+   * graph.setGraphDefaultRenderer(dr);
+   * ```
+   */
+  setGraphDefaultRenderer(renderer: Renderer) {
+    for (const layer of this.layers) {
+      layer.setDefaultRenderer(renderer);
     }
   }
 
@@ -419,6 +462,21 @@ export class Graph {
     // release all the offscreen canvas memory
     this.layers.length = 0;
     cancelAnimationFrame(this.looping);
+  }
+
+  /**
+   * get the default renderer of a specific layer
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * const renderer = graph.getRenderer(0);
+   * if (renderer) renderer.draw(...);
+   * ```
+   */
+  getRenderer(layer: number): Renderer | undefined {
+    if (layer < 0 || layer >= this.layers.length) return;
+    return this.layers[layer].defaultRenderer;
   }
 
   /**

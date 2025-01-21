@@ -38,9 +38,13 @@ export const buildMeshContext: MeshContextBuilder = (ctx: OffscreenCanvasRenderi
 // default text context builder
 export const buildTextContext: TextContextBuilder = (ctx: OffscreenCanvasRenderingContext2D, o: TextOptions) => {
   for (const key in o) {
-    if (key === "font") {
-      ctx.font = o.font as any;
-      continue;
+    switch (key) {
+      case "font":
+        ctx.font = o.font as any;
+        break;
+      case "align":
+        ctx.textAlign = o.textAlign as any;
+        break;
     }
     buildDrawableContextWithKey(ctx, o, key);
   }
