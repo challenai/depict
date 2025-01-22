@@ -271,8 +271,8 @@ export class Layer {
       if (el.shapes || el.texts || el.postRenderCallback) {
         this.ctx.translate(tx, ty);
         el.shapes?.forEach((m: Mesh) => r.draw(this.ctx, m));
-        el.texts?.forEach((t: Text) => r.write(this.ctx, t));
         if (el.postRenderCallback) this.postRender(el.postRenderCallback.bind(el));
+        el.texts?.forEach((t: Text) => r.write(this.ctx, t));
         this.renderElements(dx, dy, el.children);
         this.ctx.translate(-tx, -ty);
       }
