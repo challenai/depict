@@ -1,4 +1,4 @@
-import type { Mesh, Text } from './drawable';
+import type { Mesh, Text, TextRect } from './drawable';
 
 // Renderer render meshes and write texts
 export abstract class Renderer {
@@ -6,4 +6,6 @@ export abstract class Renderer {
   abstract draw(ctx: OffscreenCanvasRenderingContext2D, shape: Mesh): void
   // write texts
   abstract write(ctx: OffscreenCanvasRenderingContext2D, text: Text): void
+  // bounding box
+  abstract boundingBox(ctx: OffscreenCanvasRenderingContext2D, text: Text): TextRect
 };
