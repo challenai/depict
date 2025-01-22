@@ -3,13 +3,25 @@ import type { Mesh, Text, TextRect } from "../../physical/drawable";
 import { Renderer } from "../../physical/render";
 import { cutLastLine, seperateText2MultiLines } from "../../physical/text";
 
+/**
+ * MinimalistRenderer options
+*/
 export interface MinimalistOptions {
+  /**
+   * provide a mesh context builder to initialize the renderer
+  */
   meshContextBuilder: MeshContextBuilder;
+  /**
+   * provide a text context builder to initialize the renderer
+  */
   textContextBuilder: TextContextBuilder;
 }
 
-// minimalist renderer provide basic wire frame to draw,
-// it will draw our shapes as fast as possible.
+/**
+ * MinimalistRenderer provide basic wire frame to draw,
+ * 
+ * it will draw our shapes as fast as possible.
+*/
 export class MinimalistRenderer extends Renderer {
   mcb: MeshContextBuilder;
   tcb: TextContextBuilder;
@@ -20,6 +32,9 @@ export class MinimalistRenderer extends Renderer {
     this.tcb = opts.textContextBuilder;
   };
 
+  /**
+   * draw meshes to the graph
+  */
   draw(ctx: OffscreenCanvasRenderingContext2D, mesh: Mesh) {
     ctx.save();
     if (mesh.opts) this.mcb(ctx, mesh.opts);
@@ -40,6 +55,9 @@ export class MinimalistRenderer extends Renderer {
     ctx.restore();
   };
 
+  /**
+   * get bounding box of the text
+  */
   boundingBox(ctx: OffscreenCanvasRenderingContext2D, text: Text): TextRect {
     ctx.save();
 
@@ -62,7 +80,7 @@ export class MinimalistRenderer extends Renderer {
     };
   }
 
-  layout(ctx: OffscreenCanvasRenderingContext2D, text: Text, lineHeight: number) {
+  private layout(ctx: OffscreenCanvasRenderingContext2D, text: Text, lineHeight: number) {
     if (text._state && text._state.t === text.content && (!text.opts || !text.opts.relayout)) return;
 
     const caculateWidth = (text: string, start: number, end?: number) => {
@@ -87,6 +105,9 @@ export class MinimalistRenderer extends Renderer {
     text._state = { t: cacheContent, ls: lines, w: width, h: lineHeight * lines.length };
   };
 
+  /**
+   * write texts to the graph
+  */
   write(ctx: OffscreenCanvasRenderingContext2D, text: Text) {
     ctx.save();
 

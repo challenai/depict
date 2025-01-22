@@ -6,12 +6,20 @@ import type { Mesh, Text, TextRect } from "../../physical/drawable";
 import { Renderer } from "../../physical/render";
 import { cutLastLine, seperateText2MultiLines } from '../../physical/text';
 
-// TODO: extra rough options
+/**
+ * SketchyRenderer options
+*/
 export interface SketchyOptions {
+  /**
+   * provide a text context builder to initialize the renderer
+  */
   textContextBuilder: TextContextBuilder;
+  // TODO: extra rough options
 }
 
-// sketchy renderer provide sketchy style wire frame to draw
+/**
+ * SketchyRenderer provide sketchy style wire frame to draw
+*/
 export class SketchyRenderer extends Renderer {
   tcb: TextContextBuilder;
   gen: RoughGenerator;
@@ -24,6 +32,9 @@ export class SketchyRenderer extends Renderer {
     this.gen = new RoughGenerator();
   };
 
+  /**
+   * draw meshes to the graph
+  */
   draw(ctx: OffscreenCanvasRenderingContext2D, mesh: Mesh) {
     ctx.save();
 
@@ -42,6 +53,9 @@ export class SketchyRenderer extends Renderer {
     ctx.restore();
   };
 
+  /**
+   * get bounding box of the text
+  */
   boundingBox(ctx: OffscreenCanvasRenderingContext2D, text: Text): TextRect {
     ctx.save();
 
@@ -64,7 +78,7 @@ export class SketchyRenderer extends Renderer {
     };
   }
 
-  layout(ctx: OffscreenCanvasRenderingContext2D, text: Text, lineHeight: number) {
+  private layout(ctx: OffscreenCanvasRenderingContext2D, text: Text, lineHeight: number) {
     if (text._state && text._state.t === text.content && (!text.opts || !text.opts.relayout)) return;
 
     const caculateWidth = (text: string, start: number, end?: number) => {
@@ -89,6 +103,9 @@ export class SketchyRenderer extends Renderer {
     text._state = { t: cacheContent, ls: lines, w: width, h: lineHeight * lines.length };
   };
 
+  /**
+   * write texts to the graph
+  */
   write(ctx: OffscreenCanvasRenderingContext2D, text: Text) {
     ctx.save();
 
