@@ -72,9 +72,7 @@ export class MinimalistRenderer extends Renderer {
     const cacheContent = text.content.slice();
     if (!text.opts || !text.opts.height || !text.opts.width) {
       let content = text.content;
-      let width: number;
       if (text.opts && text.opts.width) {
-        width = text.opts.width;
         content = cutLastLine(text.content, text.opts.width, 0, caculateWidth, text.opts.wordBased, text.opts.ellipsis);
       }
       text._state = { t: cacheContent, ls: [content], w: 0, h: 0 };
