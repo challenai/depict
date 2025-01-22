@@ -4,6 +4,21 @@ import { buildMeshContext, buildTextContext } from "../physical/context";
 import type { Renderer } from "../physical/render";
 import type { ShadowElement } from "./element";
 import { MessageType, type CanvasEvent } from "../defs/types";
+import type { Text, TextRect } from "../physical/drawable";
+
+/**
+ * text bounding box propertities
+*/
+export interface TextBoundingBoxProps {
+  /**
+   * layer of the text
+  */
+  layer?: number;
+  /**
+   * renderer of the text, not need if the text use default renderer
+  */
+  renderer?: Renderer;
+};
 
 /**
  * preHandle runs before all events.
@@ -445,6 +460,27 @@ export class Graph {
     for (const layer of this.layers) {
       layer.render();
     }
+  }
+
+  /**
+   * get the bounding box of a text
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * const rect = graph.boundingBox(text);
+   * // or: const rect = graph.boundingBox(text, {renderer: sketchyRenderer});
+   * console.log(rect.width, rect.height);
+   * ```
+   */
+  boundingBox(text: Text, props?: TextBoundingBoxProps): TextRect {
+    if (props?.layer) {
+      if (props.layer < 0 || props.layer >= this.layers.length) {
+        return { width: 0, height: 0 };
+      }
+      return this.layers[props.layer].boundingBox(text, props.renderer);
+    }
+    return this.layers[0].boundingBox(text);
   }
 
   /**
