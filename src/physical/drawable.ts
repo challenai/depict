@@ -76,6 +76,8 @@ export interface TextSpecificOptions {
   lineHeight?: number;
   // font of text
   font?: string;
+  // align of text: start, end, center, left, right
+  textAlign?: string;
   // tell the graph the user want the text to caculate layout again
   relayout?: boolean;
   // ellipsis
