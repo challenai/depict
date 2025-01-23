@@ -1,79 +1,185 @@
-// mesh is the basic render unit
+/**
+ * mesh is the basic render unit
+*/
 export interface Mesh {
-  // path of the given mesh
+  /**
+   * path of the given mesh
+  */
   path: string;
-  // prevent random generated shape from changing
+  /**
+   * prevent random generated shape from changing
+  */
   seed?: number;
-  // offset x
+  /**
+   * offset x
+  */
   x?: number;
-  // offset y
+  /**
+   * offset y
+  */
   y?: number;
-  // options
+  /**
+   * mesh options
+  */
   opts?: MeshOptions;
 };
 
-// shared style options
+/**
+ * shared style options
+*/
 export interface DrawableOptions {
-  // need to draw border
+  /**
+   * need to draw border ?
+  */
   border?: boolean;
-  // need to draw background
+  /**
+   * need to draw background ?
+  */
   background?: boolean;
-  // canvas stroke style
+  /**
+   * canvas stroke style
+  */
   stroke?: string;
-  // canvas fill color or pattern
+  /**
+   * canvas fill color or pattern
+  */
   fill?: string;
-  // rotation in degrees
+  /**
+   * rotation in radian
+  */
   rotation?: number;
-  // scale factor
+  /**
+   * scale factor
+  */
   scale?: number;
-  // shadow
+  /**
+   * the color of shadow
+  */
   shadowColor?: string;
+  /**
+   * the blur of shadow
+  */
   shadowBlur?: number;
+  /**
+   * the offset x of shadow
+  */
   shadowOffsetX?: number;
+  /**
+   * the offset y of shadow
+  */
   shadowOffsetY?: number;
 }
 
-// mesh style options
+/**
+ * mesh style options
+*/
 export interface MeshOptions extends MeshSpecificOptions, DrawableOptions { };
 
+/**
+ * mesh related options
+*/
 export interface MeshSpecificOptions {
-  // line width of mesh
+  /**
+   * line width of mesh
+  */
   lineWidth?: number;
+  /**
+   * line cap of mesh
+  */
   lineCap?: string;
+  /**
+   * line join of mesh
+  */
   lineJoin?: string;
+  /**
+   * miter limit of mesh
+  */
   miterLimit?: number;
 }
 
-// Text is all the text shown in our art
+/**
+ * Text is all the text shown in our art
+*/
 export interface Text {
-  // text content
+  /**
+   * text content
+  */
   content: string;
-  // offset x
+  /**
+   * offset x
+  */
   x?: number;
-  // offset y
+  /**
+   * offset y
+  */
   y?: number;
-  // options
+  /**
+   * options
+  */
   opts?: TextOptions;
-  // internal state
+  /**
+   * internal state to speed up render,
+   * 
+   * never modify it munually
+  */
   _state?: any;
 };
 
-// text style options
+/**
+ * TextRect is the rect size of a given text
+*/
+export interface TextRect {
+  /**
+   * width of the text
+  */
+  width: number;
+  /**
+   * height of the text
+  */
+  height: number;
+};
+
+/**
+ * text style options
+*/
 export interface TextOptions extends TextSpecificOptions, DrawableOptions { };
 
+/**
+ * text related options
+*/
 export interface TextSpecificOptions {
-  // max width of given text, the extra words whould be thrown away
+  /**
+   * max width of given text, the extra words whould be thrown away
+  */
   width?: number;
-  // max height of the text, if the height is given, the lines could be wrap
+  /**
+   * max height of the text,
+   * 
+   * if the height is given, the text could be wrap to multilines.
+  */
   height?: number;
-  // line height of the text
+  /**
+   * line height of the text
+  */
   lineHeight?: number;
-  // font of text
+  /**
+   * font of text, to set font weight, font family and font size
+  */
   font?: string;
-  // tell the graph the user want the text to caculate layout again
+  /**
+   * align of text: start, end, center, left, right
+  */
+  textAlign?: string;
+  /**
+   * tell the graph the user want the text to caculate layout again
+  */
   relayout?: boolean;
-  // ellipsis
+  /**
+   * ellipsis overflow text
+  */
   ellipsis?: boolean;
-  // seperate according to words instead of letter
+  /**
+   * seperate according to words instead of letter
+  */
   wordBased?: boolean;
 }

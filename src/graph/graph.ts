@@ -4,6 +4,21 @@ import { buildMeshContext, buildTextContext } from "../physical/context";
 import type { Renderer } from "../physical/render";
 import type { ShadowElement } from "./element";
 import { MessageType, type CanvasEvent } from "../defs/types";
+import type { Text, TextRect } from "../physical/drawable";
+
+/**
+ * text bounding box propertities
+*/
+export interface TextBoundingBoxProps {
+  /**
+   * layer of the text
+  */
+  layer?: number;
+  /**
+   * renderer of the text, not need if the text use default renderer
+  */
+  renderer?: Renderer;
+};
 
 /**
  * preHandle runs before all events.
@@ -179,6 +194,12 @@ export class Graph {
    * initialize the graph
    * 
    * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to intialize munually.
+   * 
+   * the default renderer is a minimalist renderer which provides only basic line and curve drawing,
+   * 
+   * if you want to create some highly stylized graph (for examples: curves, lines and background with animations; hand drawn style graph),
+   * 
+   * setting a customized renderer by setDefaultRenderer would be a better choice.
    */
   initialize(layers: OffscreenCanvas[], w: number, h: number, scale: number, background?: OffscreenCanvas) {
     const defaultRenderer: Renderer = new MinimalistRenderer({
@@ -188,6 +209,43 @@ export class Graph {
     for (const canvas of layers) {
       const layer = new Layer(canvas, defaultRenderer, w, h, scale, background);
       this.layers.push(layer);
+    }
+  }
+
+  /**
+   * set default renderer for a specific layer
+   * 
+   * @param layer layer to update, for exmaple, to update the second layer, you should pass 1.
+   * 
+   * @param renderer the default renderer
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * const dr: Renderer = new MinimalistRenderer({...});
+   * graph.setDefaultRenderer(0, dr);
+   * ```
+   */
+  setDefaultRenderer(layer: number, renderer: Renderer) {
+    if (layer < 0 || layer >= this.layers.length) return;
+    this.layers[layer].setDefaultRenderer(renderer);
+  }
+
+  /**
+   * set default renderer for the whole graph
+   * 
+   * @param renderer the default renderer
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * const dr: Renderer = new MinimalistRenderer({...});
+   * graph.setGraphDefaultRenderer(dr);
+   * ```
+   */
+  setGraphDefaultRenderer(renderer: Renderer) {
+    for (const layer of this.layers) {
+      layer.setDefaultRenderer(renderer);
     }
   }
 
@@ -405,6 +463,27 @@ export class Graph {
   }
 
   /**
+   * get the bounding box of a text
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * const rect = graph.boundingBox(text);
+   * // or: const rect = graph.boundingBox(text, {renderer: sketchyRenderer});
+   * console.log(rect.width, rect.height);
+   * ```
+   */
+  boundingBox(text: Text, props?: TextBoundingBoxProps): TextRect {
+    if (props?.layer) {
+      if (props.layer < 0 || props.layer >= this.layers.length) {
+        return { width: 0, height: 0 };
+      }
+      return this.layers[props.layer].boundingBox(text, props.renderer);
+    }
+    return this.layers[0].boundingBox(text);
+  }
+
+  /**
    * destroy the graph
    * 
    * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to destroy munually.
@@ -419,6 +498,21 @@ export class Graph {
     // release all the offscreen canvas memory
     this.layers.length = 0;
     cancelAnimationFrame(this.looping);
+  }
+
+  /**
+   * get the default renderer of a specific layer
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * const renderer = graph.getRenderer(0);
+   * if (renderer) renderer.draw(...);
+   * ```
+   */
+  getRenderer(layer: number): Renderer | undefined {
+    if (layer < 0 || layer >= this.layers.length) return;
+    return this.layers[layer].defaultRenderer;
   }
 
   /**

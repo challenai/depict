@@ -1,5 +1,5 @@
 import type { RenderHooksFn, ShadowElement } from "./element";
-import type { DrawableOptions, Mesh, MeshSpecificOptions, Text, TextSpecificOptions } from "../physical/drawable";
+import type { DrawableOptions, Mesh, MeshSpecificOptions, Text, TextRect, TextSpecificOptions } from "../physical/drawable";
 import { Renderer } from "../physical/render";
 import { initializeContext } from "../physical/context";
 import { BinaryEventHandler } from "./events";
@@ -271,8 +271,8 @@ export class Layer {
       if (el.shapes || el.texts || el.postRenderCallback) {
         this.ctx.translate(tx, ty);
         el.shapes?.forEach((m: Mesh) => r.draw(this.ctx, m));
-        el.texts?.forEach((t: Text) => r.write(this.ctx, t));
         if (el.postRenderCallback) this.postRender(el.postRenderCallback.bind(el));
+        el.texts?.forEach((t: Text) => r.write(this.ctx, t));
         this.renderElements(dx, dy, el.children);
         this.ctx.translate(-tx, -ty);
       }
@@ -331,6 +331,22 @@ export class Layer {
   // should this layer rerender now ?
   shouldRender(): boolean {
     return this.dynamic || this.dirty;
+  }
+
+  // get bounding box of text
+  boundingBox(text: Text, renderer?: Renderer): TextRect {
+    if (renderer) return renderer.boundingBox(this.ctx, text);
+    return this.dr.boundingBox(this.ctx, text);
+  }
+
+  // set default renderer
+  setDefaultRenderer(renderer: Renderer) {
+    this.dr = renderer;
+  }
+
+  // get default renderer
+  get defaultRenderer(): Renderer {
+    return this.dr;
   }
 
   // ask for rendering current layer

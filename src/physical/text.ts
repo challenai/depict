@@ -1,6 +1,11 @@
+/**
+ * caculate the width of text
+*/
 export type WidthCaculator = (text: string, start: number, end?: number) => number;
 
-// nextLine search potiential end position.
+/**
+ * nextLine search potiential end position.
+*/
 const nextEnding = (text: string, width: number, start: number, caculateWidth: WidthCaculator): number => {
   if (caculateWidth(text, start) <= width) return text.length;
 
@@ -18,8 +23,11 @@ const nextEnding = (text: string, width: number, start: number, caculateWidth: W
   return r;
 }
 
-// TODO: compare heuristic search effecience
+/**
+ * nextWordsEnding search potiential end position with words granularity.
+*/
 const nextWordsEnding = (text: string, width: number, start: number, caculateWidth: WidthCaculator): number => {
+  // TODO: compare heuristic search effecience
   const border = nextEnding(text, width, start, caculateWidth);
   // the rest text cannot fullfill the width
   if (border === text.length) return border;
@@ -29,7 +37,9 @@ const nextWordsEnding = (text: string, width: number, start: number, caculateWid
   return border;
 }
 
-// cut the last line and ellipsis if required
+/**
+ * cut the last line and ellipsis if required
+*/
 export const cutLastLine = (text: string, width: number, start: number, caculateWidth: WidthCaculator, wordBased?: boolean, ellipsis?: boolean): string => {
   if (caculateWidth(text, start) <= width) return text.substring(start);
 
@@ -42,7 +52,9 @@ export const cutLastLine = (text: string, width: number, start: number, caculate
 }
 
 
-// seperate text to at most given lines
+/**
+ * seperate text to at most given lines
+*/
 export const seperateText2MultiLines = (text: string, width: number, caculateWidth: WidthCaculator, targetLines: number, wordBased?: boolean, ellipsis?: boolean): string[] => {
   const lines: string[] = [];
   let l = 0;
