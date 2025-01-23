@@ -92,8 +92,8 @@ graph.updateQueue(2, [node]);
 
 works in the todo list:   
 - [x] support single thread version.
-- [ ] provide api to get text rect information.
-- [ ] support text align.
+- [x] provide api to get text rect information.
+- [x] support text align.
 - [ ] support change element render priority.
 - [ ] support bounding box ?
 - [ ] provide a new animated renderer ?
