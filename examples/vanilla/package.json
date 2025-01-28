@@ -17,6 +17,6 @@
   },
   "dependencies": {
     "@pattaya/depict": "^0.5.3",
-    "@pattaya/pather": "^1.0.1"
+    "impressionist": "^1.0.4"
   }
 }
