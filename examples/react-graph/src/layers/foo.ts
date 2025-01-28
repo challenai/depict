@@ -1,5 +1,5 @@
 import { ShadowElement } from "@pattaya/depict/graph";
-import { Rectangle } from "@pattaya/pather";
+import { rectangle } from "impressionist";
 import { reactState } from "./state";
 
 export const fooGraph: ShadowElement[] = [
@@ -26,7 +26,7 @@ export const fooGraph: ShadowElement[] = [
     y: 181,
     shapes: [
       {
-        path: Rectangle.Basic(0, 0, 96, 72),
+        path: rectangle.basic(0, 0, 96, 72),
         opts: {
           stroke: "#666",
           fill: "#333",

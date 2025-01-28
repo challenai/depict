@@ -1,4 +1,4 @@
-import { Rectangle } from "@pattaya/pather";
+import { rectangle } from "impressionist";
 import { counterState } from "./state";
 
 export const fooGraph = [
@@ -25,7 +25,7 @@ export const fooGraph = [
     y: 181,
     shapes: [
       {
-        path: Rectangle.Basic(0, 0, 96, 72),
+        path: rectangle.basic(0, 0, 96, 72),
         opts: {
           stroke: "#666",
           fill: "#333",
