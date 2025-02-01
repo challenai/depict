@@ -57,7 +57,7 @@ export const buildTextContext: TextContextBuilder = (ctx: OffscreenCanvasRenderi
       case "font":
         ctx.font = o.font as any;
         break;
-      case "align":
+      case "textAlign":
         ctx.textAlign = o.textAlign as any;
         break;
     }
