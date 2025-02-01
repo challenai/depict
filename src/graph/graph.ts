@@ -445,6 +445,24 @@ export class Graph {
   }
 
   /**
+   * update graph options
+   * 
+   * @param options options to update
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * graph.updateGraphOptions([{ dynamic: true, update: true }]);
+   * ```
+   */
+  updateGraphOptions(options: LayerOptions[]) {
+    if (!options || options.length > this.layers.length) return;
+    options.forEach((opts, layer) => {
+      this.layers[layer].updateOptions(opts);
+    });
+  }
+
+  /**
    * ask for rerendering a specific layer
    * 
    * for example, rerender the second layer.
