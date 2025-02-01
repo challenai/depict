@@ -78,7 +78,7 @@ export class MinimalistRenderer extends Renderer {
       return {
         width: ctx.measureText(lines[0]).width,
         height: lineHeight,
-      }
+      };
     }
     return {
       width: text._state.w,
