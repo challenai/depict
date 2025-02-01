@@ -268,14 +268,12 @@ export class Layer {
           continue;
         }
       }
-      if (el.shapes || el.texts || el.postRenderCallback) {
-        this.ctx.translate(tx, ty);
-        el.shapes?.forEach((m: Mesh) => r.draw(this.ctx, m));
-        if (el.postRenderCallback) this.postRender(el.postRenderCallback.bind(el));
-        el.texts?.forEach((t: Text) => r.write(this.ctx, t));
-        this.renderElements(dx, dy, el.children);
-        this.ctx.translate(-tx, -ty);
-      }
+      this.ctx.translate(tx, ty);
+      el.shapes?.forEach((m: Mesh) => r.draw(this.ctx, m));
+      if (el.postRenderCallback) this.postRender(el.postRenderCallback.bind(el));
+      el.texts?.forEach((t: Text) => r.write(this.ctx, t));
+      this.renderElements(dx, dy, el.children);
+      this.ctx.translate(-tx, -ty);
     }
   }
 
