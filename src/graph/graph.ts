@@ -320,8 +320,14 @@ export class Graph {
 
   /**
    * the callback will be called when the graph is ready
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * graph.onReady(() => console.log("graph is ready now"));
+   * ```
    */
-  ready(callback?: ReadyHook) {
+  onReady(callback?: ReadyHook) {
     this.readyCallback = callback;
   }
 
