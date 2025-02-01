@@ -7,6 +7,11 @@ import { MessageType, type CanvasEvent } from "../defs/types";
 import type { Text, TextRect } from "../physical/drawable";
 
 /**
+ * the callback will be called when the graph is ready
+*/
+export type ReadyHookFn = () => void;
+
+/**
  * text bounding box propertities
 */
 export interface TextBoundingBoxProps {
@@ -115,6 +120,9 @@ export class Graph {
 
   // animation handle
   private looping: number;
+
+  // ready hook
+  private readyCallback?: ReadyHookFn;
 
   /**
    * overall graph offset x
@@ -306,9 +314,16 @@ export class Graph {
    * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to start graph munually.
    */
   start() {
+    if (this.readyCallback) this.readyCallback();
     this.loopFrame(0);
   }
 
+  /**
+   * the callback will be called when the graph is ready
+   */
+  ready(callback?: ReadyHookFn) {
+    this.readyCallback = callback;
+  }
 
   /**
    * update elements render queue of a specific layer
