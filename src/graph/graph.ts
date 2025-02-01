@@ -1,15 +1,15 @@
+import type { ShadowElement } from "./element";
+import type { Renderer } from "../physical/render";
+import type { Text, TextRect } from "../physical/drawable";
 import { Layer, type LayerOptions } from "./layer";
 import { MinimalistRenderer } from "../stylize/minimallist/minimallist";
 import { buildMeshContext, buildTextContext } from "../physical/context";
-import type { Renderer } from "../physical/render";
-import type { ShadowElement } from "./element";
 import { MessageType, type CanvasEvent } from "../defs/types";
-import type { Text, TextRect } from "../physical/drawable";
 
 /**
  * the callback will be called when the graph is ready
 */
-export type ReadyHookFn = () => void;
+export type ReadyHook = () => void;
 
 /**
  * text bounding box propertities
@@ -122,7 +122,7 @@ export class Graph {
   private looping: number;
 
   // ready hook
-  private readyCallback?: ReadyHookFn;
+  private readyCallback?: ReadyHook;
 
   /**
    * overall graph offset x
@@ -321,7 +321,7 @@ export class Graph {
   /**
    * the callback will be called when the graph is ready
    */
-  ready(callback?: ReadyHookFn) {
+  ready(callback?: ReadyHook) {
     this.readyCallback = callback;
   }
 

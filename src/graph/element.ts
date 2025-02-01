@@ -2,18 +2,25 @@ import type { Mesh, Text } from "../physical/drawable";
 import type { Renderer } from "../physical/render";
 
 /**
- * RenderHooksFn is a render hook
+ * RenderHook could run before/after/during render
  * 
  * @param ctx canvas context
+ * 
+ * @param offscreen a shared offscreen canvas among different elements
  */
-export type RenderHooksFn = (ctx: OffscreenCanvasRenderingContext2D, offscreen?: OffscreenCanvas) => void;
+export type RenderHook = (ctx: OffscreenCanvasRenderingContext2D, offscreen?: OffscreenCanvas) => void;
+
+/**
+ * MouseEventHandler handles mouse events
+ */
+export type MouseEventHandler = (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => void;
 
 /**
  * UpdateFn runs updates before render
  * 
  * @param delta delta time from previous render, it's commonly used to animate.
  */
-export type UpdateFn = (delta: number) => void;
+export type UpdateHook = (delta: number) => void;
 
 /**
  * RenderLayer request render the given layer
@@ -100,7 +107,6 @@ export interface ShadowElement {
    * self customized renderer could be used to draw more complex shapes.
    */
   renderer?: Renderer;
-  // update hook
   /**
    * update would be called before render,
    * 
@@ -108,37 +114,37 @@ export interface ShadowElement {
    * 
    * if rerender doesn't happen, the update hook will not be called.
    */
-  update?: UpdateFn;
+  update?: UpdateHook;
   /**
    * postRenderCallback would be called immediately after render a single node.
    * 
    * you can draw highly customized shapes, or images here.
    */
-  postRenderCallback?: RenderHooksFn;
+  postRenderCallback?: RenderHook;
   /**
    * onClick would be called when the element is clicked.
    */
-  onClick?: (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => void;
+  onClick?: MouseEventHandler;
   /**
    * onMouseenter would be called when the mouse enters the element.
    */
-  onMouseenter?: (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => void;
+  onMouseenter?: MouseEventHandler;
   /**
    * onMouseleave would be called when the mouse leaves the element.
    */
-  onMouseleave?: (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => void;
+  onMouseleave?: MouseEventHandler;
   /**
    * onMouseup would be called when the mouse up event is triggered.
    */
-  onMouseup?: (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => void;
+  onMouseup?: MouseEventHandler;
   /**
    * onMousedown would be called when the mouse down event is triggered.
    */
-  onMousedown?: (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => void;
+  onMousedown?: MouseEventHandler;
   /**
    * onMousemove would be called when the mouse move event is triggered.
    */
-  onMousemove?: (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => void;
+  onMousemove?: MouseEventHandler;
   // TODO: decide if bounding box works
   // boundingBox?: number[];
   /**
