@@ -16,6 +16,10 @@ export interface NonWorkerDepictOptions {
    */
   root: HTMLDivElement;
   /**
+   * the real graph
+   */
+  graph: Graph;
+  /**
    * provide a offline canvas which doesn't show in the viewport,
    * 
    * you can use this offline canvas to draw and cache graph.
@@ -62,12 +66,13 @@ export class NonWorkerDepict {
   constructor({
     maxLayers,
     root,
+    graph,
     offscreenCanvas,
   }: NonWorkerDepictOptions) {
     this.root = root;
     this.maxLayers = maxLayers;
     this.layers = [];
-    this.g = new Graph();
+    this.g = graph;
 
     const rect = this.root.getBoundingClientRect();
     this.w = rect ? rect.width : 0;
