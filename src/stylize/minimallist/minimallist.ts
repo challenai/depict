@@ -37,6 +37,11 @@ export class MinimalistRenderer extends Renderer {
   */
   draw(ctx: OffscreenCanvasRenderingContext2D, mesh: Mesh) {
     ctx.save();
+    this._draw(ctx, mesh);
+    ctx.restore();
+  }
+
+  private _draw(ctx: OffscreenCanvasRenderingContext2D, mesh: Mesh) {
     if (mesh.opts) this.mcb(ctx, mesh.opts);
 
     // set current mesh offset
@@ -51,8 +56,6 @@ export class MinimalistRenderer extends Renderer {
 
     // fill the mesh, default value == false
     if (mesh.opts?.background || mesh.opts?.fill) ctx.fill(p2d);
-
-    ctx.restore();
   };
 
   /**
@@ -60,12 +63,15 @@ export class MinimalistRenderer extends Renderer {
   */
   boundingBox(ctx: OffscreenCanvasRenderingContext2D, text: Text): TextRect {
     ctx.save();
+    const r = this._boundingBox(ctx, text);
+    ctx.restore();
+    return r;
+  }
 
+  private _boundingBox(ctx: OffscreenCanvasRenderingContext2D, text: Text): TextRect {
     const lineHeight = text.opts?.lineHeight || 18;
     if (text.opts) this.tcb(ctx, text.opts);
     this.layout(ctx, text, lineHeight);
-
-    ctx.restore();
 
     const lines = text._state.ls;
     if (lines.length === 1) {
@@ -110,7 +116,11 @@ export class MinimalistRenderer extends Renderer {
   */
   write(ctx: OffscreenCanvasRenderingContext2D, text: Text) {
     ctx.save();
+    this._write(ctx, text);
+    ctx.restore();
+  }
 
+  private _write(ctx: OffscreenCanvasRenderingContext2D, text: Text) {
     const lineHeight = text.opts?.lineHeight || 18;
     if (text.opts) this.tcb(ctx, text.opts);
     this.layout(ctx, text, lineHeight);
@@ -128,8 +138,6 @@ export class MinimalistRenderer extends Renderer {
       if (fill) ctx.fillText(ln, text.x || 0, y);
       y += lineHeight;
     }
-
-    ctx.restore();
   }
 
   // estimate how many lines should it wraps.
