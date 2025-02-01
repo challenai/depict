@@ -1,4 +1,4 @@
-import type { RenderHooksFn, ShadowElement } from "./element";
+import type { RenderHook, ShadowElement } from "./element";
 import type { DrawableOptions, Mesh, MeshSpecificOptions, Text, TextRect, TextSpecificOptions } from "../physical/drawable";
 import { Renderer } from "../physical/render";
 import { initializeContext } from "../physical/context";
@@ -280,7 +280,7 @@ export class Layer {
   }
 
   // run an extra render callback hook after an element finished its draw for pathes and texts
-  private postRender(callback: RenderHooksFn) {
+  private postRender(callback: RenderHook) {
     this.ctx.save();
     callback(this.ctx, this.background);
     this.ctx.restore();
