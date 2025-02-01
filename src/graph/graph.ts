@@ -231,10 +231,10 @@ export class Graph {
    * 
    * ```jsx
    * const dr: Renderer = new MinimalistRenderer({...});
-   * graph.setDefaultRenderer(0, dr);
+   * graph.setLayerRenderer(0, dr);
    * ```
    */
-  setDefaultRenderer(layer: number, renderer: Renderer) {
+  setLayerRenderer(layer: number, renderer: Renderer) {
     if (layer < 0 || layer >= this.layers.length) return;
     this.layers[layer].setDefaultRenderer(renderer);
   }
@@ -248,10 +248,10 @@ export class Graph {
    * 
    * ```jsx
    * const dr: Renderer = new MinimalistRenderer({...});
-   * graph.setGraphDefaultRenderer(dr);
+   * graph.setGraphRenderer(dr);
    * ```
    */
-  setGraphDefaultRenderer(renderer: Renderer) {
+  setGraphRenderer(renderer: Renderer) {
     for (const layer of this.layers) {
       layer.setDefaultRenderer(renderer);
     }
