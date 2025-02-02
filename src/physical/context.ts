@@ -57,8 +57,11 @@ export const buildTextContext: TextContextBuilder = (ctx: OffscreenCanvasRenderi
       case "font":
         ctx.font = o.font as any;
         break;
-      case "align":
+      case "textAlign":
         ctx.textAlign = o.textAlign as any;
+        break;
+      case "textBaseline":
+        ctx.textBaseline = o.textBaseline as any;
         break;
     }
     buildDrawableContextWithKey(ctx, o, key);

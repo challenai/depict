@@ -1,8 +1,8 @@
 import type { ResolvedOptions, Drawable, OpSet } from 'roughjs/bin/core';
-import { RoughGenerator } from "roughjs/bin/generator";
-import { randomSeed } from "roughjs/bin/math";
 import type { TextContextBuilder } from "../../physical/context";
 import type { Mesh, Text, TextRect } from "../../physical/drawable";
+import { RoughGenerator } from "roughjs/bin/generator";
+import { randomSeed } from "roughjs/bin/math";
 import { Renderer } from "../../physical/render";
 import { cutLastLine, seperateText2MultiLines } from '../../physical/text';
 
@@ -37,7 +37,13 @@ export class SketchyRenderer extends Renderer {
   */
   draw(ctx: OffscreenCanvasRenderingContext2D, mesh: Mesh) {
     ctx.save();
+    this._draw(ctx, mesh);
+    ctx.restore();
+  }
 
+  // TODO: impl the mesh context builder
+  // some options are not supported currently
+  private _draw(ctx: OffscreenCanvasRenderingContext2D, mesh: Mesh) {
     // set current mesh offset
     const x = mesh.x || 0;
     const y = mesh.y || 0;
@@ -49,8 +55,6 @@ export class SketchyRenderer extends Renderer {
     })
 
     this.drawRough(ctx, d)
-
-    ctx.restore();
   };
 
   /**
@@ -58,19 +62,22 @@ export class SketchyRenderer extends Renderer {
   */
   boundingBox(ctx: OffscreenCanvasRenderingContext2D, text: Text): TextRect {
     ctx.save();
+    const r = this._boundingBox(ctx, text);
+    ctx.restore();
+    return r;
+  }
 
+  private _boundingBox(ctx: OffscreenCanvasRenderingContext2D, text: Text): TextRect {
     const lineHeight = text.opts?.lineHeight || 18;
     if (text.opts) this.tcb(ctx, text.opts);
     this.layout(ctx, text, lineHeight);
-
-    ctx.restore();
 
     const lines = text._state.ls;
     if (lines.length === 1) {
       return {
         width: ctx.measureText(lines[0]).width,
         height: lineHeight,
-      }
+      };
     }
     return {
       width: text._state.w,
@@ -108,7 +115,11 @@ export class SketchyRenderer extends Renderer {
   */
   write(ctx: OffscreenCanvasRenderingContext2D, text: Text) {
     ctx.save();
+    this._write(ctx, text);
+    ctx.restore();
+  }
 
+  private _write(ctx: OffscreenCanvasRenderingContext2D, text: Text) {
     const lineHeight = text.opts?.lineHeight || 18;
     if (text.opts) this.tcb(ctx, text.opts);
     this.layout(ctx, text, lineHeight);
@@ -126,8 +137,6 @@ export class SketchyRenderer extends Renderer {
       if (fill) ctx.fillText(ln, text.x || 0, y);
       y += lineHeight;
     }
-
-    ctx.restore();
   }
 
   // estimate how many lines should it wraps.

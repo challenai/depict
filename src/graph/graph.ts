@@ -1,10 +1,15 @@
+import type { ShadowElement } from "./element";
+import type { Renderer } from "../physical/render";
+import type { Text, TextRect } from "../physical/drawable";
 import { Layer, type LayerOptions } from "./layer";
 import { MinimalistRenderer } from "../stylize/minimallist/minimallist";
 import { buildMeshContext, buildTextContext } from "../physical/context";
-import type { Renderer } from "../physical/render";
-import type { ShadowElement } from "./element";
 import { MessageType, type CanvasEvent } from "../defs/types";
-import type { Text, TextRect } from "../physical/drawable";
+
+/**
+ * the callback will be called when the graph is ready
+*/
+export type ReadyHook = () => void;
 
 /**
  * text bounding box propertities
@@ -116,6 +121,9 @@ export class Graph {
   // animation handle
   private looping: number;
 
+  // ready hook
+  private readyCallback?: ReadyHook;
+
   /**
    * overall graph offset x
    * 
@@ -223,10 +231,10 @@ export class Graph {
    * 
    * ```jsx
    * const dr: Renderer = new MinimalistRenderer({...});
-   * graph.setDefaultRenderer(0, dr);
+   * graph.setLayerRenderer(0, dr);
    * ```
    */
-  setDefaultRenderer(layer: number, renderer: Renderer) {
+  setLayerRenderer(layer: number, renderer: Renderer) {
     if (layer < 0 || layer >= this.layers.length) return;
     this.layers[layer].setDefaultRenderer(renderer);
   }
@@ -240,10 +248,10 @@ export class Graph {
    * 
    * ```jsx
    * const dr: Renderer = new MinimalistRenderer({...});
-   * graph.setGraphDefaultRenderer(dr);
+   * graph.setGraphRenderer(dr);
    * ```
    */
-  setGraphDefaultRenderer(renderer: Renderer) {
+  setGraphRenderer(renderer: Renderer) {
     for (const layer of this.layers) {
       layer.setDefaultRenderer(renderer);
     }
@@ -306,9 +314,22 @@ export class Graph {
    * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to start graph munually.
    */
   start() {
+    if (this.readyCallback) this.readyCallback();
     this.loopFrame(0);
   }
 
+  /**
+   * the callback will be called when the graph is ready
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * graph.onReady(() => console.log("graph is ready now"));
+   * ```
+   */
+  onReady(callback?: ReadyHook) {
+    this.readyCallback = callback;
+  }
 
   /**
    * update elements render queue of a specific layer
@@ -427,6 +448,24 @@ export class Graph {
   updateLayerOptions(layer: number, options: LayerOptions) {
     if (layer < 0 || layer >= this.layers.length) return;
     this.layers[layer].updateOptions(options);
+  }
+
+  /**
+   * update graph options
+   * 
+   * @param options options to update
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * graph.updateGraphOptions([{ dynamic: true, update: true }]);
+   * ```
+   */
+  updateGraphOptions(options: LayerOptions[]) {
+    if (!options || options.length > this.layers.length) return;
+    options.forEach((opts, layer) => {
+      this.layers[layer].updateOptions(opts);
+    });
   }
 
   /**

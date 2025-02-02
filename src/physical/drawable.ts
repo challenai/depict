@@ -167,9 +167,13 @@ export interface TextSpecificOptions {
   */
   font?: string;
   /**
-   * align of text: start, end, center, left, right
+   * horizontal align of text: start, end, center, left, right
   */
   textAlign?: string;
+  /**
+   * vertical align of text: alphabetic, top, hanging, middle, ideographic, bottom
+  */
+  textBaseline?: string;
   /**
    * tell the graph the user want the text to caculate layout again
   */

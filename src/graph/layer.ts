@@ -1,4 +1,4 @@
-import type { RenderHooksFn, ShadowElement } from "./element";
+import type { RenderHook, ShadowElement } from "./element";
 import type { DrawableOptions, Mesh, MeshSpecificOptions, Text, TextRect, TextSpecificOptions } from "../physical/drawable";
 import { Renderer } from "../physical/render";
 import { initializeContext } from "../physical/context";
@@ -268,19 +268,17 @@ export class Layer {
           continue;
         }
       }
-      if (el.shapes || el.texts || el.postRenderCallback) {
-        this.ctx.translate(tx, ty);
-        el.shapes?.forEach((m: Mesh) => r.draw(this.ctx, m));
-        if (el.postRenderCallback) this.postRender(el.postRenderCallback.bind(el));
-        el.texts?.forEach((t: Text) => r.write(this.ctx, t));
-        this.renderElements(dx, dy, el.children);
-        this.ctx.translate(-tx, -ty);
-      }
+      this.ctx.translate(tx, ty);
+      el.shapes?.forEach((m: Mesh) => r.draw(this.ctx, m));
+      if (el.postRenderCallback) this.postRender(el.postRenderCallback.bind(el));
+      el.texts?.forEach((t: Text) => r.write(this.ctx, t));
+      this.renderElements(dx, dy, el.children);
+      this.ctx.translate(-tx, -ty);
     }
   }
 
   // run an extra render callback hook after an element finished its draw for pathes and texts
-  private postRender(callback: RenderHooksFn) {
+  private postRender(callback: RenderHook) {
     this.ctx.save();
     callback(this.ctx, this.background);
     this.ctx.restore();
