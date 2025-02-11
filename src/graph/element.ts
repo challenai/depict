@@ -18,9 +18,9 @@ export type MouseEventHandler = (render: RenderLayer, x: number, y: number, mous
 /**
  * UpdateFn runs updates before render
  * 
- * @param delta delta time from previous render, it's commonly used to animate.
+ * @param timestamp timestamp from the beginning, it's commonly used to animate the graph.
  */
-export type UpdateHook = (delta: number) => void;
+export type UpdateHook = (timestamp: number) => void;
 
 /**
  * RenderLayer request render the given layer
@@ -28,6 +28,17 @@ export type UpdateHook = (delta: number) => void;
  * @param layer specify the layer to render, if no layer was given, the whole graph will be rerender.
  */
 export type RenderLayer = (layer?: number) => void;
+
+/**
+ * ContainCallback decides whether the coordinates inside the graph
+ * 
+ * @param x x axis position
+ * 
+ * @param y y axis position
+ * 
+ * @returns whether the coordinates inside the graph ?
+ */
+export type ContainCallback = (x: number, y: number) => boolean;
 
 /**
  * internal run time state of an element
@@ -98,7 +109,7 @@ export interface ShadowElement {
    * 
    * it's used for event handling.
    */
-  contain?: (x: number, y: number) => boolean;
+  contain?: ContainCallback;
   /**
    * specify renderer for this element,
    * 
