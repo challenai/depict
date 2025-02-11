@@ -18,9 +18,9 @@ export type MouseEventHandler = (render: RenderLayer, x: number, y: number, mous
 /**
  * UpdateFn runs updates before render
  * 
- * @param delta delta time from previous render, it's commonly used to animate.
+ * @param timestamp timestamp from the beginning, it's commonly used to animate the graph.
  */
-export type UpdateHook = (delta: number) => void;
+export type UpdateHook = (timestamp: number) => void;
 
 /**
  * RenderLayer request render the given layer
