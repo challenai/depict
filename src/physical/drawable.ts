@@ -39,11 +39,11 @@ export interface DrawableOptions {
   /**
    * canvas stroke style
   */
-  stroke?: string;
+  stroke?: string | CanvasGradient | CanvasPattern;
   /**
    * canvas fill color or pattern
   */
-  fill?: string;
+  fill?: string | CanvasGradient | CanvasPattern;
   /**
    * rotation in radian
   */
