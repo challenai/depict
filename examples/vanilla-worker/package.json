@@ -8,15 +8,15 @@
   },
   "license": "MIT",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
-    "vite": "^5.4.14"
+    "vite": "^5.4.10"
   },
   "dependencies": {
     "@pattaya/depict": "^0.6.2",
-    "impressionist": "^1.2.0"
+    "impressionist": "^1.0.4"
   }
 }
