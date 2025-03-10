@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Graph from "./lib/Graph.svelte";
+  import Graph from "./GraphContainer.svelte";
 
   let count: number = $state(0);
   const increment = () => {
