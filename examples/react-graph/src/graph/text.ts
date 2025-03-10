@@ -1,4 +1,4 @@
-import { ShadowElement } from "@pattaya/depict/graph";
+import type { ShadowElement } from "@pattaya/depict/graph";
 
 export const textGraph: ShadowElement[] = [
   {
