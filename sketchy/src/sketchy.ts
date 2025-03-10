@@ -1,10 +1,7 @@
 import type { ResolvedOptions, Drawable, OpSet } from 'roughjs/bin/core';
-import type { TextContextBuilder } from "../../physical/context";
-import type { Mesh, Text, TextRect } from "../../physical/drawable";
+import { type TextContextBuilder, type Mesh, type Text, cutLastLine, seperateText2MultiLines } from "@pattaya/depict/graph";
 import { RoughGenerator } from "roughjs/bin/generator";
 import { randomSeed } from "roughjs/bin/math";
-import { Renderer } from "../../physical/render";
-import { cutLastLine, seperateText2MultiLines } from '../../physical/text';
 
 /**
  * SketchyRenderer options
@@ -20,13 +17,12 @@ export interface SketchyOptions {
 /**
  * SketchyRenderer provide sketchy style wire frame to draw
 */
-export class SketchyRenderer extends Renderer {
+export class SketchyRenderer {
   tcb: TextContextBuilder;
   gen: RoughGenerator;
   seed: number;
 
   constructor(opts: SketchyOptions) {
-    super();
     this.seed = randomSeed();
     this.tcb = opts.textContextBuilder;
     this.gen = new RoughGenerator();
@@ -50,7 +46,8 @@ export class SketchyRenderer extends Renderer {
     if (x != 0 || y != 0) ctx.translate(x, y);
 
     const d = this.gen.path(mesh.path, {
-      ...mesh.opts,
+      // TODO: fix
+      // ...mesh.opts,
       seed: this.seed,
     })
 
@@ -60,14 +57,14 @@ export class SketchyRenderer extends Renderer {
   /**
    * get bounding box of the text
   */
-  boundingBox(ctx: OffscreenCanvasRenderingContext2D, text: Text): TextRect {
+  boundingBox(ctx: OffscreenCanvasRenderingContext2D, text: Text): any {
     ctx.save();
     const r = this._boundingBox(ctx, text);
     ctx.restore();
     return r;
   }
 
-  private _boundingBox(ctx: OffscreenCanvasRenderingContext2D, text: Text): TextRect {
+  private _boundingBox(ctx: OffscreenCanvasRenderingContext2D, text: Text): any {
     const lineHeight = text.opts?.lineHeight || 18;
     if (text.opts) this.tcb(ctx, text.opts);
     this.layout(ctx, text, lineHeight);
