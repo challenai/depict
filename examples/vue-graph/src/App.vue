@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import Graph from './components/Graph.vue'
+import GraphContainer from './GraphContainer.vue'
 import { ref } from 'vue'
 
 const count = ref(0)
 </script>
 
 <template>
-  <Graph :count="count" />
+  <GraphContainer :count="count" />
   <h1>Vue + Depict</h1>
 
   <div class="card">

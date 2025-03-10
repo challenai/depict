@@ -1,6 +1,6 @@
-import { ShadowElement } from "@pattaya/depict/graph";
+import type { ShadowElement } from "@pattaya/depict/graph";
 import { rectangle } from "impressionist";
-import { vueState } from "./state";
+import { graphState } from "./state";
 
 export const fooGraph: ShadowElement[] = [
   {
@@ -18,7 +18,7 @@ export const fooGraph: ShadowElement[] = [
       }
     ],
     update() {
-      this.texts![0].content = ` count: ${vueState.count}, speed level: ${vueState.count % 10}`;
+      this.texts![0].content = ` count: ${graphState.count}, speed level: ${graphState.count % 10}`;
     },
   },
   {

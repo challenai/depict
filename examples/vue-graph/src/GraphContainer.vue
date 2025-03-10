@@ -1,11 +1,7 @@
 <script lang="ts">
-import { Depict } from '@pattaya/depict';
 import { defineComponent, onMounted, ref, watch } from 'vue';
-import { MsgUpdateVueState } from './msg';
-
-const worker = new Worker(new URL('./worker.ts', import.meta.url), {
-  type: "module"
-});
+import { NonWorkerDepict } from "@pattaya/depict/nonworker";
+import { graph, graphState } from "./graph";
 
 export default defineComponent({
   name: "Graph",
@@ -17,22 +13,23 @@ export default defineComponent({
   },
   setup(props) {
     const rootRef = ref<HTMLDivElement>()
-    const graph = ref<Depict | undefined>(undefined)
+    const depict = ref<NonWorkerDepict | undefined>(undefined)
 
     onMounted(() => {
-      if (!graph.value) {
+      if (!depict.value) {
         if (!rootRef.value) return
-        graph.value = new Depict({
+        depict.value = new NonWorkerDepict({
           root: rootRef.value,
           maxLayers: 3,
-          worker,
+          graph: graph,
         });
-        graph.value.start();
+        depict.value.start();
       }
     })
 
     watch(() => props.count, (nv, _ov) => {
-      worker.postMessage({ type: MsgUpdateVueState, msg: nv });
+      graphState.count = nv;
+      graph.renderAll();
     })
 
     return {
@@ -49,6 +46,8 @@ export default defineComponent({
 
 <style scoped>
 .graph {
+  /* take care: the graph container should have width, height and relative position */
+  /* or it take up 100% of its parent, (so that it's not 0px) */
   position: relative;
   width: 600px;
   height: 400px;
