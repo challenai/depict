@@ -5,7 +5,6 @@
   - [Quick start](quickstart.md)
   - [Build your Graph](graph.md)
   - [Handle Events](event.md)
-  - [Animation](animation.md)
 
 - Intergration
 
@@ -14,7 +13,14 @@
   - [Svelte](intergration/svelte.md)
   - [HTML/Javascript](intergration/vanilla.md)
 
+- Update Graph
+
+  - [State Driven](update/state.md)
+  - [Command](update/command.md)
+  - [Hybrid](update/hybrid.md)
+
 - Advanced
 
   - [Web Worker](worker.md)
   - [Custom Renderer](renderer.md)
+  - [Animation](animation.md)
