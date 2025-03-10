@@ -8,4 +8,3 @@ export { initializeContext, buildMeshContext, buildTextContext, type InitializeC
 export { CanvasEvent, MessageType } from "../defs/types";
 export { cutLastLine, seperateText2MultiLines, type WidthCaculator } from "../physical/text";
 export { MinimalistRenderer, type MinimalistOptions } from "../stylize/minimallist/minimallist";
-export { SketchyRenderer, type SketchyOptions } from "../stylize/sketchy/sketchy";

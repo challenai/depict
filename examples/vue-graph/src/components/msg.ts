@@ -1,1 +1,0 @@
-export const MsgUpdateVueState = 1;

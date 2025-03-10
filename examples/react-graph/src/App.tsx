@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './App.css'
-import GraphContainer from './graph'
+import GraphContainer from './GraphContainer'
 
 function App() {
   const [count, setCount] = useState(0)

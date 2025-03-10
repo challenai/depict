@@ -1,5 +1,5 @@
 {
-  "name": "@pattaya/depict",
+  "name": "@challenai/sketchy",
   "module": "lib/index.min.js",
   "version": "0.6.2",
   "type": "module",
@@ -7,21 +7,9 @@
     ".": {
       "types": "./types/index.d.ts",
       "default": "./lib/index.min.js"
-    },
-    "./depict": {
-      "types": "./types/index.d.ts",
-      "default": "./lib/index.min.js"
-    },
-    "./graph": {
-      "types": "./types/graph/index.d.ts",
-      "default": "./lib/graph/index.min.js"
-    },
-    "./nonworker": {
-      "types": "./types/nonworker/index.d.ts",
-      "default": "./lib/nonworker/index.min.js"
     }
   },
-  "description": "make it easy to design dynamic graph in canvas environment",
+  "description": "a sketchy style renderer for depict",
   "author": "Challen Ai <fengyiai@gmail.com>",
   "typings": "types/index.d.ts",
   "types": "types/index.d.ts",
@@ -30,8 +18,8 @@
     "graph",
     "path",
     "shape",
-    "event",
-    "render"
+    "sketchy",
+    "depict"
   ],
   "files": [
     "lib",
@@ -53,5 +41,9 @@
     "esbuild": "0.23.1",
     "eslint": "^9.10.0",
     "typescript-eslint": "^8.6.0"
+  },
+  "dependencies": {
+    "@pattaya/depict": "0.6.2",
+    "roughjs": "^4.6.6"
   }
 }
