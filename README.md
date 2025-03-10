@@ -23,6 +23,7 @@ listed as follows:
 - [Vue graph example](https://github.com/challenai/depict/blob/main/examples/vue-graph/README.md)
 - [Svelte graph example](https://github.com/challenai/depict/blob/main/examples/svelte-graph/README.md)
 - [HTML + Javascript example](https://github.com/challenai/depict/blob/main/examples/vanilla/README.md)
+- [Web Worker example](https://github.com/challenai/depict/blob/main/examples/vanilla-worker/README.md)
 
 for **every application** in the `examples` directory, you can run the application with the following steps.  
 
@@ -38,40 +39,21 @@ npm run dev
 
 ## Quick Guide 
 
-First, you should create a depict instance to hold the graph canvas DOM.
-
 ```ts
-import { Depict } from "@pattaya/depict";
+import { NonWorkerDepict } from "@pattaya/depict/nonworker";
 
-const worker = new Worker(new URL('xxx/worker.ts', import.meta.url), {
-  type: "module"
-})
-
-const graphContainer = new Depict({
-  root: canvasHTMLDivElement,
-  maxLayers: 3,
-  worker,
+// First, you should create a depict instance to hold the graph canvas DOM.
+const depict = new NonWorkerDepict({
+  root: root_div_element, // root_div_element = <div></div>
+  maxLayers: 1,
+  graph: graph,
 });
 
-graphContainer.start();
-```
+// start your graph
+depict.start();
 
-then you should create a web worker file to actually run the graph.
-
-```ts
-import { Graph, MessageType } from "@pattaya/depict/graph";
-
-const graph = new Graph();
-
-onmessage = (ev) => {
-  graph.handleMessageEvent(ev);
-};
-```
-
-Now, you can build your image with an array of nodes.  
-You can add events, animation or even state system if you want to build something big.
-
-```ts
+// Now, you can build your image with an array of nodes.  
+// You can add events, animation or even state system if you want to build something big.
 const node = {
   x: 150,
   y: 145,
@@ -85,7 +67,11 @@ const node = {
     }
   ],
 };
-graph.updateQueue(2, [node]);
+
+// update the first layer with our shapes
+depict.graph.updateQueue(0, [node]);
+// request render the new elements
+depict.graph.renderAll();
 ```
 
 ### features
@@ -95,7 +81,7 @@ works in the todo list:
 - [x] provide api to get text rect information.
 - [x] support text align.
 - [ ] support change element render priority.
-- [ ] support bounding box ?
+- [x] support text bounding box
 - [ ] provide a new animated renderer ?
 - [ ] more examples: render image, animation
 
