@@ -1,23 +1,22 @@
 # Depict
 
-Depict is a JavaScript library for building canvas based user interface.
+**Depict** is a JavaScript library for building canvas-based user interfaces.
 
-- Declarative: Depict makes it painless to create complex animation and events driven graph without mind burden.
-- Maintainable: Organize simple and clear nodes to Create complex shapes, there are no specific positioning or layout engines included, the only thing you need to care about is its offset, nothing specific to learn. You don't need to consider the relationship among different components, nodes or shapes, and try to manage complex application state communication.
-- Performance: Performance auto tuning battery is included. However, if you try to build something really fast, many optional performance tools are available. Demonstrate your app fastly and improve it later if it's necessary. But it's fast enough in most of the cases 
-- Multi-pattern: You can build your graph driven by function varibles, or simple state, or even react state, vue state, the graph will be driven by what you expect, no annoying communication between shapes, elements...
+- **Declarative:** Depict makes it painless to create complex, animation and event-driven graphs without mental overhead.
+- **Maintainable:** Organize simple and clear nodes to create complex shapes. There's no need for specific positioning or layout engines—just focus on offsets. No need to manage complex relationships or application state communication.
+- **Performance:** Includes automatic performance tuning, but if you need even better performance, optional tools are available. You can quickly demonstrate your app and optimize later. It's fast enough for most cases.
+- **Multi-pattern:** You can build your graph driven by function variables, simple state, or even React, Vue, or Svelte state. The graph will be driven as expected, with no need for complex communication between shapes and elements.
+
+---
 
 ## Installation
 
-`npm install @pattaya/depict --save`
+```bash
+npm install @pattaya/depict --save
+```
 
 ## Examples
-
-### examples
-
-You can create graph application with any other framework you like,    
-there are some demo applications which include **React**, **Vue**, **Svelte**, or **vanilla javascript** based graph,  
-listed as follows:  
+You can create a graph application with any framework you prefer. The following demo applications are available, which include examples using **React**, **Vue**, **Svelte**, or **vanilla javascript**:
 
 - [React graph example](https://github.com/challenai/depict/blob/main/examples/react-graph/README.md)
 - [Vue graph example](https://github.com/challenai/depict/blob/main/examples/vue-graph/README.md)
@@ -25,9 +24,9 @@ listed as follows:
 - [HTML + Javascript example](https://github.com/challenai/depict/blob/main/examples/vanilla/README.md)
 - [Web Worker example](https://github.com/challenai/depict/blob/main/examples/vanilla-worker/README.md)
 
-for **every application** in the `examples` directory, you can run the application with the following steps.  
+To run any application from the `examples` directory, follow these steps:
 
-```shell
+```bash
 cd exmaples/xxx
 
 # install packages
@@ -42,18 +41,18 @@ npm run dev
 ```ts
 import { NonWorkerDepict } from "@pattaya/depict/nonworker";
 
-// First, you should create a depict instance to hold the graph canvas DOM.
+// Create a depict instance to hold the graph canvas DOM
 const depict = new NonWorkerDepict({
   root: root_div_element, // root_div_element = <div></div>
   maxLayers: 1,
   graph: graph,
 });
 
-// start your graph
+// Start your graph
 depict.start();
 
-// Now, you can build your image with an array of nodes.  
-// You can add events, animation or even state system if you want to build something big.
+// Now, you can build your graph with an array of nodes. 
+// You can add events, animations, or even a state system for larger applications.
 const node = {
   x: 150,
   y: 145,
@@ -68,22 +67,23 @@ const node = {
   ],
 };
 
-// update the first layer with our shapes
+// Update the first layer with our shapes
 depict.graph.updateQueue(0, [node]);
-// request render the new elements
+// Request to render the new elements
 depict.graph.renderAll();
 ```
 
-### features
+### Features
 
-works in the todo list:   
-- [x] support single thread version.
-- [x] provide api to get text rect information.
-- [x] support text align.
-- [ ] support change element render priority.
-- [x] support text bounding box
-- [ ] provide a new animated renderer ?
-- [ ] more examples: render image, animation
+To-do list:
+
+- [x] Support single-thread version.
+- [x] Provide API to get text rectangle information.
+- [x] Support text alignment.
+- [x] Support changing element render priority.
+- [x] Support text bounding box.
+- [x] Provide a new animated renderer?
+- [x] More examples: rendering images, animations.
 
 ### License
 

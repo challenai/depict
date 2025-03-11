@@ -1,8 +1,21 @@
 # Depict
 
-Depict is a JavaScript library for building canvas based user interface.
+**Depict** is a lightweight JavaScript library for building canvas-based user interfaces with ease. It provides a declarative approach to designing interactive and animated graphs without unnecessary complexity.
 
-- Declarative: Depict makes it painless to create complex animation and events driven graph without mind burden.
-- Maintainable: Organize simple and clear nodes to Create complex shapes, there are no specific positioning or layout engines included, the only thing you need to care about is its offset, nothing specific to learn. You don't need to consider the relationship among different components, nodes or shapes, and try to manage complex application state communication.
-- Performance: Performance auto tuning battery is included. However, if you try to build something really fast, many optional performance tools are available. Demonstrate your app fastly and improve it later if it's necessary. But it's fast enough in most of the cases 
-- Multi-pattern: You can build your graph driven by function varibles, or simple state, or even react state, vue state, the graph will be driven by what you expect, no annoying communication between shapes, elements...
+## 🌟 Features
+
+### 🖋️ Declarative & Intuitive  
+Create complex, event-driven, and animated graphs effortlessly. Depict’s declarative approach reduces cognitive load, allowing you to focus on logic rather than low-level rendering details.
+
+### 🛠️ Simple & Maintainable  
+Design intricate shapes using a straightforward node-based structure—no need for dedicated layout engines or positioning systems. Just define offsets, and Depict takes care of the rest. You don’t have to manage inter-component relationships or maintain complex application state synchronization.
+
+### ⚡ Optimized for Performance  
+Depict comes with built-in performance tuning, ensuring smooth rendering by default. If you need even more speed, optional optimization tools are available. Start building quickly and fine-tune later—Depict is fast enough for most use cases.
+
+### 🔄 Flexible State Management  
+Drive your graph using function variables, a simple state system, or even React/Vue state management. Depict integrates seamlessly with your preferred approach, eliminating the need for tedious shape-to-shape communication.
+
+---
+
+Depict simplifies the process of building dynamic, high-performance, and maintainable canvas-based UIs. Get started today and bring your ideas to life with ease!
