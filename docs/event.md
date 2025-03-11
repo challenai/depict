@@ -1,6 +1,9 @@
 # Handle Event
 
-example: Listen to Click
+Depict lets you add event handlers to your ShadowElements. Event handlers are your own functions that will be triggered in response to mouse interactions like clicking, hovering and so on.
+The other events like keyup, keydown could be listened by plain Javascript or frameworks, and change your graph directly.
+
+## Example: Listen to Click
 
 ```js
 // import a rectangle from a canvas/svg path library directly...

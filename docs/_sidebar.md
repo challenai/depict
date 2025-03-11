@@ -3,7 +3,7 @@
 - Getting started
 
   - [Quick start](quickstart.md)
-  - [Build your Graph](graph.md)
+  - [Building Blocks](element.md)
   - [Handle Events](event.md)
 
 - Intergration

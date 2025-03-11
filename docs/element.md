@@ -1,10 +1,20 @@
-# Graph
+# Building Blocks
 
-## ShadowElement: Basic Building Block
+## Layers
 
-### simple element
+The Depict graph is seperated to some layers, they could be dynamic or static.  
+A static layer will not re-render automatically, but the dynamic one will re-render each frame.
+The static layer (default layer) can be updated and re-rendered by a `renderLayer` or `renderAll` request.  
+ShadowElements are the basic components of the graph, each layer contains a group of ShadowElements.  
 
-The graph in Depict is organized as some **ShadowElement** trees.   
+## ShadowElement
+
+ShadowElements are the core concepts of Depict.   
+They are the foundation upon which you build your graphs, which makes them the perfect place to start your journey!
+
+### Simple Element
+
+The graphs in Depict is organized as some **ShadowElement** trees.   
 
 ```js
 // ShadowElement
