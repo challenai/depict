@@ -17,10 +17,8 @@
 
   - [State Driven](update/state.md)
   - [Command](update/command.md)
-  - [Hybrid](update/hybrid.md)
 
 - Advanced
 
   - [Web Worker](worker.md)
-  - [Custom Renderer](renderer.md)
   - [Animation](animation.md)

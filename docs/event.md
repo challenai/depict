@@ -3,6 +3,9 @@
 example: Listen to Click
 
 ```js
+// import a rectangle from a canvas/svg path library directly...
+import { rectangle } from "impressionist";
+
 // ShadowElement
 const w = 200;
 const h = 100;
