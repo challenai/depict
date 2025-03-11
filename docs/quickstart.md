@@ -1,13 +1,15 @@
-## Installation
+## 🚀 Installation
 
 `npm install @pattaya/depict --save`
 
-## First Graph
+## 🎨 First Graph
 
-Create a depict instance first.  
-There are two options: web worker version and a common version.  
-If you want to offload the graph to another thread, you can pick the web worker version to improve performance.  
+To create a Depict instance, choose between two options:
 
+- Web Worker Version – Offloads the graph processing to another thread for improved performance.
+- Common Version – Runs in the main thread.
+
+Initialize Depict
 ```js
 const depict = new NonWorkerDepict({
     root: document.getElementById('#graph'),
@@ -16,16 +18,12 @@ const depict = new NonWorkerDepict({
 });
 ```
 
-Then, start the graph, if your application need to do some preparation(for example: load some data),  
-you can start it later.
-
+Start the Graph
 ```js
 depict.start();
 ```
 
-Last, you build some shapes and render.
-You can request for re-rendering when you change the graph.
-
+Create and Render Shapes
 ```js
 const node = {
   x: 240,
@@ -45,7 +43,7 @@ depict.graph.resetGraph([[n]]);
 depict.graph.renderAll();
 ```
 
-## Popular Frameworks
+## 🔗 Popular Frameworks
 
 [to integrate React](/#/intergration/react)
 

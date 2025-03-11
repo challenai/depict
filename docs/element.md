@@ -2,19 +2,22 @@
 
 ## Layers
 
-The Depict graph is seperated to some layers, they could be dynamic or static.  
-A static layer will not re-render automatically, but the dynamic one will re-render each frame.
-The static layer (default layer) can be updated and re-rendered by a `renderLayer` or `renderAll` request.  
-ShadowElements are the basic components of the graph, each layer contains a group of ShadowElements.  
+The Depict graph is divided into multiple layers, which can be either **dynamic** or **static**.  
+- A **static layer** (default) does not re-render automatically but can be updated manually using `renderLayer` or `renderAll`.  
+- A **dynamic layer** re-renders every frame.  
+
+Each layer contains a group of **ShadowElements**, which serve as the building blocks of the graph.
+
+---
 
 ## ShadowElement
 
-ShadowElements are the core concepts of Depict.   
-They are the foundation upon which you build your graphs, which makes them the perfect place to start your journey!
+**ShadowElements** are the core components of Depict.  
+They form the foundation of your graphs, making them the perfect starting point.
 
-### Simple Element
+### Simple Element Structure
 
-The graphs in Depict is organized as some **ShadowElement** trees.   
+Graphs in Depict are organized as **ShadowElement** trees.
 
 ```js
 // ShadowElement
@@ -34,17 +37,14 @@ const se = {
 };
 ```
 
-You can add unlimited shapes to a ShadowElement,  
-you can also add some texts to the element,  
-so an element could be a button, a card.  
+- You can add unlimited shapes to a ShadowElement.
+- You can also add text, making it function as a button, card, or other UI element.
+- If a single element isn't enough, compose it using multiple elements.
+- Since elements are plain JavaScript objects, debugging is simple and memory usage is minimal.
 
-If one element is not enough, build your component with 2 elements, or 20 elements.  
-The element itself is just a plain Javascript object, 
-so that the user can easily debug and print, the cost is quite low too.  
+### Drawing Custom Shapes with Context
 
-### draw your own shape with context
-
-You can also draw the shapes with commands or customed function.  
+You can draw shapes using commands or a custom function.
 
 ```js
 // ShadowElement: draw with commands
@@ -61,27 +61,28 @@ const se = {
 };
 ```
 
-But the internal **shapes: Mesh[]** field is first-class for performance.    
-If you draw the elements by commands, no optimization will be applied to the render process,   
-that means the render process will be like drawing with plain Javascript, run function one by one,  
-the graph will not be rendered in a batch, merge duplicated styles, or further optimize.  
-In most of the case, it's **fast enough**.
+However, the built-in `shapes: Mesh[]` field is optimized for performance.
+If you draw using custom commands, no automatic optimizations will be applied.
+This means:
 
-## other useful fields 
+- The rendering process executes JavaScript functions one by one.
+- The graph won't batch render, merge duplicate styles, or apply other optimizations.
+In most cases, it's **fast enough**.
+
+## Other Useful Fields
 
 ### absolute
 
-You can set the position of current element absolute, have no relationship with its parent.
+Sets the element’s position to be absolute, independent of its parent.
 
 ### hidden
 
-Hide the element or show it.
+Controls whether the element is visible or hidden.
 
 ### data
 
-Used for saving your own data, you can save anything, for example: the name of the current element for debug.
+Stores custom data (e.g., element names for debugging).
 
 ### layerUp
 
-Mark current element is just copied pointer which actually lives in a different layer
-That means this element is seperated with its parent.
+Indicates that the element is a copied reference from a different layer, making it independent of its parent.

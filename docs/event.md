@@ -1,7 +1,8 @@
-# Handle Event
+# Handle Events
 
-Depict lets you add event handlers to your ShadowElements. Event handlers are your own functions that will be triggered in response to mouse interactions like clicking, hovering and so on.
-The other events like keyup, keydown could be listened by plain Javascript or frameworks, and change your graph directly.
+Depict allows you to add event handlers to your **ShadowElements**. These event handlers are custom functions that get triggered by mouse interactions, such as clicking, hovering, and more.
+
+Other events, like `keyup` and `keydown`, can be listened to with plain JavaScript or through frameworks, allowing you to modify your graph directly in response to user input.
 
 ## Example: Listen to Click
 

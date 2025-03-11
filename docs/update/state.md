@@ -1,9 +1,11 @@
 # State Driven
 
-Depict provides an `update` hook for you to control the graphs by states.
-you describe the different states that related to your ShadowElements, then control your graph in  your customed `update` functions.
-You can store your state in a `plain Javascript object`,  
-then refer this state in your `update` function.  
+Depict provides an `update` hook that allows you to control your graphs using states.  
+You define the different states related to your **ShadowElements**, and then use custom `update` functions to control the graph's behavior based on those states.
+
+You can store your state in a **plain JavaScript object**,  
+and refer to this state inside your `update` function to manage the graph's dynamic behavior.
+
 
 ## Example: Control the rectangle width by interval
 
