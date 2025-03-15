@@ -84,13 +84,13 @@ export interface MeshSpecificOptions {
   */
   lineWidth?: number;
   /**
-   * line cap of mesh
+   * line cap of mesh: butt, round, square
   */
-  lineCap?: string;
+  lineCap?: "butt" | "round" | "square";
   /**
-   * line join of mesh
+   * line join of mesh: miter, bevel, round
   */
-  lineJoin?: string;
+  lineJoin?: "miter" | "bevel" | "round";
   /**
    * miter limit of mesh
   */
@@ -102,7 +102,7 @@ export interface MeshSpecificOptions {
 */
 export interface Text {
   /**
-   * text content
+   * text content, for example: hello, world
   */
   content: string;
   /**
@@ -168,12 +168,16 @@ export interface TextSpecificOptions {
   font?: string;
   /**
    * horizontal align of text: start, end, center, left, right
+   * 
+   * default value: start
   */
-  textAlign?: string;
+  textAlign?: "start" | "end" | "center" | "left" | "right";
   /**
    * vertical align of text: alphabetic, top, hanging, middle, ideographic, bottom
+   * 
+   * default value: alphabetic
   */
-  textBaseline?: string;
+  textBaseline?: "alphabetic" | "top" | "hanging" | "middle" | "ideographic" | "bottom";
   /**
    * tell the graph the user want the text to caculate layout again
   */

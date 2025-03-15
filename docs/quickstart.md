@@ -45,10 +45,10 @@ depict.graph.renderAll();
 
 ## 🔗 Popular Frameworks
 
-[to integrate React](/#/intergration/react)
+[to integrate React](/intergration/react)
 
-[to integrate Vue](/#/intergration/vue)
+[to integrate Vue](/intergration/vue)
 
-[to integrate Svelte](/#/intergration/svelte)
+[to integrate Svelte](/intergration/svelte)
 
-[to use in pure HTML](/#/intergration/vanilla)
+[to use in pure HTML](/intergration/vanilla)

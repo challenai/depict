@@ -1,4 +1,4 @@
-export type { ShadowElement, RenderHook, UpdateHook, RenderLayer, RuntimeState, MouseEventHandler } from "./element";
+export type { ShadowElement, RenderHook, UpdateHook, RenderLayer, RuntimeState, MouseEventHandler, ContainCallback } from "./element";
 export type { LayerOptions, ExplicitRenderLayer } from "./layer";
 export type { Mesh, DrawableOptions, MeshOptions, MeshSpecificOptions, Text, TextOptions, TextSpecificOptions } from "../physical/drawable";
 export type { Renderer } from "../physical/render";

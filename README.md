@@ -80,10 +80,10 @@ To-do list:
 - [x] Support single-thread version.
 - [x] Provide API to get text rectangle information.
 - [x] Support text alignment.
-- [x] Support changing element render priority.
+- [ ] Support changing element render priority.
 - [x] Support text bounding box.
-- [x] Provide a new animated renderer?
-- [x] More examples: rendering images, animations.
+- [ ] Provide a new animated renderer?
+- [ ] More examples: rendering images, animations.
 
 ### License
 
