@@ -118,6 +118,9 @@ export class Graph {
   // the layers of the graph
   private layers: Layer[];
 
+  // background offscreen canvas
+  private background?: OffscreenCanvas;
+
   // animation handle
   private looping: number;
 
@@ -210,6 +213,7 @@ export class Graph {
    * setting a customized renderer by setDefaultRenderer would be a better choice.
    */
   initialize(layers: OffscreenCanvas[], w: number, h: number, scale: number, background?: OffscreenCanvas) {
+    this.background = background;
     const defaultRenderer: Renderer = new MinimalistRenderer({
       meshContextBuilder: buildMeshContext,
       textContextBuilder: buildTextContext,
@@ -590,5 +594,26 @@ export class Graph {
         return true;
     };
     return false;
+  }
+
+  /**
+   * offscreenCanvas get the offscreen canvas from given layer
+   * 
+   * **Example Usage**
+   * 
+   * ```jsx
+   * const graph = new Graph();
+   * 
+   * graph.onReady(() => {
+   *   const offscreen = graph.offscreenCanvas;
+   *   if (offscreen) {
+   *     const offCtx = offscreen.getContext("2d");
+   *     console.log(offCtx);
+   *   }
+   * });
+   * ```
+   */
+  get offscreenCanvas(): OffscreenCanvas | undefined {
+    return this.background;
   }
 }
