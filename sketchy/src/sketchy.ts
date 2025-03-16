@@ -1,5 +1,5 @@
 import type { ResolvedOptions, Drawable, OpSet } from 'roughjs/bin/core';
-import { type TextContextBuilder, type Mesh, type Text, cutLastLine, seperateText2MultiLines } from "@pattaya/depict/graph";
+import { type TextContextBuilder, type Mesh, type Text, cutLastLine, seperateText2MultiLines } from "@challenai/depict/graph";
 import { RoughGenerator } from "roughjs/bin/generator";
 import { randomSeed } from "roughjs/bin/math";
 

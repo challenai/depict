@@ -1,4 +1,4 @@
-import { Graph, MessageType } from "@pattaya/depict/graph";
+import { Graph, MessageType } from "@challenai/depict/graph";
 import { fooGraph } from "./layers/foo";
 import { barGraph } from "./layers/bar";
 import { textGraph } from "./layers/text";

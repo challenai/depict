@@ -12,7 +12,7 @@
 ## Installation
 
 ```bash
-npm install @pattaya/depict --save
+npm install @challenai/depict --save
 ```
 
 ## Examples
@@ -39,7 +39,7 @@ npm run dev
 ## Quick Guide 
 
 ```ts
-import { NonWorkerDepict } from "@pattaya/depict/nonworker";
+import { NonWorkerDepict } from "@challenai/depict/nonworker";
 
 // Create a depict instance to hold the graph canvas DOM
 const depict = new NonWorkerDepict({

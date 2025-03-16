@@ -1,4 +1,4 @@
-import { Depict } from "@pattaya/depict";
+import { Depict } from "@challenai/depict";
 import { MsgUpdateCounterState } from "./msg";
 
 // run worker

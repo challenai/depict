@@ -1,4 +1,4 @@
-import type { ShadowElement } from "@pattaya/depict/graph";
+import type { ShadowElement } from "@challenai/depict/graph";
 import { rectangle } from "impressionist";
 import { graphState } from "./state";
 
