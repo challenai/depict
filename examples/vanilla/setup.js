@@ -1,4 +1,4 @@
-import { NonWorkerDepict } from "@pattaya/depict/nonworker";
+import { NonWorkerDepict } from "@challenai/depict/nonworker";
 import { graph, counterState } from "./graph";
 
 let counter = 0;

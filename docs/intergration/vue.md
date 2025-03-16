@@ -3,8 +3,8 @@
 ```vue
 <script lang="ts">
 import { defineComponent, onMounted, ref, watch } from 'vue';
-import { NonWorkerDepict } from "@pattaya/depict/nonworker";
-import { Graph } from "@pattaya/depict/graph";
+import { NonWorkerDepict } from "@challenai/depict/nonworker";
+import { Graph } from "@challenai/depict/graph";
 export const graph = new Graph();
 
 export default defineComponent({

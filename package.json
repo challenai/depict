@@ -1,5 +1,5 @@
 {
-  "name": "@pattaya/depict",
+  "name": "@challenai/depict",
   "module": "lib/index.min.js",
   "version": "0.6.3",
   "type": "module",

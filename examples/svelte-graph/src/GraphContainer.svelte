@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { NonWorkerDepict } from "@pattaya/depict/nonworker";
+  import { NonWorkerDepict } from "@challenai/depict/nonworker";
   import { onMount } from "svelte";
   import { graph, graphState } from "./graph";
 

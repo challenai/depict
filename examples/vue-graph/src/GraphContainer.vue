@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref, watch } from 'vue';
-import { NonWorkerDepict } from "@pattaya/depict/nonworker";
+import { NonWorkerDepict } from "@challenai/depict/nonworker";
 import { graph, graphState } from "./graph";
 
 export default defineComponent({

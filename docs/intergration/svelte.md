@@ -3,8 +3,8 @@
 
 ```svelte
 <script lang="ts">
-  import { NonWorkerDepict } from "@pattaya/depict/nonworker";
-  import { Graph } from "@pattaya/depict/graph";
+  import { NonWorkerDepict } from "@challenai/depict/nonworker";
+  import { Graph } from "@challenai/depict/graph";
   import { onMount } from "svelte";
 
   let depict: NonWorkerDepict | undefined = $state(undefined);

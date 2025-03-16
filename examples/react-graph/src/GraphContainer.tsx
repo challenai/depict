@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { NonWorkerDepict } from "@pattaya/depict/nonworker";
+import { NonWorkerDepict } from "@challenai/depict/nonworker";
 import { graph, graphState } from "./graph";
 
 export interface GraphContainerProps {

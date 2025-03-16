@@ -1,6 +1,6 @@
 ## 🚀 Installation
 
-`npm install @pattaya/depict --save`
+`npm install @challenai/depict --save`
 
 ## 🎨 First Graph
 
