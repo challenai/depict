@@ -35,12 +35,12 @@
     "lint": "eslint src/**"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.8.2"
   },
   "devDependencies": {
     "esbuild": "0.25.1",
-    "eslint": "^9.22.0",
-    "typescript-eslint": "^8.26.1"
+    "eslint": "^9.23.0",
+    "typescript-eslint": "^8.28.0"
   },
   "dependencies": {
     "@challenai/depict": "0.7.0",
