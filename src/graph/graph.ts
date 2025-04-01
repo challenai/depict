@@ -8,40 +8,40 @@ import { MessageType, type CanvasEvent } from "../defs/types";
 
 /**
  * the callback will be called when the graph is ready
-*/
+ */
 export type ReadyHook = () => void;
 
 /**
  * text bounding box propertities
-*/
+ */
 export interface TextBoundingBoxProps {
   /**
    * layer of the text
-  */
+   */
   layer?: number;
   /**
    * renderer of the text, not need if the text use default renderer
-  */
+   */
   renderer?: Renderer;
-};
+}
 
 /**
  * preHandle runs before all events.
- * 
+ *
  * if you want to catch the event and do something before the graph get the event,
- * 
+ *
  * use it if you return true, the event **will not** be passed to graph.
- * 
+ *
  * @param {CanvasEvent} typ the type of the event
- * 
+ *
  * @param {number} x the position x of the event
- * 
+ *
  * @param {number} y the position y of the event
- * 
+ *
  * @return {boolean} the stop the event if true.
- * 
+ *
  * **Example Usage**
- * 
+ *
  * ```jsx
  * graph.preHandle = (typ, x, y) => {
  *   console.log("event happens at position: ", x, y);
@@ -49,67 +49,76 @@ export interface TextBoundingBoxProps {
  * }
  * ```
  */
-export type EventPreHandler = (typ: CanvasEvent, x: number, y: number) => boolean;
+export type EventPreHandler = (
+  typ: CanvasEvent,
+  x: number,
+  y: number,
+) => boolean;
 
 /**
  * postHandle runs before all events.
- * 
+ *
  * use it if you want to catch the event and do something after the graph handle the event,
- * 
+ *
  * if you return true, the event **will not** be passed to graph.
- * 
+ *
  * @param triggered triggered is used to tell you if the event has triggered some elements in the graphy
- * 
+ *
  * @param typ the type of the event
- * 
+ *
  * @param x the position x of the event
- * 
+ *
  * @param y the position y of the event
- * 
+ *
  * **Example Usage**
- * 
+ *
  * ```jsx
  * graph.postHandle = (triggered, typ, x, y) => {
  *   console.log("event happens at position: ", x, y);
  * }
  * ```
  */
-export type EventPostHandler = (triggered: boolean, typ: CanvasEvent, x: number, y: number) => void;
+export type EventPostHandler = (
+  triggered: boolean,
+  typ: CanvasEvent,
+  x: number,
+  y: number,
+) => void;
 
 /**
  * Graph hold all your shapes, it could run in the worker thread.
- * 
+ *
  * It could be used to draw any styles of graph, a chart, or a diagram, or even an interactive button with only a single layer.
- * 
+ *
  * The graph could be either simple event-driven or state-driven, or even a combination of both.
- * 
+ *
  * since it only depends on the canvas API, it could be used in any popular framework like React, Vue, Angular, or even vanilla JS.
  *
  * **Example Usage**
- * 
+ *
  * in web worker style, the graph will run in another thread,
- * 
+ *
  * and you don't need to handle the life cycle of the graph:
- * 
+ *
  * ```jsx
  * const graph = new Graph();
- * 
+ *
  * // worker thread listen to the message event.
  * onmessage = (ev) => {
  *   graph.handleMessageEvent(ev);
  * };
  * ```
- * 
+ *
  * directly run the graph in your main thread style: (currently not recommended)
- * 
+ *
  * you need to munually handle the life cycle of the graph.
- * 
+ *
  * ```jsx
  * const graph = new Graph();
- * 
+ *
  * // initialize the graph with layers and size.
  * graph.initialize(layers, width, height);
- * 
+ *
  * // you need to destroy the graph when you don't need it anymore.
  * graph.destroy();
  * ```
@@ -129,35 +138,35 @@ export class Graph {
 
   /**
    * overall graph offset x
-   * 
+   *
    * the graph will render according this delta x.
    */
   dx: number;
 
   /**
-   * overall graph offset y, 
-   * 
+   * overall graph offset y,
+   *
    * the graph will render according this delta y.
    */
   dy: number;
 
   /**
    * preHandle runs before all events.
-   * 
+   *
    * if you want to catch the event and do something before the graph get the event,
-   * 
+   *
    * use it if you return true, the event **will not** be passed to graph.
-   * 
+   *
    * @param {CanvasEvent} typ the type of the event
-   * 
+   *
    * @param {number} x the position x of the event
-   * 
+   *
    * @param {number} y the position y of the event
-   * 
+   *
    * @return {boolean} the stop the event if true.
-   * 
+   *
    * **Example Usage**
-   * 
+   *
    * ```jsx
    * graph.preHandle = (typ, x, y) => {
    *   console.log("event happens at position: ", x, y);
@@ -169,21 +178,21 @@ export class Graph {
 
   /**
    * postHandle runs before all events.
-   * 
+   *
    * use it if you want to catch the event and do something after the graph handle the event,
-   * 
+   *
    * if you return true, the event **will not** be passed to graph.
-   * 
+   *
    * @param triggered triggered is used to tell you if the event has triggered some elements in the graphy
-   * 
+   *
    * @param typ the type of the event
-   * 
+   *
    * @param x the position x of the event
-   * 
+   *
    * @param y the position y of the event
-   * 
+   *
    * **Example Usage**
-   * 
+   *
    * ```jsx
    * graph.postHandle = (triggered, typ, x, y) => {
    *   console.log("event happens at position: ", x, y);
@@ -203,16 +212,22 @@ export class Graph {
 
   /**
    * initialize the graph
-   * 
+   *
    * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to intialize munually.
-   * 
+   *
    * the default renderer is a minimalist renderer which provides only basic line and curve drawing,
-   * 
+   *
    * if you want to create some highly stylized graph (for examples: curves, lines and background with animations; hand drawn style graph),
-   * 
+   *
    * setting a customized renderer by setDefaultRenderer would be a better choice.
    */
-  initialize(layers: OffscreenCanvas[], w: number, h: number, scale: number, background?: OffscreenCanvas) {
+  initialize(
+    layers: OffscreenCanvas[],
+    w: number,
+    h: number,
+    scale: number,
+    background?: OffscreenCanvas,
+  ) {
     this.background = background;
     const defaultRenderer: Renderer = new MinimalistRenderer({
       meshContextBuilder: buildMeshContext,
@@ -226,13 +241,13 @@ export class Graph {
 
   /**
    * set default renderer for a specific layer
-   * 
+   *
    * @param layer layer to update, for exmaple, to update the second layer, you should pass 1.
-   * 
+   *
    * @param renderer the default renderer
-   * 
+   *
    * **Example Usage**
-   * 
+   *
    * ```jsx
    * const dr: Renderer = new MinimalistRenderer({...});
    * graph.setLayerRenderer(0, dr);
@@ -245,11 +260,11 @@ export class Graph {
 
   /**
    * set default renderer for the whole graph
-   * 
+   *
    * @param renderer the default renderer
-   * 
+   *
    * **Example Usage**
-   * 
+   *
    * ```jsx
    * const dr: Renderer = new MinimalistRenderer({...});
    * graph.setGraphRenderer(dr);
@@ -263,7 +278,7 @@ export class Graph {
 
   /**
    * resize the graph
-   * 
+   *
    * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to resize munually.
    */
   resize(w: number, h: number, scale: number) {
@@ -275,7 +290,7 @@ export class Graph {
 
   /**
    * trigger the events
-   * 
+   *
    * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to triggerEvent munually.
    */
   triggerEvent(typ: CanvasEvent, x: number, y: number) {
@@ -288,7 +303,12 @@ export class Graph {
 
     let triggered = false;
     for (let i = this.layers.length - 1; i >= 0; i--) {
-      triggered = this.layers[i].triggerEvent(typ, this.render.bind(this), x - dx, y - dy);
+      triggered = this.layers[i].triggerEvent(
+        typ,
+        this.render.bind(this),
+        x - dx,
+        y - dy,
+      );
       if (triggered) break;
     }
 
@@ -301,7 +321,7 @@ export class Graph {
     const cdy = this.dy;
     for (const layer of this.layers) {
       if (layer.shouldRender()) {
-        layer.updateElements(delta)
+        layer.updateElements(delta);
         layer.renderQueue(cdx, cdy);
       }
     }
@@ -314,7 +334,7 @@ export class Graph {
 
   /**
    * start the graph
-   * 
+   *
    * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to start graph munually.
    */
   start() {
@@ -324,9 +344,9 @@ export class Graph {
 
   /**
    * the callback will be called when the graph is ready
-   * 
+   *
    * **Example Usage**
-   * 
+   *
    * ```jsx
    * graph.onReady(() => console.log("graph is ready now"));
    * ```
@@ -337,15 +357,15 @@ export class Graph {
 
   /**
    * update elements render queue of a specific layer
-   * 
+   *
    * if you want to update a part of this layer, you can update only a part of some elements of a specific layer.
-   * 
+   *
    * @param layer layer to update, for exmaple, to update the second layer, you should pass 1.
-   * 
+   *
    * @param elements an arraylist of elements to render for the next frame.
-   * 
+   *
    * **Example Usage**
-   * 
+   *
    * ```jsx
    * const node = {
    *   x: 24,
@@ -367,17 +387,17 @@ export class Graph {
 
   /**
    * reset elements render queue of a specific layer
-   * 
+   *
    * if you want to draw a whole new layer, you can reset the layer with a group of new elements
-   * 
+   *
    * the only difference with `updateQueue` is that it could be a bit faster.
-   * 
+   *
    * @param layer layer to update, for exmaple, to update the second layer, you should pass 1.
-   * 
+   *
    * @param elements an arraylist of elements to render for the next frame.
-   * 
+   *
    * **Example Usage**
-   * 
+   *
    * ```jsx
    * const node = {
    *   x: 24,
@@ -399,17 +419,17 @@ export class Graph {
 
   /**
    * reset the whole graph
-   * 
+   *
    * if you want to draw a whole new graph, you can reset all the layers
-   * 
+   *
    * you can still reuse the previous elements.
-   * 
+   *
    * if you don't specify the elements of the specific layer, the layer will be reset empty.
-   * 
+   *
    * @param elements an arraylist of new layers.
-   * 
+   *
    * **Example Usage**
-   * 
+   *
    * ```jsx
    * const node = {
    *   x: 24,
@@ -438,13 +458,13 @@ export class Graph {
 
   /**
    * update layer options of a specific layer
-   * 
+   *
    * @param layer layer to update, for exmaple, to update the second layer, you should pass 1.
-   * 
+   *
    * @param options layer options to update
-   * 
+   *
    * **Example Usage**
-   * 
+   *
    * ```jsx
    * graph.updateLayerOptions(1, { dynamic: true, update: true });
    * ```
@@ -456,11 +476,11 @@ export class Graph {
 
   /**
    * update graph options
-   * 
+   *
    * @param options options to update
-   * 
+   *
    * **Example Usage**
-   * 
+   *
    * ```jsx
    * graph.updateGraphOptions([{ dynamic: true, update: true }]);
    * ```
@@ -474,13 +494,13 @@ export class Graph {
 
   /**
    * ask for rerendering a specific layer
-   * 
+   *
    * for example, rerender the second layer.
-   * 
+   *
    * @param layer layer to rerender, for exmaple, to render to second layer, you should pass 1.
-   * 
+   *
    * **Example Usage**
-   * 
+   *
    * ```jsx
    * graph.render(1);
    * ```
@@ -492,9 +512,9 @@ export class Graph {
 
   /**
    * ask for rerendering all layers(the whole graph)
-   * 
+   *
    * **Example Usage**
-   * 
+   *
    * ```jsx
    * graph.renderAll();
    * ```
@@ -507,9 +527,9 @@ export class Graph {
 
   /**
    * get the bounding box of a text
-   * 
+   *
    * **Example Usage**
-   * 
+   *
    * ```jsx
    * const rect = graph.boundingBox(text);
    * // or: const rect = graph.boundingBox(text, {renderer: sketchyRenderer});
@@ -528,11 +548,11 @@ export class Graph {
 
   /**
    * destroy the graph
-   * 
+   *
    * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to destroy munually.
-   * 
+   *
    * **Example Usage**
-   * 
+   *
    * ```jsx
    * graph.destroy();
    * ```
@@ -545,9 +565,9 @@ export class Graph {
 
   /**
    * get the default renderer of a specific layer
-   * 
+   *
    * **Example Usage**
-   * 
+   *
    * ```jsx
    * const renderer = graph.getRenderer(0);
    * if (renderer) renderer.draw(...);
@@ -560,16 +580,16 @@ export class Graph {
 
   /**
    * handleMessageEvent handles messages from main thread.
-   * 
+   *
    * @param {MessageEvent} ev the message event
-   * 
+   *
    * @return {boolean} does the given event could been handled by this function? the user defined events can't be handled automatically
-   * 
+   *
    * **Example Usage**
-   * 
+   *
    * ```jsx
    * const graph = new Graph();
-   * 
+   *
    * onmessage = (ev: MessageEvent) => {
    *   if (graph.handleMessageEvent(ev)) return;
    * }
@@ -580,7 +600,13 @@ export class Graph {
     const msg = ev.data.msg;
     switch (eventType) {
       case MessageType.INIT:
-        this.initialize(msg.layers, msg.size.w, msg.size.h, msg.size.scale, msg.background);
+        this.initialize(
+          msg.layers,
+          msg.size.w,
+          msg.size.h,
+          msg.size.scale,
+          msg.background,
+        );
         this.start();
         return true;
       case MessageType.DESTROY:
@@ -592,18 +618,18 @@ export class Graph {
       case MessageType.RESIZE:
         this.resize(msg.w, msg.h, msg.scale);
         return true;
-    };
+    }
     return false;
   }
 
   /**
    * offscreenCanvas get the offscreen canvas from given layer
-   * 
+   *
    * **Example Usage**
-   * 
+   *
    * ```jsx
    * const graph = new Graph();
-   * 
+   *
    * graph.onReady(() => {
    *   const offscreen = graph.offscreenCanvas;
    *   if (offscreen) {

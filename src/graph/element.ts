@@ -3,57 +3,66 @@ import type { Renderer } from "../physical/render";
 
 /**
  * RenderHook could run before/after/during render
- * 
+ *
  * @param ctx canvas context
- * 
+ *
  * @param offscreen a shared offscreen canvas among different elements
  */
-export type RenderHook = (ctx: OffscreenCanvasRenderingContext2D, offscreen?: OffscreenCanvas) => void;
+export type RenderHook = (
+  ctx: OffscreenCanvasRenderingContext2D,
+  offscreen?: OffscreenCanvas,
+) => void;
 
 /**
  * MouseEventHandler handles mouse events
  */
-export type MouseEventHandler = (render: RenderLayer, x: number, y: number, mouseX: number, mouseY: number) => void;
+export type MouseEventHandler = (
+  render: RenderLayer,
+  x: number,
+  y: number,
+  mouseX: number,
+  mouseY: number,
+) => void;
 
 /**
  * UpdateFn runs updates before render
- * 
+ *
  * @param timestamp timestamp from the beginning, it's commonly used to animate the graph.
  */
 export type UpdateHook = (timestamp: number) => void;
 
 /**
  * RenderLayer request render the given layer
- * 
+ *
  * @param layer specify the layer to render, if no layer was given, the whole graph will be rerender.
  */
 export type RenderLayer = (layer?: number) => void;
 
 /**
  * ContainCallback decides whether the coordinates inside the graph
- * 
+ *
  * @param x x axis position
- * 
+ *
  * @param y y axis position
- * 
+ *
  * @returns whether the coordinates inside the graph ?
  */
 export type ContainCallback = (x: number, y: number) => boolean;
 
 /**
  * internal run time state of an element
-*/
+ */
 export interface RuntimeState {
   idx: number;
   dx: number;
   dy: number;
   liftUp?: boolean;
   destroy?: boolean;
-};
+}
 
 /**
  * ShadowElement is the basic unit where stores shapes and texts
- * 
+ *
  * It contains a children property so that it is organized as a tree
  *
  * **Example Usage**
@@ -106,29 +115,29 @@ export interface ShadowElement {
   children?: ShadowElement[];
   /**
    * if current element contains the given coordination ?
-   * 
+   *
    * it's used for event handling.
    */
   contain?: ContainCallback;
   /**
    * specify renderer for this element,
-   * 
-   * if not specified, it will use the default minimal renderer,  
-   * 
+   *
+   * if not specified, it will use the default minimal renderer,
+   *
    * self customized renderer could be used to draw more complex shapes.
    */
   renderer?: Renderer;
   /**
    * update would be called before render,
-   * 
+   *
    * it would be called before every render, if the update flag is turned on.
-   * 
+   *
    * if rerender doesn't happen, the update hook will not be called.
    */
   update?: UpdateHook;
   /**
    * postRenderCallback would be called immediately after render a single node.
-   * 
+   *
    * you can draw highly customized shapes, or images here.
    */
   postRenderCallback?: RenderHook;
@@ -164,11 +173,11 @@ export interface ShadowElement {
   data?: any;
   /**
    * _state is the internal run time state of the element,
-   * 
-   * it should **not** controlled by the user. 
-   * 
+   *
+   * it should **not** controlled by the user.
+   *
    * so **never** modify it.
-   * 
+   *
    * it's used to cache some computed results to speed up the rendering and event handling process.
    */
   _state?: RuntimeState;

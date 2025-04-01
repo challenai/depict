@@ -11,31 +11,31 @@ export interface DepictOptions {
   maxLayers: number;
   /**
    * root element to hold graph,
-   * 
+   *
    * the graph will automatically resize to fit the root element.
    */
   root: HTMLDivElement;
   /**
    * worker thread to run the graph,
-   * 
+   *
    * you can run multiple graphs in a single one worker.
-   * 
+   *
    * or you can run only one graph per worker.
    */
   worker: Worker;
   /**
    * provide an offscreen canvas which doesn't show in the viewport,
-   * 
+   *
    * you can use this offscreen canvas to draw and cache graph.
    */
   offscreenCanvas?: boolean;
-};
+}
 
 /**
  * Depict runs in the main thread,
- * 
+ *
  * it's the entrance of a multi-thread graph.
- * 
+ *
  * It will communite with the worker thread to draw the graph.
  *
  * **Example Usage**
@@ -46,7 +46,7 @@ export interface DepictOptions {
  *   root: document.getElementById("root"),
  *   worker: new Worker("./worker.js"),
  * });
- * 
+ *
  * depict.start();
  * ```
  */
@@ -67,12 +67,7 @@ export class Depict {
   private resizeObserver: ResizeObserver;
   private offscreenCanvas?: HTMLCanvasElement;
 
-  constructor({
-    maxLayers,
-    root,
-    worker,
-    offscreenCanvas,
-  }: DepictOptions) {
+  constructor({ maxLayers, root, worker, offscreenCanvas }: DepictOptions) {
     this.root = root;
     this.maxLayers = maxLayers;
     this.layers = [];
@@ -102,10 +97,7 @@ export class Depict {
     this.resizeObserver.observe(this.root);
   }
 
-  private initializeCanvas(
-    canvas: HTMLCanvasElement,
-    base: boolean,
-  ) {
+  private initializeCanvas(canvas: HTMLCanvasElement, base: boolean) {
     canvas.style.width = `${this.w}px`;
     canvas.style.height = `${this.h}px`;
     canvas.style.position = "absolute";
@@ -118,11 +110,11 @@ export class Depict {
 
   /**
    * start the graph now.
-   * 
+   *
    * the graph will be initialized and start to run.
-   * 
+   *
    * **Example Usage**
-   * 
+   *
    * ```jsx
    * const depict = new Depict(opts);
    * depict.start();
@@ -137,23 +129,51 @@ export class Depict {
     const c = this.layers[this.layers.length - 1];
     c.onclick = (ev: MouseEvent) => {
       const rect = c.getBoundingClientRect();
-      this.worker.postMessage({ type: MessageType.EVENT, msg: { x: ev.clientX - rect.left, y: ev.clientY - rect.top, typ: CanvasEvent.CLICK } });
+      this.worker.postMessage({
+        type: MessageType.EVENT,
+        msg: {
+          x: ev.clientX - rect.left,
+          y: ev.clientY - rect.top,
+          typ: CanvasEvent.CLICK,
+        },
+      });
     };
     c.onmouseup = (ev: MouseEvent) => {
       const rect = c.getBoundingClientRect();
-      this.worker.postMessage({ type: MessageType.EVENT, msg: { x: ev.clientX - rect.left, y: ev.clientY - rect.top, typ: CanvasEvent.MOUSE_UP } });
+      this.worker.postMessage({
+        type: MessageType.EVENT,
+        msg: {
+          x: ev.clientX - rect.left,
+          y: ev.clientY - rect.top,
+          typ: CanvasEvent.MOUSE_UP,
+        },
+      });
     };
     c.onmousedown = (ev: MouseEvent) => {
       const rect = c.getBoundingClientRect();
-      this.worker.postMessage({ type: MessageType.EVENT, msg: { x: ev.clientX - rect.left, y: ev.clientY - rect.top, typ: CanvasEvent.MOUSE_DOWN } });
+      this.worker.postMessage({
+        type: MessageType.EVENT,
+        msg: {
+          x: ev.clientX - rect.left,
+          y: ev.clientY - rect.top,
+          typ: CanvasEvent.MOUSE_DOWN,
+        },
+      });
     };
     c.onmousemove = (ev: MouseEvent) => {
       const rect = c.getBoundingClientRect();
       const interval = 16;
-      const now = (new Date()).getTime();
+      const now = new Date().getTime();
       if (now > this.moveThrottle + interval) {
         this.moveThrottle = now;
-        this.worker.postMessage({ type: MessageType.EVENT, msg: { x: ev.clientX - rect.left, y: ev.clientY - rect.top, typ: CanvasEvent.MOUSE_MOVE } });
+        this.worker.postMessage({
+          type: MessageType.EVENT,
+          msg: {
+            x: ev.clientX - rect.left,
+            y: ev.clientY - rect.top,
+            typ: CanvasEvent.MOUSE_MOVE,
+          },
+        });
       }
     };
 
@@ -193,9 +213,9 @@ export class Depict {
 
   /**
    * destroy the graph to release all the resources and memories.
-   * 
+   *
    * **Example Usage**
-   * 
+   *
    * ```jsx
    * depict.destroy();
    * ```
@@ -207,4 +227,4 @@ export class Depict {
     }
     this.resizeObserver.disconnect();
   }
-};
+}
