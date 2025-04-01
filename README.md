@@ -16,6 +16,7 @@ npm install @challenai/depict --save
 ```
 
 ## Examples
+
 You can create a graph application with any framework you prefer. The following demo applications are available, which include examples using **React**, **Vue**, **Svelte**, or **vanilla javascript**:
 
 - [React graph example](https://github.com/challenai/depict/blob/main/examples/react-graph/README.md)
@@ -36,7 +37,7 @@ npm install
 npm run dev
 ```
 
-## Quick Guide 
+## Quick Guide
 
 ```ts
 import { NonWorkerDepict } from "@challenai/depict/nonworker";
@@ -51,7 +52,7 @@ const depict = new NonWorkerDepict({
 // Start your graph
 depict.start();
 
-// Now, you can build your graph with an array of nodes. 
+// Now, you can build your graph with an array of nodes.
 // You can add events, animations, or even a state system for larger applications.
 const node = {
   x: 150,
@@ -62,8 +63,8 @@ const node = {
       opts: {
         stroke: "#666",
         fill: "#333",
-      }
-    }
+      },
+    },
   ],
 };
 

@@ -1,9 +1,16 @@
-import type { RenderHook, ShadowElement } from "./element";
-import type { DrawableOptions, Mesh, MeshSpecificOptions, Text, TextRect, TextSpecificOptions } from "../physical/drawable";
-import { Renderer } from "../physical/render";
-import { initializeContext } from "../physical/context";
-import { BinaryEventHandler } from "./events";
 import { CanvasEvent } from "../defs/types";
+import { initializeContext } from "../physical/context";
+import type {
+  DrawableOptions,
+  Mesh,
+  MeshSpecificOptions,
+  Text,
+  TextRect,
+  TextSpecificOptions,
+} from "../physical/drawable";
+import type { Renderer } from "../physical/render";
+import type { RenderHook, ShadowElement } from "./element";
+import { BinaryEventHandler } from "./events";
 
 export type ExplicitRenderLayer = (layer: number) => void;
 
@@ -72,7 +79,9 @@ export class Layer {
     // canvas
     this.canvas = canvas;
     this.background = background;
-    this.ctx = this.canvas.getContext("2d") as OffscreenCanvasRenderingContext2D;
+    this.ctx = this.canvas.getContext(
+      "2d",
+    ) as OffscreenCanvasRenderingContext2D;
 
     // width and height
     this.w = w;
@@ -118,7 +127,7 @@ export class Layer {
   private updateElementsInQueue(delta: number, elements?: ShadowElement[]) {
     if (!this.update || !elements) return;
     for (const element of elements) {
-      if (element.update) element.update(delta)
+      if (element.update) element.update(delta);
       this.updateElementsInQueue(delta, element.children);
     }
   }
@@ -170,7 +179,12 @@ export class Layer {
   }
 
   // try to trigger given event
-  triggerEvent(typ: CanvasEvent, renderLayer: ExplicitRenderLayer, x: number, y: number): boolean {
+  triggerEvent(
+    typ: CanvasEvent,
+    renderLayer: ExplicitRenderLayer,
+    x: number,
+    y: number,
+  ): boolean {
     const renderLayerDefault = (layer?: number) => {
       if (layer === undefined) {
         this.render();
@@ -182,48 +196,86 @@ export class Layer {
     switch (typ) {
       case CanvasEvent.CLICK:
         element = this.evClick.trigger(x, y);
-        if (element && element.onClick) {
-          element.onClick(renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
+        if (element?.onClick) {
+          element.onClick(
+            renderLayerDefault,
+            element._state!.dx,
+            element._state!.dy,
+            x,
+            y,
+          );
           return true;
         }
         return false;
       case CanvasEvent.MOUSE_UP:
         element = this.evMouseUp.trigger(x, y);
-        if (element && element.onMouseup) {
-          element.onMouseup(renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
+        if (element?.onMouseup) {
+          element.onMouseup(
+            renderLayerDefault,
+            element._state!.dx,
+            element._state!.dy,
+            x,
+            y,
+          );
           return true;
         }
         return false;
       case CanvasEvent.MOUSE_DOWN:
         element = this.evMouseDown.trigger(x, y);
-        if (element && element.onMousedown) {
-          element.onMousedown(renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
+        if (element?.onMousedown) {
+          element.onMousedown(
+            renderLayerDefault,
+            element._state!.dx,
+            element._state!.dy,
+            x,
+            y,
+          );
           return true;
         }
         return false;
       case CanvasEvent.MOUSE_MOVE:
-        const els = this.evMove.elements;
-        for (const element of els) {
-          if (element.onMousemove) {
-            element.onMousemove(renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
+        {
+          const els = this.evMove.elements;
+          for (const element of els) {
+            if (element.onMousemove) {
+              element.onMousemove(
+                renderLayerDefault,
+                element._state!.dx,
+                element._state!.dy,
+                x,
+                y,
+              );
+            }
           }
-        }
 
-        // mouse enter and leave
-        const actives = this.evActive.triggerAll(x, y);
-        const activesSet = new Set(actives);
-        for (const element of this.active) {
-          if (element._state?.destroy) continue;
-          if (element.onMouseleave && !activesSet.has(element)) {
-            element.onMouseleave(renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
+          // mouse enter and leave
+          const actives = this.evActive.triggerAll(x, y);
+          const activesSet = new Set(actives);
+          for (const element of this.active) {
+            if (element._state?.destroy) continue;
+            if (element.onMouseleave && !activesSet.has(element)) {
+              element.onMouseleave(
+                renderLayerDefault,
+                element._state!.dx,
+                element._state!.dy,
+                x,
+                y,
+              );
+            }
           }
-        }
-        for (const element of activesSet) {
-          if (element.onMouseenter && !this.active.has(element)) {
-            element.onMouseenter(renderLayerDefault, element._state!.dx, element._state!.dy, x, y);
+          for (const element of activesSet) {
+            if (element.onMouseenter && !this.active.has(element)) {
+              element.onMouseenter(
+                renderLayerDefault,
+                element._state!.dx,
+                element._state!.dy,
+                x,
+                y,
+              );
+            }
           }
+          this.active = activesSet;
         }
-        this.active = activesSet;
         return false;
     }
     return false;
@@ -234,7 +286,7 @@ export class Layer {
     if (!elements) return;
     for (const el of elements) {
       // check internal _state
-      this.counter++
+      this.counter++;
       if (!el._state) el._state = { idx: this.counter, dx: x, dy: y };
       if (el._state.destroy) el._state.destroy = false;
       if (el.hidden) continue;
@@ -270,7 +322,8 @@ export class Layer {
       }
       this.ctx.translate(tx, ty);
       el.shapes?.forEach((m: Mesh) => r.draw(this.ctx, m));
-      if (el.postRenderCallback) this.postRender(el.postRenderCallback.bind(el));
+      if (el.postRenderCallback)
+        this.postRender(el.postRenderCallback.bind(el));
       el.texts?.forEach((t: Text) => r.write(this.ctx, t));
       this.renderElements(dx, dy, el.children);
       this.ctx.translate(-tx, -ty);

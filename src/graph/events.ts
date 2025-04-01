@@ -16,7 +16,12 @@ export class BinaryEventHandler {
         this.nodes.splice(i, 1);
         continue;
       }
-      if (current.contain && current.contain(x - current._state!.dx - current.x, y - current._state!.dy - current.y)) {
+      if (
+        current.contain?.(
+          x - current._state!.dx - current.x,
+          y - current._state!.dy - current.y,
+        )
+      ) {
         return current;
       }
     }
@@ -32,7 +37,12 @@ export class BinaryEventHandler {
         this.nodes.splice(i, 1);
         continue;
       }
-      if (current.contain && current.contain(x - current._state!.dx - current.x, y - current._state!.dy - current.y)) {
+      if (
+        current.contain?.(
+          x - current._state!.dx - current.x,
+          y - current._state!.dy - current.y,
+        )
+      ) {
         active.push(current);
       }
     }

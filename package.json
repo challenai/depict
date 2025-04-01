@@ -1,7 +1,7 @@
 {
   "name": "@challenai/depict",
   "module": "lib/index.min.js",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "type": "module",
   "exports": {
     ".": {
@@ -44,14 +44,14 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc && esbuild dist/**/*.js --bundle --minify --format=esm --outdir=lib/ --out-extension:.js=.min.js",
-    "lint": "eslint src/**"
+    "lint": "biome lint --write src/*",
+    "format": "biome format --write src/*"
   },
   "peerDependencies": {
     "typescript": "^5.8.2"
   },
   "devDependencies": {
-    "esbuild": "0.25.1",
-    "eslint": "^9.23.0",
-    "typescript-eslint": "^8.28.0"
+    "@biomejs/biome": "1.9.4",
+    "esbuild": "0.25.1"
   }
 }
