@@ -25,19 +25,9 @@
   "author": "Challen Ai <fengyiai@gmail.com>",
   "typings": "types/index.d.ts",
   "types": "types/index.d.ts",
-  "keywords": [
-    "canvas",
-    "graph",
-    "path",
-    "shape",
-    "event",
-    "render"
-  ],
+  "keywords": ["canvas", "graph", "path", "shape", "event", "render"],
   "homepage": "https://docs.depict.wiki",
-  "files": [
-    "lib",
-    "types"
-  ],
+  "files": ["lib", "types"],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/challenai/dipict.git"
