@@ -1,19 +1,30 @@
 import type { Mesh, Text, TextRect } from "./drawable";
 
 /**
- * Renderer render meshes and write texts
+ * Abstract base class for renderers that handle drawing meshes and writing texts.
+ * Implementations must provide methods for drawing shapes, writing text, and
+ * calculating text bounding boxes.
  */
 export abstract class Renderer {
   /**
-   * draw meshes to the graph
+   * Draw a mesh shape to the canvas context.
+   * @param ctx - The rendering context.
+   * @param shape - The mesh to draw.
    */
   abstract draw(ctx: OffscreenCanvasRenderingContext2D, shape: Mesh): void;
+
   /**
-   * write texts to the graph
+   * Write text to the canvas context.
+   * @param ctx - The rendering context.
+   * @param text - The text object to render.
    */
   abstract write(ctx: OffscreenCanvasRenderingContext2D, text: Text): void;
+
   /**
-   * get bounding box of the text
+   * Calculate the bounding box of the given text.
+   * @param ctx - The rendering context.
+   * @param text - The text object to measure.
+   * @returns The bounding rectangle of the text.
    */
   abstract boundingBox(
     ctx: OffscreenCanvasRenderingContext2D,
