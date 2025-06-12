@@ -13,8 +13,18 @@
   "author": "Challen Ai <fengyiai@gmail.com>",
   "typings": "types/index.d.ts",
   "types": "types/index.d.ts",
-  "keywords": ["canvas", "graph", "path", "shape", "sketchy", "depict"],
-  "files": ["lib", "types"],
+  "keywords": [
+    "canvas",
+    "graph",
+    "path",
+    "shape",
+    "sketchy",
+    "depict"
+  ],
+  "files": [
+    "lib",
+    "types"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/challenai/dipict.git"
@@ -26,14 +36,14 @@
     "format": "biome format --write src/*"
   },
   "peerDependencies": {
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "esbuild": "0.25.1"
+    "esbuild": "0.25.5"
   },
   "dependencies": {
-    "@challenai/depict": "^0.7.0",
+    "@challenai/depict": "^0.7.1",
     "roughjs": "^4.6.6"
   }
 }
