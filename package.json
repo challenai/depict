@@ -46,13 +46,15 @@
   "scripts": {
     "build": "tsc && esbuild dist/**/*.js --bundle --minify --format=esm --outdir=lib/ --out-extension:.js=.min.js",
     "lint": "biome lint --write src/*",
-    "format": "biome format --write src/*"
+    "format": "biome format --write src/*",
+    "test": "bun test"
   },
   "peerDependencies": {
     "typescript": "^5.8.3"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "@types/bun": "^1.2.16",
     "esbuild": "0.25.5"
   }
 }
