@@ -12,7 +12,7 @@ import { MessageType, type CanvasEvent } from "../defs/types";
 export type ReadyHook = () => void;
 
 /**
- * text bounding box propertities
+ * text bounding box properties
  */
 export interface TextBoundingBoxProps {
   /**
@@ -20,7 +20,7 @@ export interface TextBoundingBoxProps {
    */
   layer?: number;
   /**
-   * renderer of the text, not need if the text use default renderer
+   * renderer of the text, not needed if the text uses the default renderer
    */
   renderer?: Renderer;
 }
@@ -28,7 +28,7 @@ export interface TextBoundingBoxProps {
 /**
  * preHandle runs before all events.
  *
- * if you want to catch the event and do something before the graph get the event,
+ * if you want to catch the event and do something before the graph gets the event,
  *
  * use it if you return true, the event **will not** be passed to graph.
  *
@@ -38,7 +38,7 @@ export interface TextBoundingBoxProps {
  *
  * @param {number} y the position y of the event
  *
- * @return {boolean} the stop the event if true.
+ * @return {boolean} stop the event if true.
  *
  * **Example Usage**
  *
@@ -56,13 +56,13 @@ export type EventPreHandler = (
 ) => boolean;
 
 /**
- * postHandle runs before all events.
+ * postHandle runs after all events.
  *
- * use it if you want to catch the event and do something after the graph handle the event,
+ * use it if you want to catch the event and do something after the graph handles the event,
  *
  * if you return true, the event **will not** be passed to graph.
  *
- * @param triggered triggered is used to tell you if the event has triggered some elements in the graphy
+ * @param triggered triggered is used to tell you if the event has triggered some elements in the graph
  *
  * @param typ the type of the event
  *
@@ -86,32 +86,32 @@ export type EventPostHandler = (
 ) => void;
 
 /**
- * Graph hold all your shapes, it could run in the worker thread.
+ * Graph holds all your shapes, it could run in the worker thread.
  *
- * It could be used to draw any styles of graph, a chart, or a diagram, or even an interactive button with only a single layer.
+ * It could be used to draw any style of graph, a chart, or a diagram, or even an interactive button with only a single layer.
  *
  * The graph could be either simple event-driven or state-driven, or even a combination of both.
  *
- * since it only depends on the canvas API, it could be used in any popular framework like React, Vue, Angular, or even vanilla JS.
+ * Since it only depends on the canvas API, it could be used in any popular framework like React, Vue, Angular, or even vanilla JS.
  *
  * **Example Usage**
  *
- * in web worker style, the graph will run in another thread,
+ * In web worker style, the graph will run in another thread,
  *
  * and you don't need to handle the life cycle of the graph:
  *
  * ```jsx
  * const graph = new Graph();
  *
- * // worker thread listen to the message event.
+ * // worker thread listens to the message event.
  * onmessage = (ev) => {
  *   graph.handleMessageEvent(ev);
  * };
  * ```
  *
- * directly run the graph in your main thread style: (currently not recommended)
+ * To run the graph in your main thread (currently not recommended):
  *
- * you need to munually handle the life cycle of the graph.
+ * you need to manually handle the life cycle of the graph.
  *
  * ```jsx
  * const graph = new Graph();
@@ -139,21 +139,21 @@ export class Graph {
   /**
    * overall graph offset x
    *
-   * the graph will render according this delta x.
+   * the graph will render according to this delta x.
    */
   dx: number;
 
   /**
    * overall graph offset y,
    *
-   * the graph will render according this delta y.
+   * the graph will render according to this delta y.
    */
   dy: number;
 
   /**
    * preHandle runs before all events.
    *
-   * if you want to catch the event and do something before the graph get the event,
+   * if you want to catch the event and do something before the graph gets the event,
    *
    * use it if you return true, the event **will not** be passed to graph.
    *
@@ -163,7 +163,7 @@ export class Graph {
    *
    * @param {number} y the position y of the event
    *
-   * @return {boolean} the stop the event if true.
+   * @return {boolean} stop the event if true.
    *
    * **Example Usage**
    *
@@ -177,13 +177,13 @@ export class Graph {
   preHandle: EventPreHandler | null;
 
   /**
-   * postHandle runs before all events.
+   * postHandle runs after all events.
    *
-   * use it if you want to catch the event and do something after the graph handle the event,
+   * use it if you want to catch the event and do something after the graph handles the event,
    *
    * if you return true, the event **will not** be passed to graph.
    *
-   * @param triggered triggered is used to tell you if the event has triggered some elements in the graphy
+   * @param triggered triggered is used to tell you if the event has triggered some elements in the graph
    *
    * @param typ the type of the event
    *
@@ -213,11 +213,11 @@ export class Graph {
   /**
    * initialize the graph
    *
-   * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to intialize munually.
+   * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, no need to initialize manually.
    *
    * the default renderer is a minimalist renderer which provides only basic line and curve drawing,
    *
-   * if you want to create some highly stylized graph (for examples: curves, lines and background with animations; hand drawn style graph),
+   * if you want to create some highly stylized graph (for example: curves, lines and background with animations; hand drawn style graph),
    *
    * setting a customized renderer by setDefaultRenderer would be a better choice.
    */
@@ -242,7 +242,7 @@ export class Graph {
   /**
    * set default renderer for a specific layer
    *
-   * @param layer layer to update, for exmaple, to update the second layer, you should pass 1.
+   * @param layer layer to update, for example, to update the second layer, you should pass 1.
    *
    * @param renderer the default renderer
    *
@@ -279,7 +279,7 @@ export class Graph {
   /**
    * resize the graph
    *
-   * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to resize munually.
+   * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, no need to resize manually.
    */
   resize(w: number, h: number, scale: number) {
     for (const layer of this.layers) {
@@ -291,7 +291,7 @@ export class Graph {
   /**
    * trigger the events
    *
-   * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to triggerEvent munually.
+   * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, no need to triggerEvent manually.
    */
   triggerEvent(typ: CanvasEvent, x: number, y: number) {
     let stopFlag = false;
@@ -335,7 +335,7 @@ export class Graph {
   /**
    * start the graph
    *
-   * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to start graph munually.
+   * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, no need to start graph manually.
    */
   start() {
     if (this.readyCallback) this.readyCallback();
@@ -360,9 +360,9 @@ export class Graph {
    *
    * if you want to update a part of this layer, you can update only a part of some elements of a specific layer.
    *
-   * @param layer layer to update, for exmaple, to update the second layer, you should pass 1.
+   * @param layer layer to update, for example, to update the second layer, you should pass 1.
    *
-   * @param elements an arraylist of elements to render for the next frame.
+   * @param elements an array of elements to render for the next frame.
    *
    * **Example Usage**
    *
@@ -392,9 +392,9 @@ export class Graph {
    *
    * the only difference with `updateQueue` is that it could be a bit faster.
    *
-   * @param layer layer to update, for exmaple, to update the second layer, you should pass 1.
+   * @param layer layer to update, for example, to update the second layer, you should pass 1.
    *
-   * @param elements an arraylist of elements to render for the next frame.
+   * @param elements an array of elements to render for the next frame.
    *
    * **Example Usage**
    *
@@ -426,7 +426,7 @@ export class Graph {
    *
    * if you don't specify the elements of the specific layer, the layer will be reset empty.
    *
-   * @param elements an arraylist of new layers.
+   * @param elements an array of new layers.
    *
    * **Example Usage**
    *
@@ -442,7 +442,7 @@ export class Graph {
    *     }],
    * };
    * graph.resetGraph([[node]]);
-   * // the second layer will be empty since we don't provide the elements of second layer.
+   * // the second layer will be empty since we don't provide the elements of the second layer.
    * ```
    */
   resetGraph(elements: ShadowElement[][]) {
@@ -459,7 +459,7 @@ export class Graph {
   /**
    * update layer options of a specific layer
    *
-   * @param layer layer to update, for exmaple, to update the second layer, you should pass 1.
+   * @param layer layer to update, for example, to update the second layer, you should pass 1.
    *
    * @param options layer options to update
    *
@@ -497,7 +497,7 @@ export class Graph {
    *
    * for example, rerender the second layer.
    *
-   * @param layer layer to rerender, for exmaple, to render to second layer, you should pass 1.
+   * @param layer layer to rerender, for example, to render the second layer, you should pass 1.
    *
    * **Example Usage**
    *
@@ -511,7 +511,7 @@ export class Graph {
   }
 
   /**
-   * ask for rerendering all layers(the whole graph)
+   * ask for rerendering all layers (the whole graph)
    *
    * **Example Usage**
    *
@@ -549,7 +549,7 @@ export class Graph {
   /**
    * destroy the graph
    *
-   * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, not need to destroy munually.
+   * if you use graph.handleMessageEvent, the graph life cycle will be controlled by events automatically, no need to destroy manually.
    *
    * **Example Usage**
    *
@@ -579,11 +579,11 @@ export class Graph {
   }
 
   /**
-   * handleMessageEvent handles messages from main thread.
+   * handleMessageEvent handles messages from the main thread.
    *
    * @param {MessageEvent} ev the message event
    *
-   * @return {boolean} does the given event could been handled by this function? the user defined events can't be handled automatically
+   * @return {boolean} does the given event can be handled by this function? User-defined events can't be handled automatically
    *
    * **Example Usage**
    *
@@ -623,7 +623,7 @@ export class Graph {
   }
 
   /**
-   * offscreenCanvas get the offscreen canvas from given layer
+   * offscreenCanvas gets the offscreen canvas from the given layer
    *
    * **Example Usage**
    *
