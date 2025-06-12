@@ -54,22 +54,26 @@ export const buildMeshContext: MeshContextBuilder = (
   o: MeshOptions,
 ) => {
   for (const key in o) {
-    const match = buildDrawableContextWithKey(ctx, o, key);
-    if (match) continue;
+    let handled = false;
     switch (key) {
       case "lineWidth":
-        ctx.lineWidth = o.lineWidth as any;
+        ctx.lineWidth = Number(o.lineWidth);
+        handled = true;
         break;
       case "lineCap":
-        ctx.lineCap = o.lineCap as any;
+        ctx.lineCap = o.lineCap as CanvasLineCap;
+        handled = true;
         break;
       case "lineJoin":
-        ctx.lineJoin = o.lineJoin as any;
+        ctx.lineJoin = o.lineJoin as CanvasLineJoin;
+        handled = true;
         break;
       case "miterLimit":
-        ctx.miterLimit = o.miterLimit as any;
+        ctx.miterLimit = Number(o.miterLimit);
+        handled = true;
         break;
     }
+    if (!handled) buildDrawableContextWithKey(ctx, o, key);
   }
 };
 
@@ -81,18 +85,22 @@ export const buildTextContext: TextContextBuilder = (
   o: TextOptions,
 ) => {
   for (const key in o) {
+    let handled = false;
     switch (key) {
       case "font":
-        ctx.font = o.font as any;
+        ctx.font = String(o.font);
+        handled = true;
         break;
       case "textAlign":
-        ctx.textAlign = o.textAlign as any;
+        ctx.textAlign = o.textAlign as CanvasTextAlign;
+        handled = true;
         break;
       case "textBaseline":
-        ctx.textBaseline = o.textBaseline as any;
+        ctx.textBaseline = o.textBaseline as CanvasTextBaseline;
+        handled = true;
         break;
     }
-    buildDrawableContextWithKey(ctx, o, key);
+    if (!handled) buildDrawableContextWithKey(ctx, o, key);
   }
 };
 
