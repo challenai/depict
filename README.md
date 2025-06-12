@@ -74,6 +74,15 @@ depict.graph.updateQueue(0, [node]);
 depict.graph.renderAll();
 ```
 
+## Test
+
+The test files in this project is driven by bun.js.
+No special rules are applied, so you can run it with `bun test`.
+
+```bash
+bun test
+```
+
 ### Features
 
 To-do list:
