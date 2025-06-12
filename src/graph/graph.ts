@@ -210,6 +210,10 @@ export class Graph {
     this.postHandle = null;
   }
 
+  private isValidLayerIndex(layer: number): boolean {
+    return layer >= 0 && layer < this.layers.length;
+  }
+
   /**
    * initialize the graph
    *
@@ -254,7 +258,7 @@ export class Graph {
    * ```
    */
   setLayerRenderer(layer: number, renderer: Renderer) {
-    if (layer < 0 || layer >= this.layers.length) return;
+    if (!this.isValidLayerIndex(layer)) return;
     this.layers[layer].setDefaultRenderer(renderer);
   }
 
@@ -381,7 +385,7 @@ export class Graph {
    * ```
    */
   updateQueue(layer: number, elements: ShadowElement[]) {
-    if (layer < 0 || layer >= this.layers.length) return;
+    if (!this.isValidLayerIndex(layer)) return;
     this.layers[layer].updateQueue(elements);
   }
 
@@ -413,7 +417,7 @@ export class Graph {
    * ```
    */
   resetQueue(layer: number, elements: ShadowElement[]) {
-    if (layer < 0 || layer >= this.layers.length) return;
+    if (!this.isValidLayerIndex(layer)) return;
     this.layers[layer].resetQueue(elements);
   }
 
@@ -470,7 +474,7 @@ export class Graph {
    * ```
    */
   updateLayerOptions(layer: number, options: LayerOptions) {
-    if (layer < 0 || layer >= this.layers.length) return;
+    if (!this.isValidLayerIndex(layer)) return;
     this.layers[layer].updateOptions(options);
   }
 
@@ -506,7 +510,7 @@ export class Graph {
    * ```
    */
   render(layer: number) {
-    if (layer < 0 || layer >= this.layers.length) return;
+    if (!this.isValidLayerIndex(layer)) return;
     this.layers[layer].render();
   }
 
@@ -538,7 +542,7 @@ export class Graph {
    */
   boundingBox(text: Text, props?: TextBoundingBoxProps): TextRect {
     if (props?.layer) {
-      if (props.layer < 0 || props.layer >= this.layers.length) {
+      if (!this.isValidLayerIndex(props.layer)) {
         return { width: 0, height: 0 };
       }
       return this.layers[props.layer].boundingBox(text, props.renderer);
@@ -574,7 +578,7 @@ export class Graph {
    * ```
    */
   getRenderer(layer: number): Renderer | undefined {
-    if (layer < 0 || layer >= this.layers.length) return;
+    if (!this.isValidLayerIndex(layer)) return;
     return this.layers[layer].defaultRenderer;
   }
 
