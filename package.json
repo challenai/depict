@@ -50,7 +50,7 @@
     "test": "bun test"
   },
   "peerDependencies": {
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.3"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
