@@ -28,7 +28,7 @@ describe("BinaryEventHandler", () => {
     handler.add(el2);
     handler.add(el3);
 
-    expect(handler.elements.map(e => e._state.idx)).toEqual([1, 2, 3]);
+    expect(handler.elements.map((e) => e._state.idx)).toEqual([1, 2, 3]);
   });
 
   it("should trigger the correct element", () => {
@@ -59,7 +59,10 @@ describe("BinaryEventHandler", () => {
 
   it("should skip hidden elements and remove destroyed elements", () => {
     const el1 = createShadowElement(1, { hidden: true, contain: () => true });
-    const el2 = createShadowElement(2, { _state: { idx: 2, destroy: true, dx: 0, dy: 0 }, contain: () => true });
+    const el2 = createShadowElement(2, {
+      _state: { idx: 2, destroy: true, dx: 0, dy: 0 },
+      contain: () => true,
+    });
     const el3 = createShadowElement(3, { contain: () => true });
 
     handler.add(el1);
