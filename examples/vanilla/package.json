@@ -13,10 +13,10 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "vite": "^5.4.14"
+    "vite": "^5.4.21"
   },
   "dependencies": {
-    "@challenai/depict": "^0.7.0",
-    "impressionist": "^1.2.0"
+    "@challenai/depict": "^0.7.2",
+    "impressionist": "^1.2.2"
   }
 }
